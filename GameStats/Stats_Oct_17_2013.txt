@@ -1,0 +1,28 @@
+Thu Oct 17 15:05:17 2013    stats
+
+         2278892 function calls (2278550 primitive calls) in 18.124 seconds
+
+   Ordered by: cumulative time
+   List reduced from 833 to 20 due to restriction <20>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.014    0.014   18.125   18.125 game.py:5(<module>)
+      688    1.684    0.002   15.376    0.022 game.py:33(mainLoop)
+  2105778    9.397    0.000    9.397    0.000 {method 'blit' of 'pygame.Surface' objects}
+        6    0.000    0.000    4.629    0.772 world.py:77(loadCurrentSections)
+       54    0.001    0.000    4.173    0.077 world.py:151(loadSection)
+       54    0.031    0.001    3.899    0.072 section.py:97(loadImages)
+      687    0.005    0.000    3.895    0.006 world.py:21(viewInBoundsCheck)
+        5    0.006    0.001    3.887    0.777 world.py:65(moveCenter)
+    18377    0.055    0.000    3.867    0.000 tile.py:51(loadImage)
+    18377    2.882    0.000    2.882    0.000 {pygame.imageext.load_extended}
+        1    1.581    1.581    1.638    1.638 {pygame.display.set_mode}
+    18377    0.853    0.000    0.853    0.000 {method 'convert_alpha' of 'pygame.Surface' objects}
+        7    0.000    0.000    0.529    0.076 world.py:163(unloadOldSections)
+       54    0.003    0.000    0.528    0.010 world.py:168(unloadSection)
+      216    0.002    0.000    0.269    0.001 C:\python27\lib\shelve.py:142(close)
+      687    0.248    0.000    0.248    0.000 {pygame.display.flip}
+      378    0.001    0.000    0.223    0.001 C:\python27\lib\bsddb\dbutils.py:47(DeadlockWrap)
+      216    0.000    0.000    0.199    0.001 C:\python27\lib\shelve.py:161(sync)
+      108    0.000    0.000    0.198    0.002 C:\python27\lib\bsddb\__init__.py:345(sync)
+      108    0.198    0.002    0.198    0.002 {method 'sync' of 'DB' objects}
