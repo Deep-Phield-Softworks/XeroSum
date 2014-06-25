@@ -106,7 +106,6 @@ class path:
     def findNextNode(self, xy, MAP):
         next = None
         #Changing mods order to try and make diagonals "float to top"
-        #mods = [(0,-1),(-1,0),(1,0),(0,1),(-1,-1),(1,-1),(-1,1),(1,1)]
         mods = [(-1,-1),(1,1),(-1,1),(1,-1),(0,-1),(-1,0),(1,0),(0,1)]
         lowestNeighbor = MAP[xy[0]][xy[1]][0]
         for mod in mods:
