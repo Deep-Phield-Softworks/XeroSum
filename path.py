@@ -56,10 +56,10 @@ class path:
                 y2 = dPath[node][1]
                 #Must use isometric headings here
                 if x1 == x2:
-                    if y2 < y1: #Heading SW
-                        face = 1
-                    else: #if y2 > y1 Heading NE
+                    if y2 < y1: #Heading NE
                         face = 9
+                    else: #if y2 > y1 Heading SW
+                        face = 1
                 elif x1 < x2:
                     if y2 < y1: #Heading Due E
                         face = 6
@@ -106,7 +106,8 @@ class path:
     def findNextNode(self, xy, MAP):
         next = None
         #Changing mods order to try and make diagonals "float to top"
-        mods = [(0,-1),(-1,0),(1,0),(0,1),(-1,-1),(1,-1),(-1,1),(1,1)]
+        #mods = [(0,-1),(-1,0),(1,0),(0,1),(-1,-1),(1,-1),(-1,1),(1,1)]
+        mods = [(-1,-1),(1,1),(-1,1),(1,-1),(0,-1),(-1,0),(1,0),(0,1)]
         lowestNeighbor = MAP[xy[0]][xy[1]][0]
         for mod in mods:
             adjX = xy[0] + mod[0]
