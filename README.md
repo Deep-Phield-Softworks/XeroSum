@@ -16,5 +16,8 @@ lend a hand with any code you'd like to contribute. Please send an e-mail to eit
 ( EFedrowisch@yahoo.com ) before-hand however, as certain issues/bugs/improvements may be either already underway or
 gotten rid of completely.
 
+Xero Sum uses the python module pygame to draw to the screen. You can get pygame from: 
+http://www.pygame.org/
+
 Thanks,
 Chris Toups
