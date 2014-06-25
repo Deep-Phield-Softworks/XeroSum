@@ -28,16 +28,17 @@ class path:
         self.stepIndex = 0
         self.facings = self.createFacingArray(self.dPath)
         self.facing = 5
+        #print self.facings
         
     
     #Move the path step index forward one node
     #Return a boolean of whether there was another step
     def advance(self):
         more = True
-        self.stepIndex += 1
-        if self.stepIndex >= len(self.path):
+        if self.stepIndex + 1 >= len(self.path):
             more = False
-            self.stepIndex -= 1
+        else:
+            self.stepIndex += 1
         return more
     
     #Use the self.dPath's "absolute" values to calculate facing
@@ -77,7 +78,7 @@ class path:
                         
                 facings.append(face)    
                 start = dPath[node]
-        facings.append(5)
+        facings.append(facings[-1])
         return facings
     
     #Create a fresh Dijkstra Map
@@ -106,6 +107,7 @@ class path:
     def findNextNode(self, xy, MAP):
         next = None
         #Changing mods order to try and make diagonals "float to top"
+        #mods = [(0,-1),(-1,0),(1,0),(0,1),(-1,-1),(1,-1),(-1,1),(1,1)]
         mods = [(-1,-1),(1,1),(-1,1),(1,-1),(0,-1),(-1,0),(1,0),(0,1)]
         lowestNeighbor = MAP[xy[0]][xy[1]][0]
         for mod in mods:
