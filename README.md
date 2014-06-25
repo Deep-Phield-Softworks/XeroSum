@@ -1,7 +1,7 @@
 XeroSum
 =======
 
-Isometric, Squad-Based, Real-Time Strategy RPG  
+Isometric, Squad-Based, Real-Time Strategy RPG in a smooth scrolling infinite and randomly generated world.  
 
 We concieved the idea for Xero Sum in the Summer of 2013. Work began right away but has undergone several lapses in 
 progress throughout that time since. As of right now, we are actively working.
