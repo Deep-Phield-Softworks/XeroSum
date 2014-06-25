@@ -54,36 +54,27 @@ class path:
                 y1 = start[1]
                 x2 = dPath[node][0]
                 y2 = dPath[node][1]
+                #Must use isometric headings here
                 if x1 == x2:
-                    if y2 < y1: #Heading NE
-                        face = 9
-                    else: #if y2 > y1 Heading SW
+                    if y2 < y1: #Heading SW
                         face = 1
+                    else: #if y2 > y1 Heading NE
+                        face = 9
                 elif x1 < x2:
-                    if y2 < y1: #Heading Due N
-                        face = 8
-                    elif y2 == y1: #Heading NW
-                        face = 7
-                    else: #Heading Due W
-                        face = 4
-                else: #if x1 > x2
                     if y2 < y1: #Heading Due E
                         face = 6
                     elif y2 == y1: #Heading SE
-                        face = 3 
+                        face = 3
                     else: #Heading Due S
                         face = 2
+                else: #if x1 > x2
+                    if y2 < y1: #Heading Due N
+                        face = 8
+                    elif y2 == y1: #Heading NW
+                        face = 7 
+                    else: #Heading Due W
+                        face = 4
                         
-                ##If the y values are equal
-                #if y1 == y2:
-                #    if x1 < x2: #Going west
-                #        face = 4
-                #    else: #Going east
-                #        face = 6 
-                #if y1 < y2: #Going south
-                #    face = 2
-                #else:
-                #    face = 8 #Going north
                 facings.append(face)    
                 start = dPath[node]
         facings.append(5)
