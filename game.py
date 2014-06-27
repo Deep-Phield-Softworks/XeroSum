@@ -6,8 +6,18 @@ import pygame, sys
 from pygame.locals import * #Import common pygame variables (FULLSCREEN,etc)
 ###Initialize###
 pygame.init()
-SCREEN_SIZE = (800,600)
-screen = pygame.display.set_mode(SCREEN_SIZE, FULLSCREEN + DOUBLEBUF, 32)
+SUPPORTED = pygame.display.list_modes()
+FLAGS = 0
+if pygame.display.mode_ok(SUPPORTED[0],pygame.FULLSCREEN):
+    FLAGS += pygame.FULLSCREEN
+else:
+    FLAGS += pygame.RESIZABLE
+if pygame.display.mode_ok(SUPPORTED[0],pygame.HWSURFACE):
+    FLAGS += pygame.HWSURFACE
+if pygame.display.mode_ok(SUPPORTED[0],pygame.DOUBLEBUF):
+    FLAGS += pygame.DOUBLEBUF
+SCREEN_SIZE = SUPPORTED[0]
+screen = pygame.display.set_mode(SCREEN_SIZE, FLAGS)
 
 #Xero Sum Imports
 from xeroConstants import *
@@ -75,7 +85,7 @@ def mainLoop():
     corner = lib.checkBoundaries(corner) #Keep view in Bounded area
     inside = w.viewInBoundsCheck()
     #view is a smaller screen-sized piece of the bigger map. 
-    view = Rect(corner[0],corner[1],800,600)
+    view = Rect(corner[0],corner[1],SCREEN_SIZE[0],SCREEN_SIZE[1])
     screen.blit(surface.subsurface(view), (0,0))
     #Draw FPS and debug text
     drawScreenText()
