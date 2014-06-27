@@ -1,19 +1,24 @@
 #!/usr/bin/env python
 import pygame, pickle, os, math, datetime, sys
 
-
-
 ###Clock###
 TICK = 0
 clock = pygame.time.Clock()
-###Screen Variables###
-
-
-COLORKEY = pygame.Color('#0080ff') 
 
 ###Screen Variables###
-SCREEN_SIZE = (800,600)
+SUPPORTED = pygame.display.list_modes()
+FLAGS = 0
+if pygame.display.mode_ok(SUPPORTED[0],pygame.FULLSCREEN):
+    FLAGS += pygame.FULLSCREEN
+else:
+    FLAGS += pygame.RESIZABLE
+if pygame.display.mode_ok(SUPPORTED[0],pygame.HWSURFACE):
+    FLAGS += pygame.HWSURFACE
+if pygame.display.mode_ok(SUPPORTED[0],pygame.DOUBLEBUF):
+    FLAGS += pygame.DOUBLEBUF
+SCREEN_SIZE = SUPPORTED[0]
 ORIGIN = (0,0)
+COLORKEY = pygame.Color('#0080ff') 
 
 ###Maps###
 #For isometric view, tile height should be 1/2 of tile width
@@ -26,7 +31,8 @@ SECTION_HEIGHT = (TILE_HEIGHT * 16)
 map_surface_WIDTH = (TILE_WIDTH * 16 * 3) 
 map_surface_HEIGHT = (TILE_HEIGHT * 16 * 3)
 
-surface = pygame.Surface((map_surface_WIDTH , map_surface_HEIGHT),32)
+surface = pygame.Surface((map_surface_WIDTH , map_surface_HEIGHT),FLAGS)
+
 surface.set_colorkey(COLORKEY)
 
 from xeroManifest import tileManifest
