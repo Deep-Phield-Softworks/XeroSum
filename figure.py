@@ -47,12 +47,19 @@ class figure:
                     self.lastFrame += 1
                 else:
                     self.lastFrame = 0
+            ###Putting this in to "fix" "IndexError: list index out of range"###
+            ###This may cause other problems, but seems to stop the exception###
+            if len(self.animation) <= self.lastFrame:
+                self.lastFrame = len(self.animation) - 1
+            ###Putting this in to "fix" "IndexError: list index out of range"###
+            ###This may cause other problems, but seems to stop the exception###
             toBlit = self.animation[self.lastFrame]
             surface.blit(toBlit,(self.px,self.py))
         else: #If no path use idle animation
             self.animation = self.image.animations[5]
             toBlit = self.animation[self.facing]
             surface.blit(toBlit,(self.px,self.py))
+    
     #General purpose move command.
     #
     def move(self, TICK, speed = 1):
