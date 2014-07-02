@@ -32,8 +32,7 @@ class world:
         
         #For each figure, blit their background surface to create a blank slate 
         for fig in self.figures: #For each figure...
-            for sect in self.currentSections: 
-                if fig.section == sect.name: #If fig in a section in scope..
+            if fig.section in self.currentSectionsDict: #If fig in a section in scope..
                     fig.renderBack(surface) 
         #Move the figures    
         for fig in self.figures:
@@ -41,26 +40,25 @@ class world:
             old = [fig.section, fig.MAPX, fig.MAPY]
             #Now get their "new" coordinates
             next = fig.move(TICK)
-            #Remove the figure from it's old sect.MAP entry 
-            for sect in self.currentSections:
-                if old[0] == sect.name:
-                    sect.MAP[old[1]][old[2]].remove(fig)
-            #Add the figure to it's next sect.MAP entry
-            for sect in self.currentSections:
-                if next[0] == sect.name:
-                    sect.MAP[next[1]][next[2]].append(fig)
+            #If the coordinates of the figure have changed...
+            if next != old:
+                #Remove the figure from it's old sect.MAP entry 
+                if old[0] in self.currentSectionsDict:
+                    self.currentSectionsDict[old[0]].MAP[old[1]][old[2]].remove(fig)
+                #Add the figure to it's next sect.MAP entry
+                if next[0] in self.currentSectionsDict:
+                    self.currentSectionsDict[next[0]].MAP[next[1]][next[2]].append(fig)
             #For each figure, calculate their next px,py position and store
             #that as their new background surface
-            for sect in self.currentSections:
-                if fig.section == sect.name:
-                    #Adjust the figure's px,py
-                    px = sect.MAP[fig.MAPX][fig.MAPY][0].px
-                    py = sect.MAP[fig.MAPX][fig.MAPY][0].py
-                    figX = px - (fig.width/2) + (TILE_WIDTH/2)
-                    figY = py - fig.height + (TILE_HEIGHT/2)
-                    fig.setPos(figX,figY)
-                    #While slate is blank, get new Background
-                    fig.getBack(surface)
+            if fig.section in self.currentSectionsDict:
+                #Adjust the figure's px,py
+                px = self.currentSectionsDict[fig.section].MAP[fig.MAPX][fig.MAPY][0].px
+                py = self.currentSectionsDict[fig.section].MAP[fig.MAPX][fig.MAPY][0].py
+                figX = px - (fig.width/2) + (TILE_WIDTH/2)
+                figY = py - fig.height + (TILE_HEIGHT/2)
+                fig.setPos(figX,figY)
+                #While slate is blank, get new Background
+                fig.getBack(surface)
         #This is the "main" part of the render.
         #For each section in the ordered list of current sections...
         for sect in self.currentSections:
@@ -86,22 +84,20 @@ class world:
                 
     #Method to generate a figure and add it to the figures list to be rendered    
     def genFigure(self,  MAPX, MAPY, section, image):
-        for sect in self.currentSections:
-                if sect.name == section:
-                    #Calculate figure px, py
-                    px = sect.MAP[MAPX][MAPY][0].px
-                    py = sect.MAP[MAPX][MAPY][0].py
+        if section in  self.currentSectionsDict:
+            #Calculate figure px, py
+            px = self.currentSectionsDict[section].MAP[MAPX][MAPY][0].px
+            py = self.currentSectionsDict[section].MAP[MAPX][MAPY][0].py
                     
-                    #Add a figure as the last entry of world.figures
-                    fig = figure(MAPX, MAPY, section, image,px,py, len(self.figures))
-                    figX = px - (fig.width/2) + (TILE_WIDTH/2)
-                    figY = py - fig.height + (TILE_HEIGHT/2)
-                    fig.setPos(figX,figY)
-                    self.figures.append(fig)
-                    #Reassign section to hold the object and not the DB key string
-                    section = sect
-        #Lastly, add the figure to the section MAP data           
-        section.MAP[MAPX][MAPY].append(self.figures[-1])
+            #Add a figure as the last entry of world.figures
+            fig = figure(MAPX, MAPY, section, image,px,py, len(self.figures))
+            figX = px - (fig.width/2) + (TILE_WIDTH/2)
+            figY = py - fig.height + (TILE_HEIGHT/2)
+            fig.setPos(figX,figY)
+            self.figures.append(fig)
+            #Reassign section to hold the object and not the DB key string
+            #Lastly, add the figure to the section MAP data           
+            self.currentSectionsDict[section].MAP[MAPX][MAPY].append(self.figures[-1])
         
     #Given: Screen View Top-Left Corner
     #Determine if view's four corners are in-bounds of the nine sections.
