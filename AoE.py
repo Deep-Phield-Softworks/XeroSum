@@ -25,7 +25,7 @@ from unboundMethods import *
 #Return:
 #-a multidimensional array with lengths equal to the magnitudes
 # in the given list
-def makeNDimension(dimensions):
+def makeNDimension(dimensions, contains = None):
     if hasattr(dimensions, '__iter__'):
         nD = None
         if len(dimensions) == 2:
@@ -33,7 +33,7 @@ def makeNDimension(dimensions):
             for x in range(dimensions[0]):
                 nD.append([])
                 for y in range(dimensions[1]):
-                    nD[x].append(None)
+                    nD[x].append(contains)
         if len(dimensions) == 3:
             nD = []
             for x in range(dimensions[0]):
@@ -41,7 +41,7 @@ def makeNDimension(dimensions):
                 for y in range(dimensions[1]):
                     nD[x].append([])
                     for z in range(dimensions[2]):
-                        nD[x][y].append(None)
+                        nD[x][y].append(contains)
     else:
         nD = []
         nD = [nD.append(None) for i in range(dimensions)]

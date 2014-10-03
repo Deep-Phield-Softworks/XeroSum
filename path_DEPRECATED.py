@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-from xeroConstants import *
-import libraryXero as lib
+
 #An object class to manage the points for a figure to move along
 #Given: initial == list containing ["sector_0_0", x, y] of start point
 #       center == a DB key string of the current center sector

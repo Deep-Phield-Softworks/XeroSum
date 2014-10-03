@@ -118,7 +118,7 @@ print "ACTIVE CHUNK IDS:", sorted(WORLD.active.keys())
 #    print "##Chunk Building...##", key
 #    WORLD.baseTerrainChunkFill(key, base)
 #    WORLD.randomFillChunkFeature(key, obj)
-#WORLD.addEntity('10_10_0', 'rose.png', 'Rose')
+#WORLD.addEntity(WORLD, '10_10_0', 'rose.png', 'Rose')
 ##UNCOMMENT TO GENERATE TERRAIN##
 ###Test Terrain Gen###
 

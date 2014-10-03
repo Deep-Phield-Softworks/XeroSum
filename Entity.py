@@ -14,7 +14,8 @@ from ImageManifests import SPRITE_MANIFEST
 #-have an action queue that defines their actions and the time costs
 #Examples: a dog, person
 class Entity(Matter): #entity(world, coordinateKey, imageKey)
-    def __init__(self, coordinateKey, imageKey, name = None, tall = 0, floatOffset = [0.5,0.5]):
+    def __init__(self,world, coordinateKey, imageKey, name = None, tall = 0, floatOffset = [0.5,0.5]):
+        self.world = world
         self.imageKey =  imageKey 
         self.SpriteSheet = SPRITE_MANIFEST[self.imageKey] #SpriteSheet object that provides sprite frames
         self.width   = self.SpriteSheet.frameWidth
@@ -46,25 +47,25 @@ class Entity(Matter): #entity(world, coordinateKey, imageKey)
         self.toBlit = None
     def TICK(self, TICK):
         pass
-        #if self.path: #If path is not None
-        ##Check to see if enough time has accumulated to advance frames
-        #    self.tickAccumulator += TICK
-        #    if self.tickAccumulator >= self.frameThreshhold:
-        #        self.tickAccumulator = 0
-        #        if self.lastFrame < (len(self.animation)-1):
-        #            self.lastFrame += 1
-        #        else:
-        #            self.lastFrame = 0
-        ####Putting this in to "fix" "IndexError: list index out of range"###
-        #    ###This may cause other problems, but seems to stop the exception###
-        #    if len(self.animation) <= self.lastFrame:
-        #        self.lastFrame = len(self.animation) - 1
-        #    ###Putting this in to "fix" "IndexError: list index out of range"###
-        #    ###This may cause other problems, but seems to stop the exception###
-        #    self.toBlit = self.animation[self.lastFrame]
-        #else: #If no path use idle animation
-        #    self.animation = self.SpriteSheet.animations[5]
-        #    self.toBlit = self.animation[self.facing]
+        if self.path: #If path is not None
+        #Check to see if enough time has accumulated to advance frames
+            self.tickAccumulator += TICK
+            if self.tickAccumulator >= self.frameThreshhold:
+                self.tickAccumulator = 0
+                if self.lastFrame < (len(self.animation)-1):
+                    self.lastFrame += 1
+                else:
+                    self.lastFrame = 0
+        ###Putting this in to "fix" "IndexError: list index out of range"###
+            ###This may cause other problems, but seems to stop the exception###
+            if len(self.animation) <= self.lastFrame:
+                self.lastFrame = len(self.animation) - 1
+            ###Putting this in to "fix" "IndexError: list index out of range"###
+            ###This may cause other problems, but seems to stop the exception###
+            self.toBlit = self.animation[self.lastFrame]
+        else: #If no path use idle animation
+            self.animation = self.SpriteSheet.animations[5]
+            self.toBlit = self.animation[self.facing]
         #def move(self, TICK, speed = 1):
         #if self.path: #If path is not None
         #    self.moveAccumulator += TICK #Add the ticks in
