@@ -1,4 +1,0 @@
-grass.png
-bush.png
-rocks.png
-tallTree.png

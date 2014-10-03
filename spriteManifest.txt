@@ -1,3 +1,0 @@
-rose.png
-male_sprite_model.png
-female_sprite_model.png
