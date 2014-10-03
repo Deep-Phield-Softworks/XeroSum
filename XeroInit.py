@@ -68,7 +68,7 @@ if not CONFIG_EXISTS: #If no config exists
     if screenHeightInTiles < screenWidthInTiles:
         VIEWPOINT_MAX_SIZE = screenHeightInTiles
     else:
-        VIEWPOINT_SIZE = screenWidthInTiles
+        VIEWPOINT_MAX_SIZE = screenWidthInTiles
     config['PLATFORM']       = PLATFORM
     config['TILE_WIDTH']     = TILE_WIDTH
     config['TILE_HEIGHT']    = TILE_HEIGHT
@@ -99,8 +99,9 @@ SCREEN = pygame.display.set_mode(SCREEN_SIZE, MODES)
 SCREEN.set_colorkey(COLORKEY)
 
 #Initialize px, py offsets
-PXOFFSET = (config['MAP_SURFACE_WIDTH']/2) - (config['TILE_WIDTH']/2)
-PYOFFSET = (config['MAP_SURFACE_HEIGHT']/2) + (config['TILE_WIDTH']/2)*3 - (((config['VIEWPOINT_WIDTH'] + 1) * TILE_HEIGHT)/2)
+PXOFFSET = (config['Resolution'][0]/2) - (config['TILE_WIDTH']/2)
+PYOFFSET = (config['Resolution'][1]/2) - ((config['VIEWPOINT_MAX_SIZE'] * TILE_HEIGHT)/2)
+#PYOFFSET = (config['Resolution'][1]/2) + (config['TILE_WIDTH']/2)*3 - ((config['VIEWPOINT_MAX_SIZE'] * TILE_HEIGHT)/2)
 #PYOFFSET = (config['MAP_SURFACE_HEIGHT']/2) - (config['TILE_WIDTH']/2) - (((config['VIEWPOINT_WIDTH'] + 1) * TILE_HEIGHT)/2)
 
 ####Colors####
