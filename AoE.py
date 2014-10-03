@@ -1,11 +1,5 @@
 #!/usr/bin/env python
-import baseObjects 
-
-#Current issues:
-#-During shape creation, there are redundant Control loops for issuing keys to
-# shape.areaKeyList and shape.nDimensionalArray. The control loops for both
-# need to be consolidated into one loop
-
+from unboundMethods import *
 #This is a collection of Area of Effect template objects.
 #They should take as parameters:
 #-origin as a coordinate object key in form "x_y_z"
@@ -17,6 +11,14 @@ import baseObjects
 #-areaKeyList; a list of coordinate object keys in that area.
 # The list should be in isometric render order (iterate through y, then x, then z)
 #-nDimensionalArray; 
+
+#Current issues:
+#-During shape creation, there are redundant Control loops for issuing keys to
+# shape.areaKeyList and shape.nDimensionalArray. The control loops for both
+# need to be consolidated into one loop
+#-makeKey method should be imported from XeroInit to keep both consistent, but
+# I can't get the import to work in that order
+
 
 #Given:
 #-dimensions; either a int or a list of ints
@@ -71,11 +73,11 @@ def midpoint(a, b):
 #-origin as a coordinate object key in form "x_y_z"
 #-magnitude to extend as either an int or a int list
 #-towardsNegInf as a boolean
-class cube():
+class Cube():
     def __init__(self, origin, magnitude, towardsNegInf = False):
         self.origin    = origin #should be coordinate object key
         self.magnitude = magnitude #int or int list that describes extent of AoE
-        XYZ = baseObjects.keyToXYZ(origin)  #convert key to [x,y,z] of origin
+        XYZ = XYZ = [int(i) for i in origin.split('_')]#convert key to [x,y,z]
         x, y, z = XYZ[0], XYZ[1], XYZ[2] #reassign variables for code clarity
 
         #Create ranges for creating coordinate list
@@ -122,7 +124,8 @@ class cube():
             for y in range(yRange[0], yRange[1]):
                 cz = 0
                 for z in range(zRange[0], zRange[1]):
-                    key = baseObjects.makeKey([x,y,z]) #Make a key string
+                    #Make a key string
+                    key = makeKey([x,y,z])
                     self.nDimensionalArray[cx][cy][cz] = key
                     cz += 1
                 cy += 1
@@ -136,7 +139,7 @@ class cube():
             for x in range(xRange[0], xRange[1] + 1):
                 for z in range(zRange[0], zRange[1]): #Why not +1 here? dik
                 #for z in range(zRange[0], zRange[1] + 1):
-                    key = baseObjects.makeKey([x,y,z]) #Make a key string
+                    key = makeKey([x,y,z]) #Make a key string
                     self.areaKeyList.append(key) #Put in flat list
                     if z >0:
                         print key 
@@ -157,11 +160,11 @@ class cube():
 #on (x,y) plane
 #OR if towardsNegInf == True:
 #Extends from origin towards + infinity on x and y axes (origin==towardsNegInf square)
-class square():
+class Square():
     def __init__(self, origin, magnitude, towardsNegInf = False):
         self.origin    = origin #should be coordinate object key
         self.magnitude = magnitude #int that describes extent of AoE
-        XYZ = baseObjects.keyToXYZ(origin)
+        XYZ = keyToXYZ(origin)
         x, y, z = XYZ[0], XYZ[1], XYZ[2]
         #Create ranges for creating coordinate list
         if hasattr(magnitude, '__iter__'):
@@ -195,19 +198,16 @@ class square():
         
         for y in range(yRange[0], yRange[1]):
             for x in range(xRange[0], xRange[1]):
-                key = baseObjects.makeKey([x,y,z]) #Make a key string
+                key = makeKey([x,y,z]) #Make a key string
                 self.areaKeyList.append(key) #Put in flat list
                 
         cx, cy = 0, 0
         #print "len(self.areaKeyList)", len(self.areaKeyList)
         for x in range(xRange[0], xRange[1]):
             for y in range(yRange[0], yRange[1]):
-                key = baseObjects.makeKey([x,y,z]) #Make a key string
+                key = makeKey([x,y,z]) #Make a key string
                 #print "key", key, "cx", cx, "cy", cy
                 self.nDimensionalArray[cx][cy] = key
                 cy += 1
             cx += 1
             cy = 0
-if __name__ == '__main__':
-    pass
-    

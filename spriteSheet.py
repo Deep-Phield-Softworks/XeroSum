@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 #Generic entity object class
-import pygame, os
-from XeroInit import *
+import pygame
 
-
-class spriteSheet:
+class SpriteSheet:
     #Constructor
-    def __init__(self, imageKey, spriteDir, framesWide, framesHigh): 
+    def __init__(self, imageKey, spriteDir, framesWide, framesHigh, COLORKEY = pygame.Color('#0080ff') ): 
         self.imageKey = imageKey   #Image file name
         self.imagepath = spriteDir + imageKey
         self.surface = pygame.image.load(self.imagepath).convert()

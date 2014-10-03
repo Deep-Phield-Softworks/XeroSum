@@ -1,10 +1,7 @@
 #!/usr/bin/env python
-
 #Main game script for "Xero Sum"
+import random
 from XeroInit import *
-from baseObjects import *
-
-###Imports###
 
 ###Main Loop###
 def mainLoop():
@@ -75,7 +72,7 @@ def mouseLeftClick(event):
     print len(collideList)#, collideList
     for e in collideList:
         print e[0],e[1].parentCoordinate, e[1].name, e[1], e[1].floatOffset
-        if not isinstance(e[1], tile):
+        if not isinstance(e[1], Tile):
             print e[1].pixelOffsets
 
 #Draw text to the screen.
@@ -101,35 +98,28 @@ def playRandomSong():
     pygame.mixer.music.load(str(TRACKS[n]))
     #Play the song once
     pygame.mixer.music.play()
-    
-#####<<DEBUG>>#####
-print "#####<<DEBUG>>#####"
-#Config Debug Key, Value dump
-for k in config.keys():
-    print k, config[k]
-print "#####<<DEBUG>>#####"
-#####<<DEBUG>>#####
 
 ####TEST WORLD INIT####
-WORLD = world("TEST")
+WORLD = World("TEST")
 origin = [0,0,0]
 oKey = makeKey(origin)
-shape = cube(oKey, [21,21,1], True)
-playerView = worldView(WORLD, oKey, shape)
+shape = Cube(oKey, [21,21,1], True)
+playerView = WorldView(WORLD, oKey, shape, SCREEN_SIZE)
 ###DEBUG###
 print "ACTIVE CHUNKS #:", len(sorted(WORLD.active.keys()))
 print "ACTIVE CHUNK IDS:", sorted(WORLD.active.keys())
 ###DEBUG###
 
 ###Test Terrain Gen###
+##UNCOMMENT TO GENERATE TERRAIN##
 #base = ('grass.png', "grass")
 #obj  = ('rocks.png', "rocks")
 #for key in sorted(WORLD.active.keys()):
 #    print "##Chunk Building...##", key
 #    WORLD.baseTerrainChunkFill(key, base)
 #    WORLD.randomFillChunkFeature(key, obj)
-#rose = entity(WORLD, '10_10_0', 'rose.png')
-#WORLD.addElement('10_10_0', rose)
+#WORLD.addEntity('10_10_0', 'rose.png', 'Rose')
+##UNCOMMENT TO GENERATE TERRAIN##
 ###Test Terrain Gen###
 
 while True:
