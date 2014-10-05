@@ -44,6 +44,9 @@ class Chunk:
             c.TICK(TICK)
     def addElement(self, coordinateKey, element):
         self.coordinates[coordinateKey].addElement(element)
+    #Return a boolean of whether element removed successfully
+    def removeElement(self, coordinateKey, element):
+        self.coordinates[coordinateKey].removeElement(element)
     def load(self):
         for c in self.coordinatesList:
             c.load()

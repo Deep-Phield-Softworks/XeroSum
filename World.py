@@ -68,3 +68,11 @@ class World:
         pchunk = findParent(e.coordinateKey)
         self.activateChunk(pchunk)
         self.active[pchunk].addElement(e.coordinateKey, e)
+    def moveElement(self, element, aKey, bKey):
+        #Make sure chunks are active
+        aChunk = findParent(aKey)
+        bChunk = findParent(bKey)
+        self.activateChunk(aChunk)
+        self.activateChunk(bChunk)
+        self.active[aChunk].removeElement(aKey, element)
+        self.active[bChunk].addElement(bKey, element)

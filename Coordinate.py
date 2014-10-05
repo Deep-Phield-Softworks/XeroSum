@@ -44,6 +44,22 @@ class Coordinate:
         if isinstance(element, Field):
             self.fields.append(element)
         element.parentCoordinate = self.key
+    def removeElement(self, element):
+        if isinstance(element, Tile):
+            if element in self.tiles:
+                self.tiles.remove(element)
+        if isinstance(element, Feature):
+            if element in self.features:
+                self.features.remove(element)
+        if isinstance(element, Item):
+            if element in self.items:
+                self.items.remove(element)
+        if isinstance(element, Entity):
+            if element in self.entities:
+                self.entities.remove(element)
+        if isinstance(element, Field):
+            if element in self.fields:
+                self.fields.remove(element)
     def contains(self):
         contents = []
         contents.append(self.tiles)

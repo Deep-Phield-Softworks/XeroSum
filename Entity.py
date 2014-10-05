@@ -70,12 +70,14 @@ class Entity(Matter): #entity(world, coordinateKey, imageKey)
             self.moveAccumulator += TICK #Add the ticks in
             if self.moveAccumulator >= self.moveThreshhold: #If enough ticks...
                 self.moveAccumulator = 0 #Reset Accumulator
+                lastKey = self.path.nodes[self.path.stepIndex]
                 more = self.path.advance()      #Advance the path to the next step
                 if more:
-                    next = self.path.nodes[self.path.stepIndex] #Lookup next node
+                    nextKey = self.path.nodes[self.path.stepIndex] #Lookup next node
                     self.facing = self.path.facings[self.path.stepIndex]
                     self.animation = self.SpriteSheet.animations[self.facing]
                     ######MOVE COORDINATES HERE############
+                    self.world.moveElement(self, lastKey, nextKey)
                 else:
                     self.path = None
                     self.animation = self.SpriteSheet.animations[5]
