@@ -60,6 +60,7 @@ class Coordinate:
         if isinstance(element, Field):
             if element in self.fields:
                 self.fields.remove(element)
+        element.parentCoordinate = None
     def contains(self):
         contents = []
         contents.append(self.tiles)
