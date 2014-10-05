@@ -21,27 +21,20 @@ class DjikstraMap:
         for key in self.selectedKeys:
             if self.MapVals.has_key(key):
                 self.MapVals[key] = setValue #Set the goals to low values
-        self.mods = []
-        for x in range(-1,2):
-            for y in range(-1,2):
-                for z in range(-1,2):
-                    if x == 0 and y == 0 and z == 0:
-                        pass
-                    else:
-                        self.mods.append([x,y,z])
+        #Using custom mods order to try and make diagonals "float to top"
+        self.mods = [(-1,-1,-1),(1,1,-1),(-1,1,-1),(1,-1,-1),(0,-1,-1),(-1,0,-1),(1,0,-1),(0,1,-1),
+                     (-1,-1,0) ,(1,1,0), (-1,1,0), (1,-1,0), (0,-1,0), (-1,0,0), (1,0,0), (0,1,0), (0,0,0),
+                     (-1,-1,1), (1,1,1), (-1,1,1), (1,-1,1), (0,-1,1), (-1,0,1), (1,0,1), (0,1,1)]
     def processMap(self):
         again = True #Control Boolean
-        c = 1
         while(again): #Run at least once
             again = False #Set continue to false unless values change
             for key in self.keysFlatList:
-                low = self.lowestNeighborValue(key)
+                low = self.lowestNeighborValue(key)[0]
                 if (self.MapVals[key] - low)>= 2:
                     self.MapVals[key] = low + 1
                     again = True
-            c += 1
-        print "Djikstra Map Processed in ", c, "Iterations"
-    #Helper method for processMap. Returns the lowest neighbor it can find.        
+    #Returns the tuple of info on lowest neighbor it can find.        
     def lowestNeighborValue(self, key):
         lowKey = None
         XYZ = keyToXYZ(key)
@@ -50,6 +43,7 @@ class DjikstraMap:
             trialKey = makeKey(initial)
             if self.MapVals.has_key(trialKey):
                low = self.MapVals[trialKey]
+               lowKey = trialKey 
                break
         for mod in self.mods:
             lookup = [None, None, None]
@@ -58,14 +52,20 @@ class DjikstraMap:
             lookup[2] = XYZ[2] + mod[2]
             modKey = makeKey(lookup)
             if self.MapVals.has_key(modKey):
-                if self.MapVals[modKey] < low:
+                if self.MapVals[modKey] <= low:
                     low = self.MapVals[modKey]
                     lowKey = modKey
         return (low, lowKey)
-                    
             
     def findPath(self, startKey):
-        nodes = []
+        nodes = [startKey]
+        nextNode = self.lowestNeighborValue(nodes[-1])[1]
+        while(nextNode != None):
+            nextNode = self.lowestNeighborValue(nodes[-1])[1]
+            if nextNode != nodes[-1]:
+                nodes.append(nextNode)
+            else:
+                break
         return nodes
 
     #Add together the values of two DMAPS
