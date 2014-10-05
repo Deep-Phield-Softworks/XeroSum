@@ -2,7 +2,7 @@
 #Main game script for "Xero Sum"
 import random
 from XeroInit import *
-
+from ImageManifests import *
 ###Main Loop###
 def mainLoop():
     global TICK

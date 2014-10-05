@@ -34,8 +34,8 @@ if __name__ == '__main__':
     playerView = WorldView(WORLD, oKey, shape, SCREEN_SIZE)
     p = Path(goalKeys, entity, playerView)
     print p
-    #for x in range(0,len(p.DMAP.keys)):
-    #    for y in range(0,len(p.DMAP.keys[x])):
-    #        for z in range(0,len(p.DMAP.keys[x][y])):
-    #            print p.DMAP.keys[x][y][z], p.DMAP.MapVals[p.DMAP.keys[x][y][z]]
+    for x in range(0,len(p.DMAP.coordinates)):
+        for y in range(0,len(p.DMAP.coordinates[x])):
+            for z in range(0,len(p.DMAP.coordinates[x][y])):
+                print p.DMAP.coordinates[x][y][z].key, p.DMAP.MapVals[p.DMAP.coordinates[x][y][z].key]
     

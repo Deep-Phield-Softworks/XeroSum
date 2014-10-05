@@ -55,6 +55,13 @@ for track in os.listdir(musicDir):
     MUSIC_MANIFEST[str(track)] = str(musicDir) + str(track) #Add track to manifest
     TRACKS.append(str(musicDir) + str(track)) #Add track to random list of songs
 
+FX_MANIFEST = dict()
+fxDir = os.getcwd() + os.sep + "sound" + os.sep + "FX" + os.sep
+for fx in os.listdir(fxDir):
+    filename = str(fxDir) + str(track)
+    sound = pygame.mixer.Sound(filename)
+    FX_MANIFEST[str(fx)] = sound
+    
 #Initialize the pygame mixer
-pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=4096)
+pygame.mixer.init(frequency=22050, size=-16, channels=4, buffer=4096)
 ###########Initilizations####################
