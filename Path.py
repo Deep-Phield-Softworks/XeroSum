@@ -22,9 +22,18 @@ class Path:
         self.DMAP.processMap()
         #Generate list of nodes' keys
         self.nodes = self.DMAP.findPath(self.entity.coordinateKey)
+        self.stepIndex = 0
         #Create facing list
-        #self.createFacings()
-        
+        self.createFacings()
+    #Move the path step index forward one node
+    #Return a boolean of whether there was another step
+    def advance(self):
+        more = True
+        if self.stepIndex + 1 >= len(self.nodes):
+            more = False
+        else:
+            self.stepIndex += 1
+        return more    
     def createFacings(self):
         self.facings = []
         #If there is more than one node in path...
@@ -33,12 +42,12 @@ class Path:
             #foreach node in range...
             for node in range(1,len(self.nodes)):
                 XYZ1 = keyToXYZ(start)
-                XYZ2 = keyToXYZ(node)
+                XYZ2 = keyToXYZ(self.nodes[node])
                 #compare the x and y values
                 x1 = start[0]
                 y1 = start[1]
-                x2 = node[0]
-                y2 = node[1]
+                x2 = self.nodes[node][0]
+                y2 = self.nodes[node][1]
                 #Must use isometric headings here
                 if x1 == x2:
                     if y2 < y1: #Heading NE
@@ -60,8 +69,8 @@ class Path:
                     else: #Heading Due W
                         face = 4  
                 self.facings.append(face)    
-                start = dPath[node]
-        #self.facings.append(self.facings[-1])
+                start = self.nodes[node]
+        self.facings.append(self.facings[-1])
         
 if __name__ == '__main__':
     #Exercise the path
@@ -75,7 +84,7 @@ if __name__ == '__main__':
     playerView = WorldView(WORLD, oKey, shape, SCREEN_SIZE)
     p = Path(goalKeys, entity, playerView)
     print p.nodes
-    #print p.facings
+    print p.facings
     
     #for x in range(0,len(p.DMAP.coordinates)):
     #    for y in range(0,len(p.DMAP.coordinates[x])):

@@ -3,6 +3,9 @@
 import random
 from XeroInit import *
 from ImageManifests import *
+from Path import Path
+from Entity import Entity
+from Tile import Tile
 ###Main Loop###
 def mainLoop():
     global TICK
@@ -62,7 +65,7 @@ def mouseClick(event):
 #This function is called when a left mouse click is passed
 def mouseLeftClick(event):
     global SCREEN_TEXT
-    global LAST_CLICK
+    global SELECTED
     point = (event.pos[0],event.pos[1])
     collideList = []
     for e in playerView.hitBoxList:
@@ -72,8 +75,20 @@ def mouseLeftClick(event):
     print len(collideList)#, collideList
     for e in collideList:
         print e[0],e[1].parentCoordinate, e[1].name, e[1], e[1].floatOffset
-        if not isinstance(e[1], Tile):
-            print e[1].pixelOffsets
+        if isinstance(e[1], Entity):
+            SELECTED = e[1]
+
+def mouseRightClick(event):
+    if SELECTED:
+        point = (event.pos[0],event.pos[1])
+        goalKeys = []
+        for e in playerView.hitBoxList:
+            if e[0].collidepoint(point):
+                if within(e[0], point):
+                    if isinstance(e[1], Tile):
+                        goalKeys.append(e[1].parentCoordinate)
+                        p = Path(goalKeys, SELECTED, playerView)
+                        SELECTED.path = p
 
 #Draw text to the screen.
 def drawScreenText():
@@ -105,6 +120,8 @@ origin = [0,0,0]
 oKey = makeKey(origin)
 shape = Cube(oKey, [21,21,1], True)
 playerView = WorldView(WORLD, oKey, shape, SCREEN_SIZE)
+
+SELECTED = None
 ###DEBUG###
 print "ACTIVE CHUNKS #:", len(sorted(WORLD.active.keys()))
 print "ACTIVE CHUNK IDS:", sorted(WORLD.active.keys())

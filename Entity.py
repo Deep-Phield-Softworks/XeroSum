@@ -66,20 +66,16 @@ class Entity(Matter): #entity(world, coordinateKey, imageKey)
         else: #If no path use idle animation
             self.animation = self.SpriteSheet.animations[5]
             self.toBlit = self.animation[self.facing]
-        #def move(self, TICK, speed = 1):
-        #if self.path: #If path is not None
-        #    self.moveAccumulator += TICK #Add the ticks in
-        #    if self.moveAccumulator >= self.moveThreshhold: #If enough ticks...
-        #        self.moveAccumulator = 0 #Reset Accumulator
-        #        more = self.path.advance()      #Advance the path to the next step
-        #        if more:
-        #            next = self.path.path[self.path.stepIndex] #Lookup next node
-        #            self.facing = self.path.facings[self.path.stepIndex]
-        #            self.animation = self.SpriteSheet.animations[self.facing]
-        #            self.section = next[0] #Set section to node's section
-        #            self.MAPX = next[1] #Adjust self.MAPX
-        #            self.MAPY = next[2] #Adjust self.MAPY
-        #        else:
-        #            self.path = None
-        #            self.animation = self.SpriteSheet.animations[5]
-        #return [self.section, self.MAPX, self.MAPY]
+        if self.path: #If path is not None
+            self.moveAccumulator += TICK #Add the ticks in
+            if self.moveAccumulator >= self.moveThreshhold: #If enough ticks...
+                self.moveAccumulator = 0 #Reset Accumulator
+                more = self.path.advance()      #Advance the path to the next step
+                if more:
+                    next = self.path.nodes[self.path.stepIndex] #Lookup next node
+                    self.facing = self.path.facings[self.path.stepIndex]
+                    self.animation = self.SpriteSheet.animations[self.facing]
+                    ######MOVE COORDINATES HERE############
+                else:
+                    self.path = None
+                    self.animation = self.SpriteSheet.animations[5]
