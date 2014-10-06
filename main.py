@@ -65,8 +65,9 @@ def mouseClick(event):
 
 #This function is called when a left mouse click is passed
 def mouseLeftClick(event):
-    global SCREEN_TEXT
+    global SCREEN_TEXT_TOP
     global SELECTED
+    SCREEN_TEXT_TOP = []
     point = (event.pos[0],event.pos[1])
     collideList = []
     for e in playerView.hitBoxList:
@@ -75,7 +76,9 @@ def mouseLeftClick(event):
                 collideList.append(e)
     print len(collideList)#, collideList
     for e in collideList:
-        print e[0],e[1].parentCoordinate, e[1].name, e[1], e[1].floatOffset
+        info = [e[0],e[1].parentCoordinate, e[1].name, e[1], e[1].floatOffset]
+        for bit in info:
+            SCREEN_TEXT_TOP.append(str(bit))
         if isinstance(e[1], Entity):
             SELECTED = e[1]
 
@@ -94,12 +97,16 @@ def mouseRightClick(event):
 #Draw text to the screen.
 def drawScreenText():
     global SCREEN_TEXT
-    y = SCREEN_SIZE[1] - FONT_HEIGHT
+    y  = SCREEN_SIZE[1] - FONT_HEIGHT
+    y2 = 0 + FONT_HEIGHT
     FPS = "FPS = " + str(CLOCK.get_fps())
     SCREEN_TEXT.append(FPS)
     for text in reversed(SCREEN_TEXT):
         SCREEN.blit( FONT.render(text, True, (255, 0, 0)), (0, y) )
         y -= FONT_HEIGHT
+    for text in reversed(SCREEN_TEXT_TOP):
+        SCREEN.blit( FONT.render(text, True, (255, 0, 0)), (0, y2) )
+        y2 += FONT_HEIGHT
     SCREEN_TEXT = []
 
 #This function is meant to save and close all data in the game.
@@ -143,7 +150,7 @@ SELECTED = None
 print "ACTIVE CHUNKS #:", len(sorted(WORLD.active.keys()))
 print "ACTIVE CHUNK IDS:", sorted(WORLD.active.keys())
 ###DEBUG###
-
+SCREEN_TEXT_TOP = []
 
 while True:
     mainLoop()

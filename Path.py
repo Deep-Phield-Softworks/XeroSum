@@ -44,10 +44,10 @@ class Path:
                 XYZ1 = keyToXYZ(start)
                 XYZ2 = keyToXYZ(self.nodes[node])
                 #compare the x and y values
-                x1 = start[0]
-                y1 = start[1]
-                x2 = self.nodes[node][0]
-                y2 = self.nodes[node][1]
+                x1 = XYZ1[0]
+                y1 = XYZ1[1]
+                x2 = XYZ2[0]
+                y2 = XYZ2[1]
                 #Must use isometric headings here
                 if x1 == x2:
                     if y2 < y1: #Heading NE
