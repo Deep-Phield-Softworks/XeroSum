@@ -74,7 +74,6 @@ def mouseLeftClick(event):
         if e[0].collidepoint(point):
             if within(e[0], point):
                 collideList.append(e)
-    print len(collideList)#, collideList
     for e in collideList:
         info = [e[0],e[1].parentCoordinate, e[1].name, e[1], e[1].floatOffset]
         for bit in info:

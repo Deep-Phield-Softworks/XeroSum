@@ -70,6 +70,8 @@ class Path:
                         face = 4  
                 self.facings.append(face)    
                 start = self.nodes[node]
+        else:
+            self.facings.append(self.entity.facing)
         self.facings.append(self.facings[-1])
         
 if __name__ == '__main__':
