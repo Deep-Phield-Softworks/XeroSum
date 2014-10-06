@@ -77,6 +77,7 @@ class Entity(Matter): #entity(world, coordinateKey, imageKey)
                     self.facing = self.path.facings[self.path.stepIndex]
                     self.animation = self.SpriteSheet.animations[self.facing]
                     ######MOVE COORDINATES HERE############
+                    self.coordinateKey = nextKey
                     self.world.moveElement(self, lastKey, nextKey)
                 else:
                     self.path = None

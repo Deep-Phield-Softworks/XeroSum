@@ -74,5 +74,7 @@ class World:
         bChunk = findParent(bKey)
         self.activateChunk(aChunk)
         self.activateChunk(bChunk)
+        
         self.active[aChunk].removeElement(aKey, element)
         self.active[bChunk].addElement(bKey, element)
+        

@@ -49,6 +49,7 @@ class WorldView:
         for parentChunk in chunks:    
             self.world.activateChunk(parentChunk)
     def render(self):
+        self.surface.fill((0,0,0))
         self.hitBoxList = [] #Empty hitBoxList
         halfTileWide = int(TILE_WIDTH  / 2 ) #imported from unboundMethods
         halfTileHigh = int(TILE_HEIGHT / 2 ) #imported from unboundMethods
