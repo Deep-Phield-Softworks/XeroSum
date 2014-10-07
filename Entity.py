@@ -48,7 +48,6 @@ class Entity(Matter): #entity(world, coordinateKey, imageKey)
         self.animation = None
         self.toBlit = None
     def TICK(self, TICK):
-        pass
         if self.path: #If path is not None
         #Check to see if enough time has accumulated to advance frames
             self.tickAccumulator += TICK
@@ -58,12 +57,8 @@ class Entity(Matter): #entity(world, coordinateKey, imageKey)
                     self.lastFrame += 1
                 else:
                     self.lastFrame = 0
-        ###Putting this in to "fix" "IndexError: list index out of range"###
-            ###This may cause other problems, but seems to stop the exception###
             if len(self.animation) <= self.lastFrame:
                 self.lastFrame = len(self.animation) - 1
-            ###Putting this in to "fix" "IndexError: list index out of range"###
-            ###This may cause other problems, but seems to stop the exception###
             self.toBlit = self.animation[self.lastFrame]
         else: #If no path use idle animation
             self.animation = self.SpriteSheet.animations[5]
@@ -78,7 +73,6 @@ class Entity(Matter): #entity(world, coordinateKey, imageKey)
                     nextKey = self.path.nodes[self.path.stepIndex] #Lookup next node
                     self.facing = self.path.facings[self.path.stepIndex]
                     self.animation = self.SpriteSheet.animations[self.facing]
-                    ######MOVE COORDINATES HERE############
                     self.coordinateKey = nextKey
                     self.world.moveElement(self, lastKey, nextKey)
                 else:
