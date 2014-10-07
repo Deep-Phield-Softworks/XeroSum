@@ -10,12 +10,11 @@ from World import World
 #What do the Djikstra Maps you will be using need to know? 
 
 class Path:
-    def __init__(self, goalKeys, entity, worldView):
+    def __init__(self, goalKeys, entity, areaShape):
         self.goalKeys   = goalKeys
         self.entity    = entity
-        self.worldView = worldView
         #Create an empty DMAP & Set Goals
-        self.DMAP = DjikstraMap(self.worldView.shape, self.goalKeys)
+        self.DMAP = DjikstraMap(areaShape, self.goalKeys)
         #Set TerrainSpeed Data
         #Set impassible
         #Process map

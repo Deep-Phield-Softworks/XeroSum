@@ -90,7 +90,7 @@ def mouseRightClick(event):
                 if within(e[0], point):
                     if isinstance(e[1], Tile):
                         goalKeys.append(e[1].parentCoordinate)
-                        p = Path(goalKeys, SELECTED, playerView)
+                        p = Path(goalKeys, SELECTED, playerView.shape)
                         SELECTED.path = p
 
 #Draw text to the screen.

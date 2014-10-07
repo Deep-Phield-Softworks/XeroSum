@@ -75,10 +75,10 @@ class Coordinate:
                 for e in archtype:
                     e.TICK(TICK)
     def load(self):
-        if not self.empty:
-            for e in self.entities:
-                e.load()
+        #if not self.empty:
+        for e in self.entities:
+            e.load()
     def unload(self):
-        if not self.empty:
-            for e in self.entities:
-                e.unload()
+        #if not self.empty:
+        for e in self.entities:
+            e.unload()
