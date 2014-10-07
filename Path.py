@@ -9,7 +9,7 @@ from World import World
 #Given:
 #-goalKeys, a list of coordinate object keys
 #-entity, the Entity object to whom the path belongs
-#-areaShape, the shape object that contains info on coordinates involved
+#-shape, the shape object that contains info on coordinates involved
 #Produce a Path object which has:
 #-self.nodes, list of coordinate keys from self.entity.parentCoordinate to
 # one of the goalKeys
@@ -17,20 +17,39 @@ from World import World
 #-self.facings, a list of int headings that correspond to SpriteSheet strip
 # indexes and set the apparent heading for each step index
 class Path:
-    def __init__(self, goalKeys, entity, areaShape):
-        self.goalKeys   = goalKeys
+    def __init__(self, goalDict, entity, shape):
+        self.goalDict   = goalDict
         self.entity    = entity
+        self.shape     = shape
         #Create an empty DMAP & Set Goals
-        self.DMAP = DjikstraMap(areaShape, self.goalKeys)
-        #Set TerrainSpeed Data
-        #Set impassible
+        self.DMAP = DjikstraMap(shape, self.goalDict)
+        #Make DMAP with Terrain Speed modifier Data and impassible data
+        self.speedMap = self.makeSpeedMap()
+        #Combine DMAPS
         #Process map
         self.DMAP.processMap()
         #Generate list of nodes' keys
         self.nodes = self.DMAP.findPath(self.entity.coordinateKey)
         self.stepIndex = 0
         #Create facing list
-        self.createFacings()
+        self.createFacings()   
+    
+    #Create DMAP populated with Terrain speeds and impassible terrain
+    def makeSpeedMap(self):
+        selectedDict = dict()
+        for key in self.shape.areaKeyList:
+            val = 10000
+            c = self.entity.world.getCoordinateObj(key)
+            for archtype in c.contains():
+                for element in archtype:
+                    if hasattr(element, 'speedModifier'):
+                        val = int(val * element.speedModifier)
+                    if hasattr(element, 'impassible'):
+                        if element.impassible:
+                            val = None
+            selectedDict[key] = val
+        return DjikstraMap(self.shape, selectedDict)
+    
     #Move the path step index forward one node
     #Return a boolean of whether there was another step
     def advance(self):
@@ -40,6 +59,7 @@ class Path:
         else:
             self.stepIndex += 1
         return more    
+    
     def createFacings(self):
         self.facings = []
         #If there is more than one node in path...
@@ -79,18 +99,20 @@ class Path:
         else:
             self.facings.append(self.entity.facing)
         self.facings.append(self.facings[-1])
-        
+   
 if __name__ == '__main__':
     #Exercise the path
-    goalKeys = ['0_0_0']
+    
     WORLD = World("TEST")
     entity = Entity(WORLD, '10_10_0', 'rose.png', 'Rose')
     origin = [0,0,0]
     oKey = makeKey(origin)
+    goalDict = dict()
+    goalDict[oKey] = 0
     shape = Cube(oKey, [21,21,1], True)
     SCREEN_SIZE = [1366, 768]
-    playerView = WorldView(WORLD, oKey, shape, SCREEN_SIZE)
-    p = Path(goalKeys, entity, playerView)
+    playerView = WorldView(WORLD, shape, SCREEN_SIZE)
+    p = Path(goalDict, entity, playerView.shape)
     print p.nodes
     print p.facings
     

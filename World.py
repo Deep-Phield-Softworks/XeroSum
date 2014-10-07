@@ -78,4 +78,7 @@ class World:
         self.activateChunk(bChunk)
         self.active[aChunk].removeElement(aKey, element)
         self.active[bChunk].addElement(bKey, element)
-        
+    def getCoordinateObj(self, coordinateKey):
+        parentChunk = findParent(coordinateKey)
+        self.activateChunk(parentChunk)
+        return self.active[parentChunk].coordinates[coordinateKey]

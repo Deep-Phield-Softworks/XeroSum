@@ -16,13 +16,14 @@ from ImageManifests import SPRITE_MANIFEST
 class Entity(Matter): #entity(world, coordinateKey, imageKey)
     def __init__(self,world, coordinateKey, imageKey, name = None, floatOffset = [0.5,0.5]):
         Matter.__init__(self, imageKey, name)
-        self.world = world
-        self.imageKey =  imageKey 
+        self.imageKey    =  imageKey 
         self.SpriteSheet = SPRITE_MANIFEST[self.imageKey] #SpriteSheet object that provides sprite frames
         self.width   = self.SpriteSheet.frameWidth
         self.height  = self.SpriteSheet.frameHeight
-        self.tall = self.height
-        self.floatOffset = floatOffset
+        self.world         = world
+        self.impassible    = True
+        self.tall          = self.height
+        self.floatOffset   = floatOffset
         self.coordinateKey = coordinateKey
         self.lastFrame = 0 #the rendered last frame in a "strip" of frames
         self.facing = 5

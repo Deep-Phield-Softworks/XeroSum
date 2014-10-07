@@ -12,10 +12,12 @@ from ImageManifests import TILE_MANIFEST
 #-may block dropping items into their coordinate
 #Examples would be a chest, door and a tree
 class Feature(Matter):
-    def __init__(self, imageKey, name = None, tall = 0, floatOffset = [0.5,0.5]):
+    def __init__(self, imageKey, name = None, tall = 0, floatOffset = [0.5,0.5], impassible = False, blocksLOS = False):
         Matter.__init__(self, imageKey, name)
-        self.tall = tall
+        self.tall        = tall
         self.floatOffset = floatOffset
+        self.impassible  = False
+        self.blocksLOS   = False
         self.height = TILE_MANIFEST[self.imageKey].get_height()
         self.width  = TILE_MANIFEST[self.imageKey].get_width()
         self.pixelOffsets = self.determinePixelOffset()

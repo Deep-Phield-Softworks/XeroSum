@@ -102,8 +102,9 @@ def mouseRightClick(event):
             if e[0].collidepoint(point):
                 if within(e[0], point):
                     if isinstance(e[1], Tile):
-                        goalKeys.append(e[1].parentCoordinate)
-                        p = Path(goalKeys, SELECTED, playerView.shape)
+                        goalDict = dict()
+                        goalDict[e[1].parentCoordinate] = 0 
+                        p = Path(goalDict, SELECTED, playerView.shape)
                         SELECTED.path = p
 
 #Draw text to the screen.
@@ -136,8 +137,8 @@ def playRandomSong():
 
 ###Test Terrain Gen###
 def makeTestTerrain():
-    base = ('grass.png', "grass")
-    obj  = ('rocks.png', "rocks")
+    base = (['grass.png'])
+    obj  = (['rocks.png'])
     for key in sorted(WORLD.active.keys()):
         print "##Chunk Building...##", key
         WORLD.baseTerrainChunkFill(key, base)

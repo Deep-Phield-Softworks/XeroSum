@@ -2,11 +2,20 @@
 from AoE import *
 from unboundMethods import *
 
+#Djikstra Map objects that can be combined together and can find paths
+#Given:
+#-shape, a shape template object from AoE.py
+#-selectedDict, a dictionary of coordinate Keys as dict keys and values that
+# will be added to the DMAP
+#Return: a Djikstra Map object that:
+#-can be combined with other Djikstra Maps
+#-should be processed once all desired input DMAPs have been combined
+#-can return a list of nodes using findPath(start) 
+
 class DjikstraMap:
-    def __init__(self, shape, selectedKeys, setValue = 0):
+    def __init__(self, shape, selectedDict, defaultMax = 10000):
         self.shape = shape
-        self.selectedKeys = selectedKeys
-        self.setValue = setValue
+        self.selectedDict = selectedDict
         #The coordinate keys are already in shape...
         self.coordinates = self.shape.nDimensionalArray #Use shape's nD Key list
         #Create a dictionary to store the values
@@ -16,24 +25,27 @@ class DjikstraMap:
         for x in range(0,len(self.coordinates)):
             for y in range(0,len(self.coordinates[x])):
                 for z in range(0,len(self.coordinates[x][y])):
-                    self.MapVals[self.coordinates[x][y][z].key] = 10000
+                    self.MapVals[self.coordinates[x][y][z].key] = defaultMax
                     self.keysFlatList.append(self.coordinates[x][y][z].key)
-        for key in self.selectedKeys:
+        for key in self.selectedDict.keys():
             if self.MapVals.has_key(key):
-                self.MapVals[key] = setValue #Set the goals to low values
-        #Using custom mods order to try and make diagonals "float to top"
+                self.MapVals[key] = self.selectedDict[key] 
+        #Using custom mods order to make diagonals "float to top" in paths
         self.mods = [(-1,-1,-1),(1,1,-1),(-1,1,-1),(1,-1,-1),(0,-1,-1),(-1,0,-1),(1,0,-1),(0,1,-1),
                      (-1,-1,0) ,(1,1,0), (-1,1,0), (1,-1,0), (0,-1,0), (-1,0,0), (1,0,0), (0,1,0), (0,0,0),
                      (-1,-1,1), (1,1,1), (-1,1,1), (1,-1,1), (0,-1,1), (-1,0,1), (1,0,1), (0,1,1)]
+    #You should call this ONLY once all desired inputs have been combined into
+    #one DMAP. It must be called before using findPath().
     def processMap(self):
         again = True #Control Boolean
         while(again): #Run at least once
             again = False #Set continue to false unless values change
             for key in self.keysFlatList:
-                low = self.lowestNeighborValue(key)[0]
-                if (self.MapVals[key] - low)>= 2:
-                    self.MapVals[key] = low + 1
-                    again = True
+                if self.MapVals[key] != None:
+                    low = self.lowestNeighborValue(key)[0]
+                    if (self.MapVals[key] - low)>= 2:
+                        self.MapVals[key] = low + 1
+                        again = True
     #Returns the tuple of info on lowest neighbor it can find.        
     def lowestNeighborValue(self, key):
         lowKey = None
@@ -41,7 +53,8 @@ class DjikstraMap:
         for mod in self.mods:
             initial = [(XYZ[0] + mod[0]),(XYZ[1] + mod[1]),(XYZ[2] + mod[2])]
             trialKey = makeKey(initial)
-            if self.MapVals.has_key(trialKey):
+            #Use lazy and eval to avoid "no such key" exception here
+            if self.MapVals.has_key(trialKey) and self.MapVals[trialKey]!= None:
                low = self.MapVals[trialKey]
                lowKey = trialKey 
                break
@@ -51,7 +64,7 @@ class DjikstraMap:
             lookup[1] = XYZ[1] + mod[1]
             lookup[2] = XYZ[2] + mod[2]
             modKey = makeKey(lookup)
-            if self.MapVals.has_key(modKey):
+            if self.MapVals.has_key(modKey)and self.MapVals[trialKey] != None:
                 if self.MapVals[modKey] <= low:
                     low = self.MapVals[modKey]
                     lowKey = modKey
@@ -68,8 +81,13 @@ class DjikstraMap:
                 break
         return nodes
 
-    #Add together the values of two DMAPS
+    #Add together the values of two DMAPS. If a given coordinate is None in
+    #either DMAP it becomes None. Otherwise the values of both are added.
     def combine(self, DMAP):
-        pass
-if __name__ == '__main__':
-    pass
+        for key in self.keysFlatList:
+            if DMAP.MapVals.has_key(key):
+                if DMAP.MapVals[key] == None or self.MapVals[key] == None:
+                    self.MapVals[key] = None
+                else:
+                    self.MapVals[key] = self.MapVals[key] + DMAP.MapVals[key]
+        return self
