@@ -37,21 +37,23 @@ class World:
                 f.floatOffset = [random.random(),random.random()]
                 f.determinePixelOffset()
                 c.addElement(f)
-    def activateChunk(self, key):
-        if not self.active.has_key(key):
+    def activateChunk(self, *keys):
+        for key in keys:
+            if not self.active.has_key(key):
+                db = shelve.open(self.db)
+                if db.has_key(key): #If Chunk exists..
+                    self.active[key] = db[key] #Load it into active Chunks
+                else:               #Else if Chunk doesn't exist
+                    self.active[key] = Chunk(key, self.gameTurn, self.chunkSize) #Make it and load it
+                    db[key] = self.active[key] #Save chunk in db
+                db.close()
+                self.active[key].load()
+    def deactivateChunk(self, *keys):
+        for key in keys:
+            self.active[key].unload()
             db = shelve.open(self.db)
-            if db.has_key(key): #If Chunk exists..
-                self.active[key] = db[key] #Load it into active Chunks
-            else:               #Else if Chunk doesn't exist
-                self.active[key] = Chunk(key, self.gameTurn, self.chunkSize) #Make it and load it
-                db[key] = self.active[key] #Save chunk in db
+            db[key] = self.active[key]
             db.close()
-            self.active[key].load()
-    def deactivateChunk(self, key):
-        self.active[key].unload()
-        db = shelve.open(self.db)
-        db[key] = self.active[key]
-        db.close()
     def TICK(self, TICK):
         self.tickAccumulator += TICK
         if self.tickAccumulator % 1000:
@@ -74,7 +76,6 @@ class World:
         bChunk = findParent(bKey)
         self.activateChunk(aChunk)
         self.activateChunk(bChunk)
-        
         self.active[aChunk].removeElement(aKey, element)
         self.active[bChunk].addElement(bKey, element)
         

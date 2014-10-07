@@ -14,17 +14,18 @@ from ImageManifests import SPRITE_MANIFEST
 #-have an action queue that defines their actions and the time costs
 #Examples: a dog, person
 class Entity(Matter): #entity(world, coordinateKey, imageKey)
-    def __init__(self,world, coordinateKey, imageKey, name = None, tall = 0, floatOffset = [0.5,0.5]):
+    def __init__(self,world, coordinateKey, imageKey, name = None, floatOffset = [0.5,0.5]):
+        Matter.__init__(self, imageKey, name)
         self.world = world
         self.imageKey =  imageKey 
         self.SpriteSheet = SPRITE_MANIFEST[self.imageKey] #SpriteSheet object that provides sprite frames
         self.width   = self.SpriteSheet.frameWidth
         self.height  = self.SpriteSheet.frameHeight
-        Matter.__init__(self, imageKey, name, self.height, floatOffset)
+        self.tall = self.height
+        self.floatOffset = floatOffset
         self.coordinateKey = coordinateKey
         self.lastFrame = 0 #the rendered last frame in a "strip" of frames
         self.facing = 5
-        self.lastFacing = 5
         self.animation = self.SpriteSheet.animations[self.facing]
         self.frameThreshhold = 100 #167
         self.moveThreshhold  = 500

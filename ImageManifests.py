@@ -54,7 +54,8 @@ musicDir = os.getcwd() + os.sep + "sound" + os.sep + "music" + os.sep
 for track in os.listdir(musicDir):
     MUSIC_MANIFEST[str(track)] = str(musicDir) + str(track) #Add track to manifest
     TRACKS.append(str(musicDir) + str(track)) #Add track to random list of songs
-
+###Sound Effects Initialization###
+#!!!BROKEN ATM!!!
 FX_MANIFEST = dict()
 fxDir = os.getcwd() + os.sep + "sound" + os.sep + "FX" + os.sep
 for fx in os.listdir(fxDir):

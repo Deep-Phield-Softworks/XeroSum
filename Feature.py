@@ -13,7 +13,9 @@ from ImageManifests import TILE_MANIFEST
 #Examples would be a chest, door and a tree
 class Feature(Matter):
     def __init__(self, imageKey, name = None, tall = 0, floatOffset = [0.5,0.5]):
-        Matter.__init__(self, imageKey, name, tall, floatOffset)
+        Matter.__init__(self, imageKey, name)
+        self.tall = tall
+        self.floatOffset = floatOffset
         self.height = TILE_MANIFEST[self.imageKey].get_height()
         self.width  = TILE_MANIFEST[self.imageKey].get_width()
         self.pixelOffsets = self.determinePixelOffset()

@@ -69,10 +69,7 @@ class DjikstraMap:
         return nodes
 
     #Add together the values of two DMAPS
-    def add(self, DMAP):
-        pass
-    #Subtract the values of two DMAPS
-    def subtract(self, DMAP):
+    def combine(self, DMAP):
         pass
 if __name__ == '__main__':
     pass

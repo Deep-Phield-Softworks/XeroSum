@@ -8,6 +8,8 @@ from Matter import Matter
 #Example: gun or loaf of bread
 class Item(Matter):
     def __init__(self, imageKey, name = None, tall = 0, floatOffset = [0.5,0.5]):
-        Matter.__init__(self, imageKey, name, tall, floatOffset)
+        Matter.__init__(self, imageKey, name)
+        self.tall = tall
+        self.floatOffset = floatOffset
     def TICK(self, TICK):
-        pass
+        pass #Default items do nothing on Tick

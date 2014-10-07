@@ -1,15 +1,34 @@
 #!/usr/bin/env python
 #Main game script for "Xero Sum"
-import random
-import os.path
-from XeroInit import *
-from ImageManifests import *
+#######Standard Python Imports#######
+import pygame, sys, os, random
+from pygame.locals import *
+#Change the CWD to wherever the main.py resides
+os.chdir(sys.path[0])
+#######Xero Sum Specific Imports#######
+from ImageManifests import SCREEN_SIZE, TRACKS, SCREEN
+from World import World
+from AoE import *
+from WorldView import WorldView
 from Path import Path
 from Entity import Entity
 from Tile import Tile
+####Font Variables###
+pygame.font.init()
+#AVAILABLE_FONTS = pygame.font.get_fonts() #Not needed atm. Here as a reminder.
+FONT = pygame.font.SysFont(None, 16) #None as first param loads built in pygame font
+FONT_HEIGHT = FONT.get_linesize()
+#SCREEN_TEXT & SCREEN_TEXT_TOP are global string lists that are blit to screen
+SCREEN_TEXT = [] 
+SCREEN_TEXT_TOP = []
+###Clock###
+TICK  = 0
+CLOCK = pygame.time.Clock()
+###Controls Variables###
+SELECTED = None #Currently selected Entity
+
 ###Main Loop###
 def mainLoop():
-    global TICK
     #Check if music is (not) playing...
     if not pygame.mixer.music.get_busy(): #If no music...
         playRandomSong() #Play a random song
@@ -19,17 +38,11 @@ def mainLoop():
             ensurePersistentData()
             sys.exit()
         if event.type == MOUSEBUTTONDOWN:
-            if event.button == 1:
-                CLICK_HELD = True
             mouseClick(event)
-        #if event.type == MOUSEBUTTONUP:
-        #    CLICK_HELD = False
-        #    mouseClick(event)
         if event.type == KEYDOWN:
             keyboard(event)
         if event.type == KEYUP:
             pass
-    
     TICK = CLOCK.tick()
     WORLD.TICK(TICK)
     playerView.render()
@@ -110,7 +123,7 @@ def drawScreenText():
 
 #This function is meant to save and close all data in the game.
 def ensurePersistentData():
-    [WORLD.deactivateChunk(cKey) for cKey in WORLD.active.keys()]
+    WORLD.deactivateChunk(*WORLD.active.keys())
     
 #Play a random song
 def playRandomSong():
@@ -138,18 +151,15 @@ oKey = makeKey(origin)
 shape = Cube(oKey, [21,21,1], True)
 #If world db shelf not in existence...
 if not os.path.isfile(WORLD.db):##Run Test Terrain Gen
-    playerView = WorldView(WORLD, oKey, shape, SCREEN_SIZE)
+    playerView = WorldView(WORLD, shape, SCREEN_SIZE)
     makeTestTerrain()
 else:#Else just make the playerView
-    playerView = WorldView(WORLD, oKey, shape, SCREEN_SIZE)
+    playerView = WorldView(WORLD, shape, SCREEN_SIZE)
 
-
-SELECTED = None
 ###DEBUG###
 print "ACTIVE CHUNKS #:", len(sorted(WORLD.active.keys()))
 print "ACTIVE CHUNK IDS:", sorted(WORLD.active.keys())
 ###DEBUG###
-SCREEN_TEXT_TOP = []
 
 while True:
     mainLoop()

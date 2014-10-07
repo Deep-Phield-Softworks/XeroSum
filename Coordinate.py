@@ -61,6 +61,13 @@ class Coordinate:
             #if element in self.fields:
                 self.fields.remove(element)
         element.parentCoordinate = None
+        #Update self.empty boolean
+        empty = True #Initializze to True
+        for archtype in self.contains(): #For each list in self.contains()..
+            if len(archtype) > 0:         #If len(list) > 0...
+                empty = False              #Empty is false
+                break                       #No need to continue... 
+        self.empty = empty
     def contains(self):
         contents = []
         contents.append(self.tiles)

@@ -5,10 +5,17 @@ from DjikstraMap import DjikstraMap
 from Entity import Entity
 from WorldView import WorldView
 from World import World
-#Where are you being called from?
-#What do you need to know?
-#What do the Djikstra Maps you will be using need to know? 
-
+#Path objects keep track of the path of an entity
+#Given:
+#-goalKeys, a list of coordinate object keys
+#-entity, the Entity object to whom the path belongs
+#-areaShape, the shape object that contains info on coordinates involved
+#Produce a Path object which has:
+#-self.nodes, list of coordinate keys from self.entity.parentCoordinate to
+# one of the goalKeys
+#-self.stepIndex, an int of the index of the current step along self.nodes
+#-self.facings, a list of int headings that correspond to SpriteSheet strip
+# indexes and set the apparent heading for each step index
 class Path:
     def __init__(self, goalKeys, entity, areaShape):
         self.goalKeys   = goalKeys

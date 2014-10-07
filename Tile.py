@@ -8,11 +8,11 @@ from Matter import Matter
 #-drawn first
 #Examples: dirt floor, rubble floor, gravel floor
 class Tile(Matter):
-    def __init__(self, imageKey, name = None, tall = 0, speedModifier = None):
-        Matter.__init__(self, imageKey, name, tall)
+    def __init__(self, imageKey, speedModifier = 1.0):
+        Matter.__init__(self, imageKey)
         self.speedModifier = speedModifier
-        self.floatOffset = [0.0,0.0] #Tiles should not be offset. Would create gaps
+        self.floatOffset = [0.0,0.0]#No Tiles offset. Would create gaps
     def determinePixelOffset(self):
-        pass
-    def TICK(self, TICK):
-        pass
+        pass #Tiles should not be offset. Would create gaps
+    def TICK(self, TICK): 
+        pass #Tiles do nothing by default when ticked atm

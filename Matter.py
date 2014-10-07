@@ -4,12 +4,12 @@
 #-solid and have a graphical representation
 #-base class for most of the other archtypes
 class Matter:
-    def __init__(self, imageKey, name = None, tall = 0, floatOffset = [0.5,0.5]):
+    def __init__(self, imageKey, name = None):
         self.imageKey = imageKey
-        self.tall = tall
+        #Default name generation
+        if name == None: #If no name given...
+            name = imageKey.split('.')[0]#Split imageKey on '.' Name == split[0]
         self.name = name
-        self.floatOffset = floatOffset
-        self.parentCoordinate = None
     def TICK(self, TICK):
         errorString = "Subclass of Matter must implement TICK method"
         raise NotImplementedError(errorString)
