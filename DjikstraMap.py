@@ -25,8 +25,8 @@ class DjikstraMap:
         for x in range(0,len(self.coordinates)):
             for y in range(0,len(self.coordinates[x])):
                 for z in range(0,len(self.coordinates[x][y])):
-                    self.MapVals[self.coordinates[x][y][z].key] = defaultMax
-                    self.keysFlatList.append(self.coordinates[x][y][z].key)
+                        self.MapVals[self.coordinates[x][y][z]] = defaultMax
+                        self.keysFlatList.append(self.coordinates[x][y][z])
         for key in self.selectedDict.keys():
             if self.MapVals.has_key(key):
                 self.MapVals[key] = self.selectedDict[key] 
@@ -43,9 +43,10 @@ class DjikstraMap:
             for key in self.keysFlatList:
                 if self.MapVals[key] != None:
                     low = self.lowestNeighborValue(key)[0]
-                    if (self.MapVals[key] - low)>= 2:
-                        self.MapVals[key] = low + 1
-                        again = True
+                    if low != None:
+                        if (self.MapVals[key] - low)>= 2:
+                            self.MapVals[key] = low + 1
+                            again = True
     #Returns the tuple of info on lowest neighbor it can find.        
     def lowestNeighborValue(self, key):
         lowKey = None
@@ -91,3 +92,15 @@ class DjikstraMap:
                 else:
                     self.MapVals[key] = self.MapVals[key] + DMAP.MapVals[key]
         return self
+    
+if __name__ == '__main__':
+    origin = [0,0,0]
+    test = 'test'
+    oKey = makeKey(origin)
+    shape = Cube(oKey, [21,21,1], True)
+    selectedDict = dict()
+    selectedDict['10_10_0'] = 0
+    selectedDict['1_1_0']   = None
+    d = DjikstraMap(shape, selectedDict)
+    d.processMap()
+    print d.findPath('0_0_0')
