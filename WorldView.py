@@ -2,11 +2,12 @@
 import pygame
 from unboundMethods import *
 from ImageManifests import *
-from Tile import Tile
-from Feature import Feature
-from Item import Item
-from Entity import Entity
-from Field import Field
+from subclassLoader import *
+#from Tile import Tile
+#from Feature import Feature
+#from Item import Item
+#from Entity import Entity
+#from Field import Field
 #worldView is an object made to render a portion of the world.
 #Given:
 #-world object

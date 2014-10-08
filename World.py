@@ -2,11 +2,7 @@
 import shelve, random
 from unboundMethods import *
 from Chunk import Chunk
-from Tile import Tile
-from Feature import Feature
-from Item import Item
-from Entity import Entity
-from Field import Field
+from subclassLoader import *
 from AoE import *
 #World object is a controller for Chunk objects. 
 #Active Chunks are stored in self.active. Inactive Chunks are saved in the db.

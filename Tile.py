@@ -6,6 +6,7 @@ from Matter import Matter
 #-cannot usually be destroyed
 #-may affect travel speed through their coordinate
 #-drawn first
+#-should have a float offset of [0.0,0.0] to prevent gaps.
 #Examples: dirt floor, rubble floor, gravel floor
 class Tile(Matter):
     def __init__(self, imageKey, speedModifier = 1.0):

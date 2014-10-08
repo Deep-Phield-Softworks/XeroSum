@@ -4,6 +4,11 @@
 #that may need to be aware of all the archtype subclasses are: Coordinate,
 #Entity and possibly World.
 import os, sys
+from Tile import Tile
+from Feature import Feature
+from Item import Item
+from Entity import Entity
+from Field import Field
 #Change the CWD to wherever this script resides
 os.chdir(sys.path[0])
 sys.path.append(str(sys.path[0])+ os.sep + 'subclasses')

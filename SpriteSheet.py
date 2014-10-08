@@ -25,36 +25,26 @@ class SpriteSheet:
     #I am leaving a hook for different sprite sheet layouts as arguement pattern
     def populateAnimations(self, pattern = None):
         #Default Sprite Sheet Pattern
-        
         for x in range(10): #Create 10 empty "animation slots"
             self.animations.append([])
         #Populate Slot 0 (IDK What to put here atm)
         self.animations[0] = self.createIdleStrip() #!!PLACEHOLDER!!#
-        
         #Populate Slot 1 (Walking SW)
         self.animations[1] = self.createStrip(1)
-        
         #Populate Slot 2 (Walking S)
         self.animations[2] = self.createStrip(1)
-        
         #Populate Slot 3 (Walking SE)
         self.animations[3] = self.createStrip(1)
-        
         #Populate Slot 4 (Walking W)
         self.animations[4] = self.createStrip(3)
-        
         #Populate Slot 5 (Standing Still Facing in All 9)
         self.animations[5] = self.createIdleStrip() #!!PLACEHOLDER!!#
-        
         #Populate Slot 6 (Walking E)
         self.animations[6] = self.createStrip(2)
-        
         #Populate Slot 7 (Walking NW)
         self.animations[7] = self.createStrip(0)
-        
         #Populate Slot 8 (Walking N)
         self.animations[8] = self.createStrip(0)
-        
         #Populate Slot 9 (Walking NE)
         self.animations[9] = self.createStrip(0)
     
