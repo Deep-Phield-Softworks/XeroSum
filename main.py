@@ -104,7 +104,7 @@ def mouseRightClick(event):
                     if isinstance(e[1], Tile):
                         goalDict = dict()
                         goalDict[e[1].parentCoordinate] = 0 
-                        p = Path(goalDict, SELECTED, playerView.shape)
+                        p = Path(goalDict, SELECTED, Cube(oKey, [21,21,1], True))
                         SELECTED.path = p
 
 #Draw text to the screen.
