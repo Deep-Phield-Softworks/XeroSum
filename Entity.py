@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from unboundMethods import *
 from ImageManifests import SPRITE_MANIFEST
-from subclassLoader import *
+from Matter import Matter
 
 #Entities are objects that are "alive". They can:
 #-move themselves
