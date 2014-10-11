@@ -26,6 +26,7 @@ class Path:
         #Make DMAP with Terrain Speed modifier Data and impassible data
         self.speedMap = self.makeSpeedMap()
         #Combine DMAPS
+        self.DMAP.combine(self.speedMap)
         #Process map
         self.DMAP.processMap()
         #Generate list of nodes' keys
