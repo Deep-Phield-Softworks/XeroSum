@@ -65,7 +65,7 @@ class DjikstraMap:
             lookup[1] = XYZ[1] + mod[1]
             lookup[2] = XYZ[2] + mod[2]
             modKey = makeKey(lookup)
-            if self.MapVals.has_key(modKey)and self.MapVals[trialKey] != None:
+            if self.MapVals.has_key(modKey)and self.MapVals[modKey] != None:
                 if self.MapVals[modKey] <= low:
                     low = self.MapVals[modKey]
                     lowKey = modKey
@@ -101,6 +101,7 @@ if __name__ == '__main__':
     selectedDict = dict()
     selectedDict['10_10_0'] = 0
     selectedDict['1_1_0']   = None
+    
     d = DjikstraMap(shape, selectedDict)
     d.processMap()
     print d.findPath('0_0_0')
