@@ -139,8 +139,8 @@ def playRandomSong():
 def makeTestTerrain():
     base = (['grass.png'])
     #feature(imageKey, name = None, speedModifier = 1.0, tall = 0, floatOffset = [0.5,0.5], impassible = False, blocksLOS = False)
-    rocks  = (['rocks.png', None, 0.75])
-    bushes  = (['bush.png', None, 0.50])
+    rocks  = (['rocks.png', None, 1.25])
+    bushes  = (['bush.png', None, 1.50])
     #trees = (['tallTree.png', None, 1.0, 32, [0.5001,0.5001], True, True])
     for key in sorted(WORLD.active.keys()):
         print "##Chunk Building...##", key
