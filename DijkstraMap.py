@@ -85,23 +85,43 @@ class DijkstraMap:
     #Add together the values of two DMAPS. If a given coordinate is None in
     #either DMAP it becomes None. Otherwise the values of both are added.
     def combine(self, DMAP):
-        for key in self.keysFlatList:
-            if DMAP.MapVals.has_key(key):
+        for key in self.keysFlatList: #For key in self..
+            if DMAP.MapVals.has_key(key): #If key in DMAP...
                 if DMAP.MapVals[key] == None or self.MapVals[key] == None:
-                    self.MapVals[key] = None
+                    self.MapVals[key] = None #Set value
                 else:
                     self.MapVals[key] = self.MapVals[key] + DMAP.MapVals[key]
         return self
     
+    #Combine two DMAPs. Then expand the calling DMAP by the unique coordinates
+    #in the argument DMAP.
+    def expand(self, DMAP):
+        #First combine the cells they have in common
+        self = self.combine(DMAP)
+        #Add new keys from DMAP
+        for key in DMAP.keysFlatList:  #For key in DMAP
+            if not self.MapVals.has_key(key): #If key not in self
+                self.MapVals[key] = DMAP.MapVals[key] #Add key & value to self
+                self.keysFlatList.append(key)         #Add key to flat list
+        return self  
+    
 if __name__ == '__main__':
-    origin = [0,0,0]
-    test = 'test'
-    oKey = makeKey(origin)
-    shape = Cube(oKey, [21,21,1], True)
+    #Run a test
+    #Make a key to use in shape object creation
+    origin = [0,0,0] 
+    oKey = makeKey(origin) 
+    #Make a Cube shape object
+    shape = Cube(oKey, [21,21,1], True) #Shape will extend from (0,0,0) to (20,20,0) in cube shape
+    #Dictionary of selected cells and their values.
+    #Value of 0 is a goal, None is impassible
     selectedDict = dict()
     selectedDict['10_10_0'] = 0
     selectedDict['1_1_0']   = None
-    
-    d = DjikstraMap(shape, selectedDict)
+    #Create the Dijkstra Map
+    d = DijkstraMap(shape, selectedDict)
+    #Optionally Combine other DMAPs if desired
+    #d.combine(otherDMAP)
+    #After all DMAPs are combined, process once
     d.processMap()
+    #Find a path given a start point
     print d.findPath('0_0_0')
