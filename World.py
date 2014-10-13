@@ -33,7 +33,8 @@ class World:
                 ###HACK HERE. Need a more flexible, possibly **kwarg based here###
                 if f.floatOffset == [0.5,0.5]:
                     f.floatOffset = [random.random(),random.random()]
-                    f.determinePixelOffset()
+                    #f.determinePixelOffset()
+                f.determinePixelOffset()
                 c.addElement(f)
     def activateChunk(self, *keys):
         for key in keys:

@@ -141,13 +141,13 @@ def makeTestTerrain():
     #feature(imageKey, name = None, speedModifier = 1.0, tall = 0, floatOffset = [0.5,0.5], impassible = False, blocksLOS = False)
     rocks  = (['rocks.png', None, 1.25])
     bushes  = (['bush.png', None, 1.50])
-    #trees = (['tallTree.png', None, 1.0, 32, [0.5001,0.5001], True, True])
+    trees = (['tallTree.png', None, 1.0, 16, [0.51,0.51], True, True])
     for key in sorted(WORLD.active.keys()):
         print "##Chunk Building...##", key
         WORLD.baseTerrainChunkFill(key, base)
         WORLD.randomFillChunkFeature(key, rocks)
         WORLD.randomFillChunkFeature(key, bushes)
-        #WORLD.randomFillChunkFeature(key, trees)
+        WORLD.randomFillChunkFeature(key, trees)
     WORLD.addEntity(WORLD, '10_10_0', 'rose.png', 'Rose')
 
 ####TEST WORLD INIT####

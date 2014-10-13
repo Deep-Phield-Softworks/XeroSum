@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from unboundMethods import *
 from AoE import *
-from DjikstraMap import DjikstraMap
+from DijkstraMap import DijkstraMap
 from Entity import Entity
 from WorldView import WorldView
 from World import World
@@ -22,7 +22,7 @@ class Path:
         self.entity    = entity
         self.shape     = shape
         #Create an empty DMAP & Set Goals
-        self.DMAP = DjikstraMap(shape, self.goalDict)
+        self.DMAP = DijkstraMap(shape, self.goalDict)
         #Make DMAP with Terrain Speed modifier Data and impassible data
         self.speedMap = self.makeSpeedMap()
         #Combine DMAPS
@@ -49,7 +49,7 @@ class Path:
                         if element.impassible:
                             val = None
             selectedDict[key] = val
-        return DjikstraMap(self.shape, selectedDict)
+        return DijkstraMap(self.shape, selectedDict)
     
     #Move the path step index forward one node
     #Return a boolean of whether there was another step

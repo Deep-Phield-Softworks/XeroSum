@@ -12,7 +12,7 @@ from unboundMethods import *
 #-should be processed once all desired input DMAPs have been combined
 #-can return a list of nodes using findPath(start) 
 
-class DjikstraMap:
+class DijkstraMap:
     def __init__(self, shape, selectedDict, defaultMax = 10000):
         self.shape = shape
         self.selectedDict = selectedDict

@@ -16,8 +16,8 @@ class Feature(Matter):
         Matter.__init__(self, imageKey, name)
         self.tall        = tall
         self.floatOffset = floatOffset
-        self.impassible  = False
-        self.blocksLOS   = False
+        self.impassible  = impassible
+        self.blocksLOS   = blocksLOS
         self.height = TILE_MANIFEST[self.imageKey].get_height()
         self.width  = TILE_MANIFEST[self.imageKey].get_width()
         self.pixelOffsets = self.determinePixelOffset()
