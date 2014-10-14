@@ -103,7 +103,36 @@ class DijkstraMap:
             if not self.MapVals.has_key(key): #If key not in self
                 self.MapVals[key] = DMAP.MapVals[key] #Add key & value to self
                 self.keysFlatList.append(key)         #Add key to flat list
-        return self  
+        #Lastly make a new expanded DMAP, populating the empty cells w/ None
+        selfBounds = self.bounds() #Find the bounds
+        DMAPBounds = DMAP.bounds() 
+        origin = makeKey(self.lower(selfBounds, DMAPBounds)) #Find the origin
+        magnitude  = (abs(selfBounds[0]-DMAPBounds[0]),
+                      abs(selfBounds[1]-DMAPBounds[1]),
+                      abs(selfBounds[2]-DMAPBounds[2])
+                      )
+        newShape = Cube(origin, magnitude, True) #Create a new Shape
+        expanded = DijkstraMap(newShape, self.MapVals, None)
+        return expanded
+    
+    #Define the bounaries as a pair of lowest (x,y,z) and greatest
+    #(x,y,z) values as determiend by using the calling DMAP's self.coordinates
+    def bounds(self):
+        low = keyToXYZ(self.coordinates[0][0][0])
+        hi  = keyToXYZ(self.coordinates[-1][-1][-1])
+        return (low, hi)
+    
+    #Given two points in form: (x,y,z)
+    #Return: Lower of the two points
+    def lower(self, a, b):
+        low = a
+        if a[0] > b[0]:
+            low = b
+        elif a[1] > b[1]:
+            low = b
+        elif a[2] > b[2]:
+            low = b
+        return low
     
 if __name__ == '__main__':
     #Run a test
@@ -125,3 +154,5 @@ if __name__ == '__main__':
     d.processMap()
     #Find a path given a start point
     print d.findPath('0_0_0')
+    print "Bounds"
+    print d.bounds()

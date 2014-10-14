@@ -11,13 +11,33 @@ from ImageManifests import TILE_MANIFEST
 #-may block travel through their coordinate
 #-may block dropping items into their coordinate
 #Examples would be a chest, door and a tree
+#
+#Accepted **kwargs in self.acceptedKWARGS:
+#-'tall' => int number of pixels. For an object that is taller than normal and
+#           must have its drawn position offset to be drawn properly.
+#-'floatOffset' => list of two floats that represent how far from the center of
+#                  the parent Coordinate the object lies. [0.5, 0.5] would be
+#                  centered on the parent Coordinate.
+#-speedModifier => float value in range 0 < x < float(+inf). Represents the
+#                  change in travel speed caused by this tile. Lower values are
+#                  faster.
+#-'impassible'  => Boolean value for whether the feature makes the containing
+#                  Coordinate not be considered by Path objects 
+#-'blocksLOS'   => Boolean value for whether the feature makes the containing
+#                  Coordinate block Line of Sight
 class Feature(Matter):
-    def __init__(self, imageKey, name = None, speedModifier = 1.0, tall = 0, floatOffset = [0.5,0.5], impassible = False, blocksLOS = False):
-        Matter.__init__(self, imageKey, name)
-        self.tall        = tall
-        self.floatOffset = floatOffset
-        self.impassible  = impassible
-        self.blocksLOS   = blocksLOS
+    def __init__(self, **kwargs):
+        Matter.__init__(self, **kwargs)
+        self.acceptedKWARGS = {'tall': 0,
+                               'floatOffset': [0.5, 0.5],
+                               'speedModifier': 1.0,
+                               'impassible': False,
+                               'blocksLOS': False }
+        for key in self.acceptedKWARGS.keys():
+            if key in kwargs.keys():
+                self.__setattr__(key, kwargs[key])
+            else:
+                self.__setattr__(key, self.acceptedKWARGS[key])
         self.height = TILE_MANIFEST[self.imageKey].get_height()
         self.width  = TILE_MANIFEST[self.imageKey].get_width()
         self.pixelOffsets = self.determinePixelOffset()

@@ -13,18 +13,34 @@ from Matter import Matter
 #-have a speed which defines how often they act
 #-have an action queue that defines their actions and the time costs
 #Examples: a dog, person
+#Accepted **kwargs in self.acceptedKWARGS:
+#-'world' => World object that contains the entity and to whom it reports its
+#            movements
+#-'coordinateKey' => key string of containing Coordinate
+#-'impassible'  => Boolean value for whether the Entity makes the containing
+#                  Coordinate not be considered by Path objects. I left this as
+#                  optional but defaults to True as I can imagine incorporeal or
+#                  miniscule entities that might not block movement.
+#-'floatOffset' => list of two floats that represent how far from the center of
+#                  the parent Coordinate the object lies. [0.5, 0.5] would be
+#                  centered on the parent Coordinate.
 class Entity(Matter): #entity(world, coordinateKey, imageKey)
-    def __init__(self,world, coordinateKey, imageKey, name = None, floatOffset = [0.5,0.5]):
-        Matter.__init__(self, imageKey, name)
-        self.imageKey    =  imageKey 
-        self.SpriteSheet = SPRITE_MANIFEST[self.imageKey] #SpriteSheet object that provides sprite frames
+    def __init__(self, **kwargs):
+        Matter.__init__(self, **kwargs)
+        self.acceptedKWARGS = {'world': None,
+                               'coordinateKey': '0_0_0',
+                               'impassible': True,
+                               'floatOffset': [0.5, 0.5]}
+        for key in self.acceptedKWARGS.keys():
+            if key in kwargs.keys():
+                self.__setattr__(key, kwargs[key])
+            else:
+                self.__setattr__(key, self.acceptedKWARGS[key]) 
+        #Render related local variables..
+        self.SpriteSheet = SPRITE_MANIFEST[self.imageKey] 
         self.width   = self.SpriteSheet.frameWidth
         self.height  = self.SpriteSheet.frameHeight
-        self.world         = world
-        self.impassible    = True
-        self.tall          = self.height
-        self.floatOffset   = floatOffset
-        self.coordinateKey = coordinateKey
+        self.tall    = self.height
         self.lastFrame = 0 #the rendered last frame in a "strip" of frames
         self.facing = 5
         self.animation = self.SpriteSheet.animations[self.facing]

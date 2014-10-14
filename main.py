@@ -103,8 +103,9 @@ def mouseRightClick(event):
                 if within(e[0], point):
                     if isinstance(e[1], Tile):
                         goalDict = dict()
-                        goalDict[e[1].parentCoordinate] = 0 
-                        p = Path(goalDict, SELECTED, Cube(oKey, [21,21,1], True))
+                        goalDict[e[1].parentCoordinate] = 0
+                        cubeargs = {'origin':oKey,'magnitude': [21,21,1]}
+                        p = Path(goalDict, SELECTED, Cube(**cubeargs))
                         SELECTED.path = p
 
 #Draw text to the screen.
@@ -137,24 +138,33 @@ def playRandomSong():
 
 ###Test Terrain Gen###
 def makeTestTerrain():
-    base = (['grass.png'])
+    base = {'imageKey': 'grass.png'}
     #feature(imageKey, name = None, speedModifier = 1.0, tall = 0, floatOffset = [0.5,0.5], impassible = False, blocksLOS = False)
-    rocks  = (['rocks.png', None, 1.25])
-    bushes  = (['bush.png', None, 1.50])
-    trees = (['tallTree.png', None, 1.0, 16, [0.51,0.51], True, True])
+    rocks = {'imageKey':'rocks.png', 'speedModifier': 1.25}
+    bushes = {'imageKey': 'bush.png', 'speedModifier': 1.50}
+    trees  = {'imageKey': 'tallTree.png',
+              'tall': 16,
+              'floatOffset': [0.5, 0.5],
+              'impassible': True,
+              'blocksLOS': True }
     for key in sorted(WORLD.active.keys()):
         print "##Chunk Building...##", key
-        WORLD.baseTerrainChunkFill(key, base)
-        WORLD.randomFillChunkFeature(key, rocks)
-        WORLD.randomFillChunkFeature(key, bushes)
-        WORLD.randomFillChunkFeature(key, trees)
-    WORLD.addEntity(WORLD, '10_10_0', 'rose.png', 'Rose')
+        WORLD.baseTerrainChunkFill(key, **base)
+        WORLD.randomFillChunkFeature(key, **rocks)
+        WORLD.randomFillChunkFeature(key, **bushes)
+        WORLD.randomFillChunkFeature(key, **trees)
+    eargs = {'world':WORLD,
+             'coordinateKey': '10_10_0',
+             'imageKey':'rose.png',
+             'name':'Rose'}
+    WORLD.addEntity(**eargs)
 
 ####TEST WORLD INIT####
 WORLD = World("TEST")
 origin = [0,0,0]
 oKey = makeKey(origin)
-shape = Cube(oKey, [21,21,1], True)
+kwargs = {'origin': oKey, 'magnitude': [21,21,1]}
+shape = Cube(**kwargs)
 #If world db shelf not in existence...
 if not os.path.isfile(WORLD.db):##Run Test Terrain Gen
     playerView = WorldView(WORLD, shape, SCREEN_SIZE)

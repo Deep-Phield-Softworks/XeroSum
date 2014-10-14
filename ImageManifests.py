@@ -37,12 +37,14 @@ TILE_MANIFEST   = dict()
 SPRITE_MANIFEST = dict()
 
 for tile in os.listdir(tileDir):
-    #Make a TILE_MANIFEST entry with filename key and pygame.image value 
-    TILE_MANIFEST[str(tile)] = pygame.image.load(tileDir+tile).convert_alpha()
+    #Make a TILE_MANIFEST entry with filename key and pygame.image value   
+    if '.png' in str(tile):
+        TILE_MANIFEST[str(tile)] = pygame.image.load(tileDir+tile).convert_alpha()
 for sprite in os.listdir(spriteDir):
     #Make a SPRITE_MANIFEST entry with filename key and SpriteSheet object value
     #SpriteSheet objects init variables are:  (imageName, imagepath, framesWide, framesHigh, pixelsWide, pixelsHigh) 
-    SPRITE_MANIFEST[str(sprite)] = SpriteSheet(sprite, spriteDir, 8, 4)    
+    if '.png' in str(sprite):
+        SPRITE_MANIFEST[str(sprite)] = SpriteSheet(sprite, spriteDir, 8, 4)    
     
 ###Music Initialization###
 #List of tracks for playing a random music

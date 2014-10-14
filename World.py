@@ -17,21 +17,21 @@ class World:
         self.active = dict()
         self.gameTurn = 0
         self.tickAccumulator = 0
-    def baseTerrainChunkFill(self, chunkKey, baseArgs):
+    def baseTerrainChunkFill(self, chunkKey, **kwargs):
         self.activateChunk(chunkKey)
         chunk = self.active[chunkKey]
         origin = chunk.coordinatesList[0].key
-        ground = Square(origin, self.chunkSize, True).areaKeyList
+        shapeargs = {'origin': origin, 'magnitude':self.chunkSize}
+        ground = Square(**shapeargs).areaKeyList
         for c in ground:
-            chunk.coordinates[c].addElement(Tile(*baseArgs))
-    def randomFillChunkFeature(self, chunkKey, objArgs, chance = 1, outOf = 10):
+            chunk.coordinates[c].addElement(Tile(**kwargs))
+    def randomFillChunkFeature(self, chunkKey, chance = 1, outOf = 10, **kwargs):
         self.activateChunk(chunkKey)
         for c in self.active[chunkKey].coordinatesList:
-            r = random.randint(0,outOf - 1)
+            r = random.randint(0, outOf - 1)
             if r < chance:
-                f = Feature(*objArgs)
-                ###HACK HERE. Need a more flexible, possibly **kwarg based here###
-                if f.floatOffset == [0.5,0.5]:
+                f = Feature(**kwargs)
+                if not 'floatOffset' in kwargs:
                     f.floatOffset = [random.random(),random.random()]
                     #f.determinePixelOffset()
                 f.determinePixelOffset()
@@ -64,8 +64,8 @@ class World:
         pchunk = findParent(coordinateKey)
         self.activateChunk(pchunk)
         self.active[pchunk].addElement(coordinateKey, element)
-    def addEntity(self, *entityConstructorArgs):
-        e = Entity(*entityConstructorArgs)
+    def addEntity(self, **entityConstructorArgs):
+        e = Entity(**entityConstructorArgs)
         pchunk = findParent(e.coordinateKey)
         self.activateChunk(pchunk)
         self.active[pchunk].addElement(e.coordinateKey, e)
