@@ -85,7 +85,7 @@ class Coordinate:
     #Sort a list into render order    
     def renderSort(self, unsorted):
         #make a custom list of values to sort(invert layer so it can be reversed)
-        sortMe = [ [e, (int(e.layer * -1)), e.floatOffset[1], e.floatOffset[0]] for e in unsorted]
+        sortMe = [ [e, (e.layer * -1), e.floatOffset[1], e.floatOffset[0]] for e in unsorted]
         #Sort the elements by Float Offset Y, then Float Offset X
         results = sorted(sortMe, key= itemgetter(1,2,3), reverse= True)
         return [r[0] for r in results]

@@ -25,13 +25,16 @@ from ImageManifests import TILE_MANIFEST
 #                  Coordinate not be considered by Path objects 
 #-'blocksLOS'   => Boolean value for whether the feature makes the containing
 #                  Coordinate block Line of Sight
+#-'layer'       => Numeric value to be used in render ordering.
+#-'floatOffsetRanges' => Tuples of floats for range of float Offsets
 class Feature(Matter):
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)
         self.acceptedKWARGS = {'tall': 0,
                                'floatOffset': [0.5, 0.5],
+                               'floatOffsetRanges': ((0.25, 0.75),(0.25, 0.75)),
                                'speedModifier': 1.0,
-                               'layer': 0,
+                               'layer': 1.0,
                                'impassible': False,
                                'blocksLOS': False }
         for key in self.acceptedKWARGS.keys():

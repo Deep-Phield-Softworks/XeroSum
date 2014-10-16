@@ -26,7 +26,8 @@ class Field:
         #origin, AoEShape, magnitude, name = None
         self.acceptedKWARGS = {'name': None,
                                'origin': '0_0_0',
-                               'AoEshape': Shape(**kwargs)}
+                               'AoEshape': Shape(**kwargs),
+                               'layer': 0.0}
         for key in self.acceptedKWARGS.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])

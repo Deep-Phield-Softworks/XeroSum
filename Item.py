@@ -12,11 +12,12 @@ from Matter import Matter
 #           must have its drawn position offset to be drawn properly.
 #-'floatOffset' => list of two floats that represent how far from the center of
 #                  the parent Coordinate the object lies. [0.5, 0.5] would be
-#                  centered on the parent Coordinate. 
+#                  centered on the parent Coordinate.
+#-'layer'       => Numeric value to be used in render ordering. 
 class Item(Matter):
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)
-        self.acceptedKWARGS = {'tall': 0, 'floatOffset': [0.5, 0.5], 'layer': 0}
+        self.acceptedKWARGS = {'tall': 0, 'floatOffset': [0.5, 0.5], 'layer': 1.5}
         for key in self.acceptedKWARGS.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])

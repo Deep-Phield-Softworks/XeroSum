@@ -12,11 +12,12 @@ from Matter import Matter
 #Accepted **kwargs in self.acceptedKWARGS:
 #-speedModifier => float value in range 0 < x < float(+inf). Represents the
 #                  change in travel speed caused by this tile. Lower values are
-#                  faster. 
+#                  faster.
+#-'layer'       => Numeric value to be used in render ordering. 
 class Tile(Matter):
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)
-        self.acceptedKWARGS = {'speedModifier': 1.0, 'layer': 0}
+        self.acceptedKWARGS = {'speedModifier': 1.0, 'layer': 0.1}
         for key in self.acceptedKWARGS.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])

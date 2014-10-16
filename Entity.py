@@ -24,6 +24,7 @@ from Matter import Matter
 #-'floatOffset' => list of two floats that represent how far from the center of
 #                  the parent Coordinate the object lies. [0.5, 0.5] would be
 #                  centered on the parent Coordinate.
+#-'layer'       => Numeric value to be used in render ordering. 
 class Entity(Matter): #entity(world, coordinateKey, imageKey)
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)

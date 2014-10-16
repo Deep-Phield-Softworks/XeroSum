@@ -31,8 +31,10 @@ class World:
             r = random.randint(0, outOf - 1)
             if r < chance:
                 f = Feature(**kwargs)
-                if not 'floatOffset' in kwargs:
-                    f.floatOffset = [random.random(),random.random()]
+                if not 'floatOffset' in kwargs: #If floatOffset not specified..
+                    ranges = f.floatOffsetRanges #Get ranges..
+                    f.floatOffset = [random.uniform(ranges[0][0],ranges[0][1]),
+                                     random.uniform(ranges[1][0],ranges[1][1])]
                     #f.determinePixelOffset()
                 f.determinePixelOffset()
                 c.addElement(f)
