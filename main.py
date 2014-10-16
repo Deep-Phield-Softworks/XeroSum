@@ -88,9 +88,11 @@ def mouseLeftClick(event):
             if within(e[0], point):
                 collideList.append(e)
     for e in collideList:
-        info = [e[0],e[1].parentCoordinate, e[1].name, e[1], e[1].floatOffset]
-        for bit in info:
-            SCREEN_TEXT_TOP.append(str(bit))
+        #info = [e[0],e[1].parentCoordinate, e[1].name, e[1], e[1].floatOffset]
+        info = [e[1].parentCoordinate, e[1].name, 'float:' + str(e[1].floatOffset)]
+        #for bit in info:
+        #    SCREEN_TEXT_TOP.append(str(bit))
+        SCREEN_TEXT_TOP.append(str(info))
         if isinstance(e[1], Entity):
             SELECTED = e[1]
 
@@ -141,10 +143,11 @@ def makeTestTerrain():
     base = {'imageKey': 'grass.png'}
     #feature(imageKey, name = None, speedModifier = 1.0, tall = 0, floatOffset = [0.5,0.5], impassible = False, blocksLOS = False)
     rocks = {'imageKey':'rocks.png', 'speedModifier': 1.25}
-    bushes = {'imageKey': 'bush.png', 'speedModifier': 1.50}
-    trees  = {'imageKey': 'tallTree.png',
-              'tall': 16,
+    bushes = {'imageKey': 'bush.png', 'speedModifier': 1.50, 'layer': 1}
+    trees  = {'imageKey': 'tallTree.png', 
+              'tall': 20,
               'floatOffset': [0.5, 0.5],
+              'layer': 1,
               'impassible': True,
               'blocksLOS': True }
     for key in sorted(WORLD.active.keys()):

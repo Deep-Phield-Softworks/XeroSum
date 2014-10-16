@@ -30,6 +30,7 @@ class Entity(Matter): #entity(world, coordinateKey, imageKey)
         self.acceptedKWARGS = {'world': None,
                                'coordinateKey': '0_0_0',
                                'impassible': True,
+                               'layer': -1, #-1 Here means always on top
                                'floatOffset': [0.5, 0.5]}
         for key in self.acceptedKWARGS.keys():
             if key in kwargs.keys():

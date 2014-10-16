@@ -24,7 +24,7 @@ class Matter:
         if self.name == None: #If no name given...
             try:
                 #Split imageKey on '.' Name == split[0]
-                name = imageKey.split('.')[0]
+                name = self.imageKey.split('.')[0]
                 self.name = name
             except:
                 pass

@@ -16,7 +16,7 @@ from Matter import Matter
 class Tile(Matter):
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)
-        self.acceptedKWARGS = {'speedModifier': 1.0}
+        self.acceptedKWARGS = {'speedModifier': 1.0, 'layer': 0}
         for key in self.acceptedKWARGS.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])
@@ -29,3 +29,4 @@ class Tile(Matter):
         pass #Tiles should not be offset. Would create gaps
     def TICK(self, TICK): 
         pass #Tiles do nothing by default when ticked atm.
+    

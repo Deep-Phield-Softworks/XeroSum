@@ -16,7 +16,7 @@ from Matter import Matter
 class Item(Matter):
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)
-        self.acceptedKWARGS = {'tall': 0, 'floatOffset': [0.5, 0.5]}
+        self.acceptedKWARGS = {'tall': 0, 'floatOffset': [0.5, 0.5], 'layer': 0}
         for key in self.acceptedKWARGS.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])

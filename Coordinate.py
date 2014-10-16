@@ -1,10 +1,12 @@
 #!/usr/bin/env python
+from operator import *
 from unboundMethods import *
 from Tile import Tile
 from Feature import Feature
 from Item import Item
 from Entity import Entity
 from Field import Field
+
 
 #Coordinates objects represent a location in a x,y,z coordinate plane.
 #Coordinates have the properties:
@@ -17,6 +19,7 @@ from Field import Field
 # to the respective list
 #-Coordinates can return their contents by using the contains() method
 #-Coordinates can tick their contents
+#-Coordinates can sort their contents by using floatOffsets
 class Coordinate:
     def __init__(self, key):
         self.key = key
@@ -31,6 +34,7 @@ class Coordinate:
         self.entities = []
         self.fields   = []
         self.parentChunk  = makeKey([self.x/16, self.y/16, self.z])
+    #Add an element to a list of corresponding types
     def addElement(self, element):
         self.empty = False
         if isinstance(element, Tile):
@@ -44,6 +48,8 @@ class Coordinate:
         if isinstance(element, Field):
             self.fields.append(element)
         element.parentCoordinate = self.key
+        self.orderContents()
+    #Remove an element
     def removeElement(self, element):
         if isinstance(element, Tile):
             #if element in self.tiles:
@@ -68,6 +74,22 @@ class Coordinate:
                 empty = False              #Empty is false
                 break                       #No need to continue... 
         self.empty = empty
+        self.orderContents()
+    #Sort the elements of each list in self.contains() by floatOffset
+    def orderContents(self):
+        self.tiles = self.renderSort(self.tiles)
+        self.features = self.renderSort(self.features)
+        self.items = self.renderSort(self.items)
+        self.entities = self.renderSort(self.entities)
+        self.fields = self.renderSort(self.fields)
+    #Sort a list into render order    
+    def renderSort(self, unsorted):
+        #make a custom list of values to sort(invert layer so it can be reversed)
+        sortMe = [ [e, (int(e.layer * -1)), e.floatOffset[1], e.floatOffset[0]] for e in unsorted]
+        #Sort the elements by Float Offset Y, then Float Offset X
+        results = sorted(sortMe, key= itemgetter(1,2,3), reverse= True)
+        return [r[0] for r in results]
+    #Return ordered list of lists by object archetype. 
     def contains(self):
         contents = []
         contents.append(self.tiles)

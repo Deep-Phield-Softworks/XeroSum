@@ -31,6 +31,7 @@ class Feature(Matter):
         self.acceptedKWARGS = {'tall': 0,
                                'floatOffset': [0.5, 0.5],
                                'speedModifier': 1.0,
+                               'layer': 0,
                                'impassible': False,
                                'blocksLOS': False }
         for key in self.acceptedKWARGS.keys():

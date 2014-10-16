@@ -43,11 +43,12 @@ class Path:
             c = self.entity.world.getCoordinateObj(key)
             for archtype in c.contains():
                 for element in archtype:
-                    if hasattr(element, 'speedModifier'):
-                        val = int(val * element.speedModifier)
-                    if hasattr(element, 'impassible'):
-                        if element.impassible:
-                            val = None
+                    if val:
+                        if hasattr(element, 'speedModifier'):
+                            val = int(val * element.speedModifier)
+                        if hasattr(element, 'impassible'):
+                            if element.impassible:
+                                val = None
             selectedDict[key] = val
         return DijkstraMap(self.shape, selectedDict)
     
