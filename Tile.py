@@ -27,7 +27,8 @@ class Tile(Matter):
         self.floatOffset = [0.0,0.0]
         self.pixelOffsets = [0, 0]
     def determinePixelOffset(self):
-        pass #Tiles should not be offset. Would create gaps
+        #Tiles should not be offset. Would create gaps
+        return self.pixelOffsets
     def TICK(self, TICK): 
         pass #Tiles do nothing by default when ticked atm.
     

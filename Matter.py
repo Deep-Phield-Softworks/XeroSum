@@ -14,7 +14,11 @@ class Matter:
         self.__dict__[name] = value
         
     def __init__(self, **kwargs):
-        self.acceptedKWARGS = {'imageKey': 'ISO_BASIC_64x32.png', 'name': None}
+        self.acceptedKWARGS = {'imageKey': 'ISO_BASIC_64x32.png',
+                               'name': None,
+                               'height': 64,
+                               'width': 32
+                               }
         for key in self.acceptedKWARGS.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import pygame
+from operator import *
 from unboundMethods import *
 from ImageManifests import *
 from subclassLoader import *
@@ -43,50 +44,82 @@ class WorldView:
                 chunks.append(parentChunk)  #Add it...
         self.world.activateChunk(*chunks)
     def preloadCoordinates(self):
+        halfTileWide = int(TILE_WIDTH  / 2 ) #imported from unboundMethods
+        halfTileHigh = int(TILE_HEIGHT / 2 ) #imported from unboundMethods
         for x in range(len(self.nD)):
             for y in range(len(self.nD[x])) :
                 for z in range(len(self.nD[x][y])):
                     cKey = self.nD[x][y][z]
                     c = self.world.active[findParent(cKey)].coordinates[cKey]
-                    self.nD[x][y][z] = c
+                    basepx = (x - y) * halfTileWide + PXOFFSET
+                    basepy = (x + y) * halfTileHigh + PYOFFSET
+                    self.nD[x][y][z] = c, (basepx, basepy)
     def render(self):
         self.surface.fill((0,0,0)) #Fill surface to avoid map edge slug trails 
         self.hitBoxList = [] #Empty hitBoxList
-        halfTileWide = int(TILE_WIDTH  / 2 ) #imported from unboundMethods
-        halfTileHigh = int(TILE_HEIGHT / 2 ) #imported from unboundMethods
+        unsorted = []
         xRange = range(len(self.nD))
         yRange = range(len(self.nD[0]))    
         #Render Tiles
         for y in yRange:
             for x in xRange:
                 for z in range(len(self.nD[x][y])):
-                    c = self.nD[x][y][z]
-                    if not c.empty: #Is this necessary if shape.z <= 0 only?
-                        basepx = (x - y) * halfTileWide + PXOFFSET
-                        basepy = (x + y) * halfTileHigh + PYOFFSET
-                        for t in c.tiles:
-                            px, py = basepx, (basepy)
-                            img = TILE_MANIFEST[t.imageKey]
-                            self.surface.blit(img, (px, py))
-                            rect = Rect( (px,py), (img.get_width(),img.get_height() ) )
-                            self.hitBoxList.append([rect, t])
-        #Render everything else
-        for y in yRange:
-            for x in xRange:
-                for z in range(len(self.nD[x][y])):
-                        c = self.nD[x][y][z]
-                        if not c.empty:#Is this necessary if shape.z <= 0 only?
-                            basepx = (x - y) * halfTileWide + PXOFFSET
-                            basepy = (x + y) * halfTileHigh + PYOFFSET
-                            contents = c.contains()
-                            for archtype in contents[1:]:
-                                for element in archtype:
-                                    if isinstance(element, Entity):
-                                        img = element.toBlit
-                                    else:
-                                        img = TILE_MANIFEST[element.imageKey]
-                                    px = basepx + element.pixelOffsets[0]
-                                    py = basepy + element.pixelOffsets[1]- element.tall - int(element.tall * element.floatOffset[1])
-                                    rect = Rect( (px,py), (img.get_width(),img.get_height() ) )
-                                    self.hitBoxList.append([rect, element])
-                                    self.surface.blit(img, (px, py))
+                    c   = self.nD[x][y][z][0] #c is now the Coordinate object
+                    px = self.nD[x][y][z][1][0] 
+                    py = self.nD[x][y][z][1][1]
+                    contents = c.listAll()    #get all contents
+                    for e in contents:
+                        #Determine proper image
+                        if isinstance(e, Entity):
+                            e.determinePixelOffset() #Update offset info
+                            img = e.toBlit
+                        else:
+                            img = TILE_MANIFEST[e.imageKey]
+                        #Adjust px,py based upon e's attributes
+                        px = px + e.pixelOffsets[0]
+                        py = py + e.pixelOffsets[1]
+                        #Create hit box rect and add to hitBoxList
+                        rect = Rect( (px,py), (img.get_width(),img.get_height() ) )
+                        self.hitBoxList.append([rect, e])
+                        unsorted.append([img, e.layer, py, px, e])
+        renderList = sorted(unsorted, key= itemgetter(1,2,3))
+        #print "############################################"
+        for e in renderList:
+            #print e
+            self.surface.blit(e[0], (e[3], e[2]))
+        #xRange = range(len(self.nD))
+        #yRange = range(len(self.nD[0]))    
+        ##Render Tiles
+        #for y in yRange:
+        #    for x in xRange:
+        #        for z in range(len(self.nD[x][y])):
+        #            c = self.nD[x][y][z]
+        #            if not c.empty: #Is this necessary if shape.z <= 0 only?
+        #                basepx = (x - y) * halfTileWide + PXOFFSET
+        #                basepy = (x + y) * halfTileHigh + PYOFFSET
+        #                for t in c.tiles:
+        #                    px, py = basepx, (basepy)
+        #                    img = TILE_MANIFEST[t.imageKey]
+        #                    self.surface.blit(img, (px, py))
+        #                    rect = Rect( (px,py), (img.get_width(),img.get_height() ) )
+        #                    self.hitBoxList.append([rect, t])
+        ##Render everything else
+        #for y in yRange:
+        #    for x in xRange:
+        #        for z in range(len(self.nD[x][y])):
+        #                c = self.nD[x][y][z]
+        #                if not c.empty:#Is this necessary if shape.z <= 0 only?
+        #                    basepx = (x - y) * halfTileWide + PXOFFSET
+        #                    basepy = (x + y) * halfTileHigh + PYOFFSET
+        #                    contents = c.contains()
+        #                    for archtype in contents[1:]:
+        #                        for element in archtype:
+        #                            if isinstance(element, Entity):
+        #                                img = element.toBlit
+        #                            else:
+        #                                img = TILE_MANIFEST[element.imageKey]
+        #                            px = basepx + element.pixelOffsets[0]
+        #                            py = basepy + element.pixelOffsets[1]- element.tall - int(element.tall * element.floatOffset[1])
+        #                            rect = Rect( (px,py), (img.get_width(),img.get_height() ) )
+        #                            self.hitBoxList.append([rect, element])
+        #                            self.surface.blit(img, (px, py))

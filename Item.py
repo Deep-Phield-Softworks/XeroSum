@@ -26,4 +26,7 @@ class Item(Matter):
     def TICK(self, TICK):
         pass #Default items do nothing on Tick
     def determinePixelOffset(self):
-        pass
+        px = ( self.width/2.0) - self.floatOffset[0] * self.width
+        py = (self.height/2.0) - self.floatOffset[1] * self.height
+        py = py - element.tall - int(element.tall * element.floatOffset[1])
+        self.pixelOffsets = [int(px), int(py)]

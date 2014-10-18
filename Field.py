@@ -27,6 +27,7 @@ class Field:
         self.acceptedKWARGS = {'name': None,
                                'origin': '0_0_0',
                                'AoEshape': Shape(**kwargs),
+                               'pixelOffsets': [0,0],
                                'layer': 0.0}
         for key in self.acceptedKWARGS.keys():
             if key in kwargs.keys():
