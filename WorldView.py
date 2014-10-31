@@ -82,44 +82,7 @@ class WorldView:
                         rect = Rect( (px,py), (img.get_width(),img.get_height() ) )
                         self.hitBoxList.append([rect, e])
                         unsorted.append([img, e.layer, py, px, e])
+        #Sort render elements by layer, py, px
         renderList = sorted(unsorted, key= itemgetter(1,2,3))
-        #print "############################################"
         for e in renderList:
-            #print e
             self.surface.blit(e[0], (e[3], e[2]))
-        #xRange = range(len(self.nD))
-        #yRange = range(len(self.nD[0]))    
-        ##Render Tiles
-        #for y in yRange:
-        #    for x in xRange:
-        #        for z in range(len(self.nD[x][y])):
-        #            c = self.nD[x][y][z]
-        #            if not c.empty: #Is this necessary if shape.z <= 0 only?
-        #                basepx = (x - y) * halfTileWide + PXOFFSET
-        #                basepy = (x + y) * halfTileHigh + PYOFFSET
-        #                for t in c.tiles:
-        #                    px, py = basepx, (basepy)
-        #                    img = TILE_MANIFEST[t.imageKey]
-        #                    self.surface.blit(img, (px, py))
-        #                    rect = Rect( (px,py), (img.get_width(),img.get_height() ) )
-        #                    self.hitBoxList.append([rect, t])
-        ##Render everything else
-        #for y in yRange:
-        #    for x in xRange:
-        #        for z in range(len(self.nD[x][y])):
-        #                c = self.nD[x][y][z]
-        #                if not c.empty:#Is this necessary if shape.z <= 0 only?
-        #                    basepx = (x - y) * halfTileWide + PXOFFSET
-        #                    basepy = (x + y) * halfTileHigh + PYOFFSET
-        #                    contents = c.contains()
-        #                    for archtype in contents[1:]:
-        #                        for element in archtype:
-        #                            if isinstance(element, Entity):
-        #                                img = element.toBlit
-        #                            else:
-        #                                img = TILE_MANIFEST[element.imageKey]
-        #                            px = basepx + element.pixelOffsets[0]
-        #                            py = basepy + element.pixelOffsets[1]- element.tall - int(element.tall * element.floatOffset[1])
-        #                            rect = Rect( (px,py), (img.get_width(),img.get_height() ) )
-        #                            self.hitBoxList.append([rect, element])
-        #                            self.surface.blit(img, (px, py))

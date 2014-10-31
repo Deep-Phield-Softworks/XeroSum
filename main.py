@@ -30,8 +30,8 @@ SELECTED = None #Currently selected Entity
 ###Main Loop###
 def mainLoop():
     #Check if music is (not) playing...
-    if not pygame.mixer.music.get_busy(): #If no music...
-        playRandomSong() #Play a random song
+    #if not pygame.mixer.music.get_busy(): #If no music...
+        #playRandomSong() #Play a random song
     ###Event Handling###
     for event in pygame.event.get():#Go through all events
         if event.type == QUIT: #If the little x in the window was clicked...
@@ -65,6 +65,9 @@ def keyboard(event):
         filename = timestamp + '.png'
         pygame.image.save((SCREEN),filename)
         print "Screenshot saved as " + filename
+    if pressed_keys[K_F2]:
+        #Hook for the debug
+        pass
 
 #Seperates mouse clicks into left and right and then call their seperate fncs
 def mouseClick(event):
