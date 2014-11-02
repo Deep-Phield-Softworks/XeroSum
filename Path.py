@@ -33,7 +33,7 @@ class Path:
         self.nodes = self.DMAP.findPath(self.entity.coordinateKey)
         self.stepIndex = 0
         #Create facing list
-        self.createFacings()   
+        self.createFacings()
     
     #Create DMAP populated with Terrain speeds and impassible terrain
     def makeSpeedMap(self):

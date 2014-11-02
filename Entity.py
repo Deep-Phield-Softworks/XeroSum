@@ -53,9 +53,12 @@ class Entity(Matter): #entity(world, coordinateKey, imageKey)
         self.path = None
         self.toBlit = self.animation[self.lastFrame]
         self.pixelOffsets = self.determinePixelOffset()
+        
     def determinePixelOffset(self):
         px = ( TILE_WIDTH/2.0)  - (self.floatOffset[0] * self.width)
-        py = ( TILE_HEIGHT/2.0) + (self.floatOffset[1] * self.height)
+        py = ( TILE_HEIGHT/2.0)
+        py = py - self.tall #- int(self.tall * self.floatOffset[1])
+        #py = py - int(self.tall * self.floatOffset[1])
         return [int(px), int(py)]
     def load(self):
         self.SpriteSheet = SPRITE_MANIFEST[self.imageKey]

@@ -19,6 +19,7 @@ from Field import Field
 #-Coordinates can return their contents by using the contains() method
 #-Coordinates can tick their contents
 #-Coordinates can sort their contents by using floatOffsets
+#-Coordinates know whether their contents block Line of Sight
 class Coordinate:
     def __init__(self, key):
         self.key = key
@@ -33,6 +34,7 @@ class Coordinate:
         self.entities = []
         self.fields   = []
         self.parentChunk  = makeKey([self.x/16, self.y/16, self.z])
+        self.blockLOS = False
     #Add an element to a list of corresponding types
     def addElement(self, element):
         self.empty = False
@@ -47,6 +49,7 @@ class Coordinate:
         if isinstance(element, Field):
             self.fields.append(element)
         element.parentCoordinate = self.key
+        self.updateLOS()
         #self.orderContents()
     #Remove an element
     def removeElement(self, element):
@@ -73,24 +76,10 @@ class Coordinate:
                 empty = False              #Empty is false
                 break                       #No need to continue... 
         self.empty = empty
-        #self.orderContents()
-    ##Sort the elements of each list in self.contains() by floatOffset
-    #def orderContents(self):
-    #    self.tiles = self.renderSort(self.tiles)
-    #    self.features = self.renderSort(self.features)
-    #    self.items = self.renderSort(self.items)
-    #    self.entities = self.renderSort(self.entities)
-    #    self.fields = self.renderSort(self.fields)
-    ##Sort a list into render order    
-    #def renderSort(self, unsorted):
-    #    #make a custom list of values to sort(invert layer so it can be reversed)
-    #    sortMe = [ [e, (e.layer * -1), e.floatOffset[1], e.floatOffset[0]] for e in unsorted]
-    #    #Sort the elements by Float Offset Y, then Float Offset X
-    #    results = sorted(sortMe, key= itemgetter(1,2,3), reverse= True)
-    #    return [r[0] for r in results]
-    #Return a list of all contents
+        self.updateLOS()
+    #Return a flat list of all contained elements
     def listAll(self):
-        elements= self.tiles+self.features+self.items+self.entities+self.fields
+        elements = self.tiles+self.features+self.items+self.entities+self.fields
         return elements
     #Return ordered list of lists by object archetype.
     def contains(self):
@@ -114,3 +103,13 @@ class Coordinate:
         #if not self.empty:
         for e in self.entities:
             e.unload()
+    def updateLOS(self):
+        blockLOS = False 
+        elements = self.listAll()
+        for e in elements:
+            if hasattr(e, 'blocksLOS'):
+                if e.blocksLOS:
+                    blockLOS = True
+                    break
+        self.blockLOS = blockLOS
+        pass

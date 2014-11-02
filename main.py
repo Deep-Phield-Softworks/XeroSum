@@ -8,6 +8,7 @@ os.chdir(sys.path[0])
 #######Xero Sum Specific Imports#######
 from ImageManifests import SCREEN_SIZE, TRACKS, SCREEN
 from World import World
+from Player import Player
 from AoE import *
 from WorldView import WorldView
 from Path import Path
@@ -92,7 +93,7 @@ def mouseLeftClick(event):
                 collideList.append(e)
     for e in collideList:
         #info = [e[0],e[1].parentCoordinate, e[1].name, e[1], e[1].floatOffset]
-        info = [e[1].parentCoordinate, e[1].name, 'float:' + str(e[1].floatOffset), 'layer: ' + str(e[1].layer)]
+        info = [e[1].parentCoordinate, e[1].name, 'float:' + str(e[1].floatOffset), 'layer: ' + str(e[1].layer), 'px,py: ', e[1].pixelOffsets]
         #for bit in info:
         #    SCREEN_TEXT_TOP.append(str(bit))
         SCREEN_TEXT_TOP.append(str(info))
@@ -159,20 +160,22 @@ def makeTestTerrain():
         WORLD.randomFillChunkFeature(key, **rocks)
         WORLD.randomFillChunkFeature(key, **bushes)
         WORLD.randomFillChunkFeature(key, **trees)
-    eargs = {'world':WORLD,
-             'coordinateKey': '10_10_0',
-             'imageKey':'rose.png',
-             'name':'Rose'}
-    WORLD.addEntity(**eargs)
 
 ####TEST WORLD INIT####
 WORLD = World("TEST")
 origin = [0,0,0]
 oKey = makeKey(origin)
-kwargs = {'origin': oKey, 'magnitude': [21,21,1]}
+kwargs = {'origin': oKey, 'magnitude': [10,10,0], 'towardsNegInf': False}
 shape = Cube(**kwargs)
 #If world db shelf not in existence...
 if not os.path.isfile(WORLD.db):##Run Test Terrain Gen
+    player_args = {'world':WORLD,
+                   'coordinateKey': oKey,
+                   'imageKey':'rose.png',
+                   'Shape': shape,
+                   'name':'Rose'}
+    PLAYER = Player(**player_args)
+    WORLD.addElement(oKey, PLAYER)
     playerView = WorldView(WORLD, shape, SCREEN_SIZE)
     makeTestTerrain()
 else:#Else just make the playerView
