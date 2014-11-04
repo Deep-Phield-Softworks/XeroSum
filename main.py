@@ -110,7 +110,6 @@ def mouseRightClick(event):
                     if isinstance(e[1], Tile):
                         goalDict = dict()
                         goalDict[e[1].parentCoordinate] = 0
-                        cubeargs = {'origin':oKey,'magnitude': [21,21,1]}
                         p = Path(goalDict, SELECTED, Cube(**cubeargs))
                         SELECTED.path = p
 
@@ -165,8 +164,8 @@ def makeTestTerrain():
 WORLD = World("TEST")
 origin = [0,0,0]
 oKey = makeKey(origin)
-kwargs = {'origin': oKey, 'magnitude': [10,10,0], 'towardsNegInf': False}
-shape = Cube(**kwargs)
+cubeargs = {'origin': oKey, 'magnitude': [10,10,0], 'towardsNegInf': False}
+shape = Cube(**cubeargs)
 #If world db shelf not in existence...
 if not os.path.isfile(WORLD.db):##Run Test Terrain Gen
     player_args = {'world':WORLD,
