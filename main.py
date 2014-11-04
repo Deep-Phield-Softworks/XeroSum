@@ -30,13 +30,14 @@ SELECTED = None #Currently selected Entity
 
 ###Main Loop###
 def mainLoop():
+    global VIEW
     #Check if music is (not) playing...
     #if not pygame.mixer.music.get_busy(): #If no music...
         #playRandomSong() #Play a random song
     ###Event Handling###
     for event in pygame.event.get():#Go through all events
         if event.type == QUIT: #If the little x in the window was clicked...
-            ensurePersistentData()
+            WORLD.close()
             sys.exit()
         if event.type == MOUSEBUTTONDOWN:
             mouseClick(event)
@@ -46,8 +47,9 @@ def mainLoop():
             pass
     TICK = CLOCK.tick()
     WORLD.TICK(TICK)
-    playerView.render()
-    SCREEN.blit(playerView.surface, (0,0))
+    moveView()
+    VIEW.render()
+    SCREEN.blit(VIEW.surface, (0,0))
     drawScreenText() #Draw text onto SCREEN
     pygame.display.flip()      
 
@@ -58,7 +60,7 @@ def keyboard(event):
     #'ESCAPE' key is for exiting the game
     if pressed_keys[K_ESCAPE]:
         #Save off more safely and unload map
-        ensurePersistentData()
+        WORLD.close()
         sys.exit()
     #'K_F1' key for screenshot. This saves it to timeString().png
     if pressed_keys[K_F1]:
@@ -87,7 +89,7 @@ def mouseLeftClick(event):
     SCREEN_TEXT_TOP = []
     point = (event.pos[0],event.pos[1])
     collideList = []
-    for e in playerView.hitBoxList:
+    for e in VIEW.hitBoxList:
         if e[0].collidepoint(point):
             if within(e[0], point):
                 collideList.append(e)
@@ -104,13 +106,13 @@ def mouseRightClick(event):
     if SELECTED:
         point = (event.pos[0],event.pos[1])
         goalKeys = []
-        for e in playerView.hitBoxList:
+        for e in VIEW.hitBoxList:
             if e[0].collidepoint(point):
                 if within(e[0], point):
                     if isinstance(e[1], Tile):
                         goalDict = dict()
                         goalDict[e[1].parentCoordinate] = 0
-                        p = Path(goalDict, SELECTED, Cube(**cubeargs))
+                        p = Path(goalDict, SELECTED, Cube(**viewArgs))
                         SELECTED.path = p
 
 #Draw text to the screen.
@@ -128,10 +130,6 @@ def drawScreenText():
         y2 += FONT_HEIGHT
     SCREEN_TEXT = []
 
-#This function is meant to save and close all data in the game.
-def ensurePersistentData():
-    WORLD.deactivateChunk(*WORLD.active.keys())
-    
 #Play a random song
 def playRandomSong():
     #Pick a random int between 0 and the length of TRACKS list (-1)
@@ -159,26 +157,39 @@ def makeTestTerrain():
         WORLD.randomFillChunkFeature(key, **rocks)
         WORLD.randomFillChunkFeature(key, **bushes)
         WORLD.randomFillChunkFeature(key, **trees)
+def moveView():
+    if viewOrigin != PLAYER.parentCoordinate:
+        pass
 
 ####TEST WORLD INIT####
 WORLD = World("TEST")
-origin = [0,0,0]
-oKey = makeKey(origin)
-cubeargs = {'origin': oKey, 'magnitude': [10,10,0], 'towardsNegInf': False}
-shape = Cube(**cubeargs)
 #If world db shelf not in existence...
 if not os.path.isfile(WORLD.db):##Run Test Terrain Gen
+    oKey = makeKey([0,0,0])
     player_args = {'world':WORLD,
                    'coordinateKey': oKey,
                    'imageKey':'rose.png',
-                   'Shape': shape,
-                   'name':'Rose'}
+                   'name':'PLAYER'}
     PLAYER = Player(**player_args)
+    WORLD.entities['PLAYER'] = PLAYER
     WORLD.addElement(oKey, PLAYER)
-    playerView = WorldView(WORLD, shape, SCREEN_SIZE)
+    activeArgs = {'origin': oKey, 'magnitude': [10,10,0], 'towardsNegInf': False}
+    activeShape = Cube(**activeArgs)
+    for key in activeShape.areaKeyList:
+        WORLD.getCoordinateObj(key)
     makeTestTerrain()
-else:#Else just make the playerView
-    playerView = WorldView(WORLD, shape, SCREEN_SIZE)
+else:#Else just make the VIEW
+    WORLD.loadWorldVariables()
+    PLAYER = WORLD.entities['PLAYER'] 
+    oKey = PLAYER.parentCoordinate
+    ###!Bad code here!###
+    WORLD.getCoordinateObj(oKey)
+    
+    ###!Bad code here!###
+viewArgs = {'origin': oKey, 'magnitude': [10,10,0], 'towardsNegInf': False}
+viewShape = Cube(**viewArgs)
+VIEW = WorldView(WORLD, viewShape, SCREEN_SIZE)
+viewOrigin = PLAYER.parentCoordinate
 
 ###DEBUG###
 print "ACTIVE CHUNKS #:", len(sorted(WORLD.active.keys()))

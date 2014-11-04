@@ -4,6 +4,7 @@ from unboundMethods import *
 from Chunk import Chunk
 from subclassLoader import *
 from AoE import *
+from Entity import Entity
 #World object is a controller for Chunk objects. 
 #Active Chunks are stored in self.active. Inactive Chunks are saved in the db.
 #World receives the clock TICK, updates the game turn and sends the TICK to
@@ -17,6 +18,19 @@ class World:
         self.active = dict()
         self.gameTurn = 0
         self.tickAccumulator = 0
+        self.entities = dict()
+    def close(self):
+        self.deactivateChunk(*self.active.keys())
+        db = shelve.open(self.db)
+        db['entities'] = self.entities
+        db.close()
+    def loadWorldVariables(self):
+        db = shelve.open(self.db)
+        #Load Persistent World Variables
+        if db.has_key('entities'):
+            self.entities = db['entities']
+        db.close()
+        pass
     def baseTerrainChunkFill(self, chunkKey, **kwargs):
         self.activateChunk(chunkKey)
         chunk = self.active[chunkKey]
@@ -66,11 +80,11 @@ class World:
         pchunk = findParent(coordinateKey)
         self.activateChunk(pchunk)
         self.active[pchunk].addElement(coordinateKey, element)
-    def addEntity(self, **entityConstructorArgs):
-        e = Entity(**entityConstructorArgs)
-        pchunk = findParent(e.coordinateKey)
-        self.activateChunk(pchunk)
-        self.active[pchunk].addElement(e.coordinateKey, e)
+        if isinstance(element, Entity):
+            if not self.entities.has_key(element.name):
+                self.entities[element.name] = element
+            else:
+                pass
     def moveElement(self, element, aKey, bKey):
         #Make sure chunks are active
         aChunk = findParent(aKey)

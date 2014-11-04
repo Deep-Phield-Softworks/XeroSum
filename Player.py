@@ -12,9 +12,7 @@ class Player(Entity):
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)
         Entity.__init__(self, **kwargs)
-        self.acceptedKWARGS = {'SCREEN_SIZE': [1366, 768],
-                               'World': None,
-                               'Shape': None
+        self.acceptedKWARGS = {
                                }
         for key in self.acceptedKWARGS.keys():
             if key in kwargs.keys():
