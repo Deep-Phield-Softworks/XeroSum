@@ -171,10 +171,10 @@ if not os.path.isfile(WORLD.db):##Run Test Terrain Gen
                    'imageKey':'rose.png',
                    'name':'PLAYER'}
     PLAYER = Player(**player_args)
+    WORLD.entities['PLAYER'] = PLAYER
     WORLD.addElement(oKey, PLAYER)
     activeArgs = {'origin': oKey, 'magnitude': [10,10,0], 'towardsNegInf': False}
     activeShape = Cube(**activeArgs)
-    #These lines cause the list of active chunks to be updated indirectly
     for key in activeShape.areaKeyList:
         WORLD.getCoordinateObj(key)
     makeTestTerrain()
