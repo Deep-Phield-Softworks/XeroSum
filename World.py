@@ -18,11 +18,9 @@ class World:
         self.active = dict()
         self.gameTurn = 0
         self.tickAccumulator = 0
-        self.entities = dict()
     def close(self):
         self.deactivateChunk(*self.active.keys())
         db = shelve.open(self.db)
-        db['entities'] = self.entities
         db.close()
     def baseTerrainChunkFill(self, chunkKey, **kwargs):
         self.activateChunk(chunkKey)

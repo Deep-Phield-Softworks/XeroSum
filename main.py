@@ -30,7 +30,6 @@ SELECTED = None #Currently selected Entity
 
 ###Main Loop###
 def mainLoop():
-    global VIEW
     #Check if music is (not) playing...
     #if not pygame.mixer.music.get_busy(): #If no music...
         #playRandomSong() #Play a random song
@@ -47,9 +46,8 @@ def mainLoop():
             pass
     TICK = CLOCK.tick()
     WORLD.TICK(TICK)
-    moveView()
-    VIEW.render()
-    SCREEN.blit(VIEW.surface, (0,0))
+    playerView.render()
+    SCREEN.blit(playerView.surface, (0,0))
     drawScreenText() #Draw text onto SCREEN
     pygame.display.flip()      
 
@@ -89,7 +87,7 @@ def mouseLeftClick(event):
     SCREEN_TEXT_TOP = []
     point = (event.pos[0],event.pos[1])
     collideList = []
-    for e in VIEW.hitBoxList:
+    for e in playerView.hitBoxList:
         if e[0].collidepoint(point):
             if within(e[0], point):
                 collideList.append(e)
@@ -106,13 +104,13 @@ def mouseRightClick(event):
     if SELECTED:
         point = (event.pos[0],event.pos[1])
         goalKeys = []
-        for e in VIEW.hitBoxList:
+        for e in playerView.hitBoxList:
             if e[0].collidepoint(point):
                 if within(e[0], point):
                     if isinstance(e[1], Tile):
                         goalDict = dict()
                         goalDict[e[1].parentCoordinate] = 0
-                        p = Path(goalDict, SELECTED, Cube(**viewArgs))
+                        p = Path(goalDict, SELECTED, Cube(**cubeargs))
                         SELECTED.path = p
 
 #Draw text to the screen.
@@ -157,39 +155,26 @@ def makeTestTerrain():
         WORLD.randomFillChunkFeature(key, **rocks)
         WORLD.randomFillChunkFeature(key, **bushes)
         WORLD.randomFillChunkFeature(key, **trees)
-def moveView():
-    if viewOrigin != PLAYER.parentCoordinate:
-        pass
 
 ####TEST WORLD INIT####
 WORLD = World("TEST")
+origin = [0,0,0]
+oKey = makeKey(origin)
+cubeargs = {'origin': oKey, 'magnitude': [10,10,0], 'towardsNegInf': False}
+shape = Cube(**cubeargs)
 #If world db shelf not in existence...
 if not os.path.isfile(WORLD.db):##Run Test Terrain Gen
-    oKey = makeKey([0,0,0])
     player_args = {'world':WORLD,
                    'coordinateKey': oKey,
                    'imageKey':'rose.png',
-                   'name':'PLAYER'}
+                   'Shape': shape,
+                   'name':'Rose'}
     PLAYER = Player(**player_args)
-    WORLD.entities['PLAYER'] = PLAYER
     WORLD.addElement(oKey, PLAYER)
-    activeArgs = {'origin': oKey, 'magnitude': [10,10,0], 'towardsNegInf': False}
-    activeShape = Cube(**activeArgs)
-    for key in activeShape.areaKeyList:
-        WORLD.getCoordinateObj(key)
+    playerView = WorldView(WORLD, shape, SCREEN_SIZE)
     makeTestTerrain()
-else:#Else just make the VIEW
-    WORLD.loadWorldVariables()
-    PLAYER = WORLD.entities['PLAYER'] 
-    oKey = PLAYER.parentCoordinate
-    ###!Bad code here!###
-    WORLD.getCoordinateObj(oKey)
-    
-    ###!Bad code here!###
-viewArgs = {'origin': oKey, 'magnitude': [10,10,0], 'towardsNegInf': False}
-viewShape = Cube(**viewArgs)
-VIEW = WorldView(WORLD, viewShape, SCREEN_SIZE)
-viewOrigin = PLAYER.parentCoordinate
+else:#Else just make the playerView
+    playerView = WorldView(WORLD, shape, SCREEN_SIZE)
 
 ###DEBUG###
 print "ACTIVE CHUNKS #:", len(sorted(WORLD.active.keys()))
