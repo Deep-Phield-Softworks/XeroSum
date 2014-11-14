@@ -24,13 +24,6 @@ class World:
         db = shelve.open(self.db)
         db['entities'] = self.entities
         db.close()
-    def loadWorldVariables(self):
-        db = shelve.open(self.db)
-        #Load Persistent World Variables
-        if db.has_key('entities'):
-            self.entities = db['entities']
-        db.close()
-        pass
     def baseTerrainChunkFill(self, chunkKey, **kwargs):
         self.activateChunk(chunkKey)
         chunk = self.active[chunkKey]
