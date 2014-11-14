@@ -12,7 +12,7 @@ PLATFORM = sys.platform
 SUPPORTED = pygame.display.list_modes() #List of supported resolutions in order from greatest to least
 MODES = 0  #Storage variable for all the supportable display modes 
 SCREEN_SIZE = [pygame.display.Info().current_w, pygame.display.Info().current_h]
-print "SCREEN_SIZE", SCREEN_SIZE
+#print "SCREEN_SIZE", SCREEN_SIZE
 SCREEN = pygame.display.set_mode(SCREEN_SIZE, pygame.FULLSCREEN)
 COLORKEY = pygame.Color('#0080ff')
 SCREEN.set_colorkey(COLORKEY)

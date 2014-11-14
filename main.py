@@ -14,6 +14,7 @@ from WorldView import WorldView
 from Path import Path
 from Entity import Entity
 from Tile import Tile
+from unboundMethods import *
 ####Font Variables###
 pygame.font.init()
 #AVAILABLE_FONTS = pygame.font.get_fonts() #Not needed atm. Here as a reminder.
