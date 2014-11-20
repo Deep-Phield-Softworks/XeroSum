@@ -9,7 +9,7 @@ pygame.init()
 SCREEN_SIZE = [pygame.display.Info().current_w, pygame.display.Info().current_h]
 SCREEN = pygame.display.set_mode(SCREEN_SIZE, pygame.FULLSCREEN)
 #World initialization
-WORLD = World("TEST")
+WORLD = World("DEMO")
 originKey = '0_0_0'
 cubeargs = {'origin': originKey, 'magnitude': [10,10,0], 'towardsNegInf': False}
 shape = Cube(**cubeargs)
