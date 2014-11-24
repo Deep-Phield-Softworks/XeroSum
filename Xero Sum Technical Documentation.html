@@ -1,0 +1,186 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Xero Sum Technical Documentation</title>
+  </head>
+  <body>
+    <h2 align="center">Xero Sum Technical Documentation</h2>
+    <br>
+    <big><b>Brief Tutorial</b></big><br>
+    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; At this point, Xero Sum is
+    divided into two main parts. There is main.py that executes the main
+    program loop and the data object types that store the data and
+    reflect changes in the state of the game world. One could also make
+    and display a world using their own version of main.py. In this
+    tutorial we will create a Xero Sum World object and use a WorldView
+    object to draw it to the screen.<br>
+    &nbsp;<br>
+    -First create a new python file in the same directory as the Xero
+    Sum. I am going to call my file “demo.py” and will leave it in the
+    main directory of Xero Sum.<br>
+    -The first few lines we will need to import the modules and classes
+    we need.<br>
+    <br>
+    <i>import pygame, sys</i><i><br>
+    </i><i>from AoE import *</i><i><br>
+    </i><i>from World import World</i><i><br>
+    </i><i>from WorldView import WorldView</i><i><br>
+    </i><br>
+    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Pygame is the renderer used to
+    draw to the screen. We will also import sys, which is standard
+    python module. We will use sys to exit the program more gracefully.
+    After the first line we have some Xero Sum specific modules: AoE,
+    World and WorldView. World is the object that stores all the other
+    game obejcts. It controls the database to store and retrieve these
+    objects. WorldView is an object that takes an area of the World
+    object and gathers all the data needed to display that area of the
+    World. AoE (short for Area of Effect) is a module that defines Shape
+    objects. Shape objects are a convenient way to store lists of
+    coordinates. WorldView objects use Shapes to define the set of
+    Coordinates of the view.<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Next, we will have some lines
+    of code for initialization of the Pygame display surface. Before
+    anything can be drawn we have to initialize pygame and tell it the
+    size of the display we want.<br>
+    <br>
+    <i>pygame.init()</i><i><br>
+    </i><i>SCREEN_SIZE = [pygame.display.Info().current_w,
+      pygame.display.Info().current_h]</i><i><br>
+    </i><i>SCREEN = pygame.display.set_mode(SCREEN_SIZE,
+      pygame.FULLSCREEN)</i><i><br>
+    </i><br>
+    Now, we come to some more Xero Sum specific lines of code.<i><br>
+    </i><i><br>
+    </i><i>WORLD = World("DEMO")</i><i><br>
+    </i><i>originKey = '0_0_0'</i><i><br>
+    </i><i>cubeargs = {'origin': originKey, 'magnitude': [10,10,0],
+      'towardsNegInf': False}</i><i><br>
+    </i><i>shape = Cube(**cubeargs)</i><i><br>
+    </i><i>VIEW = WorldView(WORLD, shape, SCREEN_SIZE)</i><br>
+    <br>
+    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; We make a World Object and
+    name it “DEMO”. This does more than is readily apparent. It also
+    creates a python shelve object to use as a database. The name of the
+    shelve object will be "World Name" + "Shelf". Or "DEMOShelf" in this
+    example. We will also need a coordinate to be the center or focus of
+    the WorldView object we will be making. I choose X=0, Y=0, Z=0 and
+    store these three values in a string named originKey. Each of the
+    axes' value is seperated by an underscore. <br>
+    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Next, I create a dictionary of
+    arguments to be used in creating a Shape object. Most objects in
+    Xero Sum are created in this manner. A dictionary of values are made
+    and then an object is created using them. This approach facilitates
+    useful inheritance as the same dictionary can be passed from each
+    object class to it's parent class and each class can be made to use
+    the arguments stored in keys that pertain to it and ignore the rest.
+    The length of the dictionary can also be kept short if each class is
+    given default values to use in the case that the dictionary doesn't
+    override those defaults.<br>
+    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; The Shape being created has an
+    origin at "0_0_0", a magnitude (or size) of 10x10x0(really becomes
+    10x10x1) and the "towardsNegInf" argument places the origin in the
+    center of the shape, rather than at the "bottom left" corner of it.
+    Now, we make the Shape usign the Cube class constructor and the
+    cubeargs dictionary. Then we create our WorldView object and store
+    it in the variable VIEW.<br>
+    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; When VIEW is initialized, it
+    does some things behind the scenes. It takes the Shape it was given
+    and determines which Chunks of the World are involved and it adds
+    those Chunks to the dictionary of active Chunks stored by the World.
+    It also creates a pygame Surface to render onto and which we will
+    later draw to the display. We could display VIEW at this point, but
+    there would be nothing to see until we fill the World with some
+    terrain and objects.<br>
+    <br>
+    <i>#Fill active chunks in VIEW with terrain</i><i><br>
+    </i><i>baseTerrain = {'imageKey': 'grass.png'}</i><i><br>
+    </i><i>rocks = {'imageKey':'rocks.png', 'speedModifier': 1.25,
+      'layer': 1.0}</i><i><br>
+    </i><i>bushes = {'imageKey': 'bush.png', 'speedModifier': 1.50,
+      'layer': 1.1}</i><i><br>
+    </i><i>for key in sorted(WORLD.active.keys()):</i><i><br>
+    </i><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      WORLD.baseTerrainChunkFill(key, **baseTerrain)</i><i><br>
+    </i><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      WORLD.randomFillChunkFeature(key, **rocks)</i><i><br>
+    </i><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      WORLD.randomFillChunkFeature(key, **bushes)</i><br>
+    &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;<br>
+    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; To make the World more
+    interesting, we create a few dictionaries of arguments describing
+    various types of terrain. In this case, a grassy base terrain to go
+    down first and then some rocks and bushes for flavor. We then pass
+    each one of these arguments of dictionaries to a method of WORLD so
+    that it can add them to the database as appropriate. We pass the
+    arguments rather than an object so that each rock or bush can be
+    created and stored as a unique object. We use an iteration throught
+    the active Chunks by key to add the desired terrain features to each
+    Chunk.<br>
+    <br>
+    <i>#Render the VIEW now that there is somethign to see</i><i><br>
+    </i><i>VIEW.render()</i><i><br>
+    </i><i>SCREEN.blit(VIEW.surface, (0,0))</i><i><br>
+    </i><i>pygame.display.flip() </i><i><br>
+    </i><br>
+    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Now that we have a VIEW
+    populated with terrain to draw, we use the render method of VIEW to
+    cause it to draw all the on screen objects to its own pygame Surface
+    and then we blit VIEWs' Surface to the SCREEN. Finally, we have
+    pygame flip the display to refresh the physical screen's display. If
+    we ran the demo.py at this point it would likely draw to the screen
+    and then disappear before we had a chance to see much of anything.
+    We need a simple main control loop to keep the program running until
+    we wish to exit it.<br>
+    <br>
+    <i>#Main control loop</i><i><br>
+    </i><i>while True:</i><i><br>
+    </i><i>&nbsp;&nbsp;&nbsp; for event in pygame.event.get():#Go
+      through all events</i><i><br>
+    </i><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if event.type ==
+      pygame.QUIT: #If the little x in the window was clicked...</i><i><br>
+    </i><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      WORLD.close()</i><i><br>
+    </i><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      sys.exit()</i><i><br>
+    </i><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if event.type ==
+      pygame.KEYDOWN:</i><i><br>
+    </i><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      pressed_keys = pygame.key.get_pressed()</i><i><br>
+    </i><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      if pressed_keys[pygame.K_ESCAPE]:</i><i><br>
+    </i><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      WORLD.close()</i><i><br>
+    </i><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      sys.exit() &nbsp;</i><br>
+    <br>
+    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; With this control loop in the
+    code, the World is created and drawn once. Then the progam waits
+    until the Escape key is pressed to exit. Now we can actually see
+    what we have made. Each time we run the demo.py there will be more
+    and more terrain added. If we wish to delete the World and start
+    over again, we must find the "DEMOShelf" file and delete that as it
+    contains the World's database. Then, a new database will be created
+    the next time the demo.py is run.<br>
+    <br>
+    <div align="center"><b><big>main.py</big></b><br>
+    </div>
+    <br>
+    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; main.py is the entry point
+    into the execution of Xero Sum. When run it will change the path
+    variable to the file directory where main.py resides. This is
+    necessary so that it can find expected files relative to that
+    absolute path (Xero Sum imports, game resources, etc).<br>
+    main.py is divided into four major sections that occur roughly in
+    this linear order in the file:<br>
+    1.&nbsp;&nbsp; &nbsp;import statements<br>
+    2.&nbsp;&nbsp; &nbsp;main loop definition<br>
+    3.&nbsp;&nbsp; &nbsp;user inputs definitions<br>
+    4.&nbsp;&nbsp; &nbsp;world initialization<br>
+    <br>
+    Import Statements in main.py<br>
+    <br>
+  </body>
+</html>
