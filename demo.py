@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 #Imports
 import pygame, sys, os
+#Change the CWD to wherever the demo.py resides
+os.chdir(sys.path[0])
 from AoE import *
 from World import World
 from WorldView import WorldView
-#Change the CWD to wherever the demo.py resides
-os.chdir(sys.path[0])
+
 #Pygame display initialization
 pygame.init()
 SCREEN_SIZE = [pygame.display.Info().current_w, pygame.display.Info().current_h]
