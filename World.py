@@ -71,11 +71,6 @@ class World:
         pchunk = findParent(coordinateKey)
         self.activateChunk(pchunk)
         self.active[pchunk].addElement(coordinateKey, element)
-        if isinstance(element, Entity):
-            if not self.entities.has_key(element.name):
-                self.entities[element.name] = element
-            else:
-                pass
     def moveElement(self, element, aKey, bKey):
         #Make sure chunks are active
         aChunk = findParent(aKey)
