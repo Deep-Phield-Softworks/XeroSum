@@ -88,55 +88,65 @@ class World:
     ######NOTE#####
     #-Currently if TICK > 2000, only one turn will be taken and the TICK will become < 1000. Not sure this is the correct failure mode.
     #-TICK is being stored in ZODB. Not sure of performace ramifications here.
+    ######NOTE#####
     def tick(self, TICK):
-        self.db['tick_accumulator'] += TICK
-        if self.db['tick_accumulator'] % 1000:
-            self.db['game_turn'] += 1
-            self.db['tick_accumulator'] = self.db['tick_accumulator'] % 1000
-        for key in self.db['active_chunks'].keys():
-            self.db['active_chunks'][key].tick(TICK, self.db['game_turn'])
+        self.db['tick_accumulator'] += TICK #Increment tick accumulator
+        if self.db['tick_accumulator'] % 1000: #If % 1000 leaves a remainder...
+            self.db['game_turn'] += 1                        #Increment game turn 
+            self.db['tick_accumulator'] = self.db['tick_accumulator'] % 1000 #Get tick accumulator remainder
+        for key in self.db['active_chunks'].keys(): #For each active chunk
+            self.db['active_chunks'][key].tick(TICK, self.db['game_turn'])  #Cascade the game turn
 
-    def addElement(self, coordinateKey, element):
-        pchunk = find_parent(coordinateKey)
-        self.activateChunk(pchunk)
-        self.db['active_chunks'][pchunk].addElement(coordinateKey, element)
+    #Given: coordinate_key as string and an object reference as element
+    #Add (probably new) element to a Coordinate object's contents
+    def add_element(self, coordinate_key, element):
+        pchunk = find_parent(coordinate_key)
+        self.activate_chunk(pchunk)
+        self.db['active_chunks'][pchunk].add_element(coordinate_key, element)
+        transaction.commit()
 
-    def moveElement(self, element, aKey, bKey):
-        #Make sure chunks are active
+    #Given: element as an object reference, and aKey and bKey as Coordinate object key strings
+    #Move element from Coordinate aKey to Coordinate bKey
+    def move_element(self, element, aKey, bKey):
+        #Find Chunks involved
         aChunk = find_parent(aKey)
         bChunk = find_parent(bKey)
-        self.activateChunk(aChunk)
-        self.activateChunk(bChunk)
-        self.db['active_chunks'][aChunk].removeElement(aKey, element)
-        self.db['active_chunks'][bChunk].addElement(bKey, element)
+        self.activate_chunk(aChunk,  bChunk) #Make sure they are active
+        self.db['active_chunks'][aChunk].remove_element(aKey, element) #Remove from aKey
+        self.db['active_chunks'][bChunk].add_element(bKey, element)       #Move to bKey
+        transaction.commit()
 
-    def getCoordinateObj(self, coordinateKey):
-        parentChunk = find_parent(coordinateKey)
-        self.activateChunk(parentChunk)
-        return self.db['active_chunks'][parentChunk].coordinates[coordinateKey]
+    #Given: coordinate_key as Coordinate object key string
+    #Return: Coordinate object's reference
+    def get_coordinate_obj(self, coordinate_key):
+        return self.db['chunks'][find_parent(coordinate_key)].coordinates[coordinate_key]
 
-    def baseTerrainChunkFill(self, chunkKey, **kwargs):
-        self.activateChunk(chunkKey)
-        chunk = self.db['active_chunks'][chunkKey]
-        origin = chunk.coordinatesList[0].key
-        shapeargs = {'origin': origin, 'magnitude':self.CHUNK_SIZE}
-        ground = Square(**shapeargs).areaKeyList
-        for c in ground:
-            chunk.coordinates[c].addElement(Tile(**kwargs))
+    #Given: chunk_key as Chunk object key string, **tile_args as a **kwarg dict of Tile object creation arguements
+    #Make a terrain layer of Tile objects for the given Chunk
+    def chunk_terrain_base_fill(self, chunk_key, **tile_args):
+        self.activate_chunk(chunk_key) #Activate the Chunk
+        chunk = self.db['active_chunks'][chunk_key]  #Assign to variable chunk for clarity
+        origin = chunk.coordinates_list[0].key                  #Get chunk Coordinate object origin
+        shape_args = {'origin': origin, 'magnitude':self.CHUNK_SIZE} #Make a dict of shape args
+        ground = Square(**shape_args).area_key_list #Make a shape that includes all the Chunk's Coordinates
+        for c in ground: #For each Coordinate
+            chunk.coordinates[c].add_element(Tile(**tile_args)) #Add a Tile object made with **tile_args as the arguements
     
-    def randomFillChunkFeature(self, chunkKey, chance = 1, outOf = 10, **kwargs):
-        self.activateChunk(chunkKey)
-        for c in self.db['active_chunks'][chunkKey].coordinatesList:
-            r = random.randint(0, outOf - 1)
+    #Given: chunk_key as Chunk object key string, chance  and out_of as ints to control probability per Coordinate of 
+    #           placing feature, and **feature_args as a **kwarg dict of Feature object creation arguements
+    #Create and place randomly Feature objects in the given Chunk
+    def chunk_random_feature_fill(self, chunk_key, chance = 1, out_of = 10, **feature_args):
+        self.activate_chunk(chunk_key)
+        for c in self.db['active_chunks'][chunk_key].coordinates_list:
+            r = random.randint(0, out_of - 1)
             if r < chance:
-                f = Feature(**kwargs)
-                if not 'floatOffset' in kwargs: #If floatOffset not specified..
-                    ranges = f.floatOffsetRanges #Get ranges..
-                    f.floatOffset = [random.uniform(ranges[0][0],ranges[0][1]),
-                                     random.uniform(ranges[1][0],ranges[1][1])]
-                    #f.determinePixelOffset()
-                f.determinePixelOffset()
-                c.addElement(f)
+                f = Feature(**feature_args)
+                if not 'float_offset' in kwargs: #If floatOffset not specified..
+                    ranges = f.float_offset_ranges #Get ranges..
+                    f.float_offset = [random.uniform(ranges[0][0],ranges[0][1]),
+                                              random.uniform(ranges[1][0],ranges[1][1])]
+                f.determine_pixel_offset()
+                c.add_element(f)
 
 if __name__ == "__main__":
     w = World('World1')
