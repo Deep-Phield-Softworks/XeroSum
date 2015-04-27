@@ -4,7 +4,7 @@ import random
 
 from ZODB import FileStorage, DB
 from BTrees.OOBTree import OOBTree
-from persistent.mapping import PersistentMapping as pmap
+from persistent.mapping import PersistentMapping as pdict
 from persistent.list import PersistentList as plist
 import transaction
 
@@ -31,7 +31,8 @@ class World:
         self.db = self.open(name,  db_file)
         self.init_args = {'CHUNK_SIZE': CHUNK_SIZE,
                                    'TILE_SIZE' : TILE_SIZE, 
-                                   'active_chunks' :  pmap(),
+                                   'active_chunks' :  pdict(),
+                                   'chunks' :  pdict(),
                                    'game_turn' : 0, 
                                    'tick_accumulator' : 0 
                                  } 
@@ -55,37 +56,45 @@ class World:
             if not self.db.has_key(key):
                 self.db[key] = val
         transaction.commit()
-
+        
+    #Given: No args
+    #Close the chunks and save the DB    
     def close(self):
         self.deactivate_chunk(*self.db['active_chunks'].keys())
-        db = shelve.open(self.db)
-        db.close()
+        transaction.commit()
 
+    #Given: *keys as a list of Chunk object key strings for use in self.db['active_chunks']
+    #Activates the given Chunk objects(loading their images ie) and creating new Chunks if needed.
     def activate_chunk(self, *keys):
         for key in keys:
-            if not self.db['active_chunks'].has_key(key):
-                if self.db.has_key(key): #If Chunk exists..
-                    self.db['active_chunks'][key] = db[key] #Load it into active Chunks
-                else:               #Else if Chunk doesn't exist
-                    self.db['active_chunks'][key] = Chunk(key, self.gameTurn, self.CHUNK_SIZE) #Make it and load it
-                    db[key] = self.db['active_chunks'][key] #Save chunk in db
-                db.close()
-                self.db['active_chunks'][key].load()
-
-    def deactivateChunk(self, *keys):
+            if not self.db['active_chunks'].has_key(key): #IF Chunk isn't active...
+                if not self.db['chunks'].has_key(key): #If Chunk does NOT exists..
+                    self.db['chunks'][key] = Chunk(key, self.gameTurn, self.CHUNK_SIZE) #Make it
+                self.db['active_chunks'][key] = self.db['chunks'][key] #Add it to active Chunks    
+                self.db['active_chunks'][key].load() #Have Chunk load itself
+        transaction.commit()
+    
+    #Given: *keys as a list of Chunk object key strings for use in self.db['active_chunks']
+    def deactivate_chunk(self, *keys):
         for key in keys:
-            self.db['active_chunks'][key].unload()
-            db = shelve.open(self.db)
-            db[key] = self.db['active_chunks'][key]
-            db.close()
+            if self.db['active_chunks'].has_key(key): #IF Chunk is active...
+                self.db['active_chunks'][key].unload()   #Unload Chunk
+                self.db['chunks'][key] = self.db['active_chunks'][key] #Save Chunk back into DB (Necessary?)
+                self.db['active_chunks'] = {keys:d[keys] for keys in d if keys != key} #Remove key from self.db['active_chunks']
+        transaction.commit()
 
-    def TICK(self, TICK):
-        self.tickAccumulator += TICK
-        if self.tickAccumulator % 1000:
-            self.gameTurn += 1
-            self.tickAccumulator = self.tickAccumulator % 1000
-        for chunkKey in self.db['active_chunks'].keys():
-            self.db['active_chunks'][chunkKey].TICK(TICK, self.gameTurn)
+    #Given: int TICK as number of milliseconds that has passed since last time tick was called
+    #Cascade the tick through all active Chunks
+    ######NOTE#####
+    #-Currently if TICK > 2000, only one turn will be taken and the TICK will become < 1000. Not sure this is the correct failure mode.
+    #-TICK is being stored in ZODB. Not sure of performace ramifications here.
+    def tick(self, TICK):
+        self.db['tick_accumulator'] += TICK
+        if self.db['tick_accumulator'] % 1000:
+            self.db['game_turn'] += 1
+            self.db['tick_accumulator'] = self.db['tick_accumulator'] % 1000
+        for key in self.db['active_chunks'].keys():
+            self.db['active_chunks'][key].tick(TICK, self.db['game_turn'])
 
     def addElement(self, coordinateKey, element):
         pchunk = find_parent(coordinateKey)

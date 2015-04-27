@@ -1,6 +1,11 @@
 #!/usr/bin/env python
+from persistent.mapping import PersistentMapping as pdict
+from persistent.list import PersistentList as plist
+
+
 from unboundmethods import key_to_XYZ,  make_key
 from coordinate import Coordinate
+
 #Chunk objects are containers for organizing coordinates into sets that are
 #either active or inactive. Chunks have the following properties:
 #-They are bounded planes composed of ordered sets of coordinates
@@ -16,8 +21,8 @@ class Chunk:
         self.XYZ = key_to_XYZ(key)
         self.chunk_size = chunk_size
         self.game_turn_created = game_turn
-        self.coordinates = dict()
-        self.coordinates_list = []
+        self.coordinates = pdict()
+        self.coordinates_list = plist()
         self.chunk_range = self.define_chunk_range()
         self.make_coordinates(self.chunk_range)
         self.last_active_game_turn = self.game_turn_created
