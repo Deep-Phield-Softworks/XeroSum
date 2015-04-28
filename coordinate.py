@@ -1,12 +1,13 @@
 #!/usr/bin/env python
-from unboundmethods import *
+from persistent.list import PersistentList as plist
+
+
+from unboundmethods import key_to_XYZ,  make_key
 from tile import Tile
 from feature import Feature
 from item import Item
 from entity import Entity
 from field import Field
-
-
 #Coordinates objects represent a location in a x,y,z coordinate plane.
 #Coordinates have the properties:
 #-Low level container of the other data object types
@@ -18,25 +19,26 @@ from field import Field
 # to the respective list
 #-Coordinates can return their contents by using the contains() method
 #-Coordinates can tick their contents
-#-Coordinates can sort their contents by using floatOffsets
+#-Coordinates can sort their contents by using floatOffsets (Deprecated, done in worldview.render())
 #-Coordinates know whether their contents block Line of Sight
 class Coordinate:
     def __init__(self, key):
         self.key = key
-        self.XYZ = keyToXYZ(key)
+        self.XYZ = key_to_XYZ(key)
         self.x = self.XYZ[0]
         self.y = self.XYZ[1]
         self.z = self.XYZ[2]
         self.empty = True
-        self.tiles  = []
-        self.features = []
-        self.items    = []
-        self.entities = []
-        self.fields   = []
-        self.parentChunk  = makeKey([self.x/16, self.y/16, self.z])
+        self.tiles  = plist([])
+        self.features = plist([])
+        self.items    = plist([])
+        self.entities = plist([])
+        self.fields   = plist([])
+        self.parent_chunk  = make_key([self.x/16, self.y/16, self.z])
         self.blockLOS = False
+    
     #Add an element to a list of corresponding types
-    def addElement(self, element):
+    def add_element(self, element):
         self.empty = False
         if isinstance(element, Tile):
             self.tiles.append(element)
@@ -48,29 +50,29 @@ class Coordinate:
             self.entities.append(element)
         if isinstance(element, Field):
             self.fields.append(element)
-        element.parentCoordinate = self.key
+        element.parent_coordinate = self.key
         self.updateLOS()
-        #self.orderContents()
+
     #Remove an element
-    def removeElement(self, element):
+    def remove_element(self, element):
         if isinstance(element, Tile):
-            #if element in self.tiles:
+            if element in self.tiles:
                 self.tiles.remove(element)
         if isinstance(element, Feature):
-            #if element in self.features:
+            if element in self.features:
                 self.features.remove(element)
         if isinstance(element, Item):
-            #if element in self.items:
+            if element in self.items:
                 self.items.remove(element)
         if isinstance(element, Entity):
-            #if element in self.entities:
+            if element in self.entities:
                 self.entities.remove(element)
         if isinstance(element, Field):
-            #if element in self.fields:
+            if element in self.fields:
                 self.fields.remove(element)
-        element.parentCoordinate = None
+        element.parent_coordinate = None
         #Update self.empty boolean
-        empty = True #Initializze to True
+        empty = True #Initialize to True
         for archtype in self.contains(): #For each list in self.contains()..
             if len(archtype) > 0:         #If len(list) > 0...
                 empty = False              #Empty is false
@@ -78,38 +80,31 @@ class Coordinate:
         self.empty = empty
         self.updateLOS()
     #Return a flat list of all contained elements
-    def listAll(self):
-        elements = self.tiles+self.features+self.items+self.entities+self.fields
-        return elements
+    def list_all(self):
+        return self.tiles+self.features+self.items+self.entities+self.fields
+        
     #Return ordered list of lists by object archetype.
     def contains(self):
-        contents = []
-        contents.append(self.tiles)
-        contents.append(self.features)
-        contents.append(self.items)
-        contents.append(self.entities)
-        contents.append(self.fields)
-        return contents
-    def TICK(self, TICK):
+        return [self.tiles, self.features, self.items, self.entities,  self.fields]
+    
+    def tick(self, TICK):
         if not self.empty:
             for archtype in self.contains():
                 for e in archtype:
-                    e.TICK(TICK)
+                    e.tick(TICK)
+    
     def load(self):
-        #if not self.empty:
-        for e in self.entities:
-            e.load()
+        [e.load() for e in self.entities]
+    
     def unload(self):
-        #if not self.empty:
-        for e in self.entities:
-            e.unload()
+        [e.unload() for e in self.entities]
+    
     def updateLOS(self):
         blockLOS = False 
-        elements = self.listAll()
+        elements = self.list_all()
         for e in elements:
             if hasattr(e, 'blocksLOS'):
                 if e.blocksLOS:
                     blockLOS = True
                     break
         self.blockLOS = blockLOS
-        pass
