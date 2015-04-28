@@ -9,7 +9,7 @@ from matter import Matter
 #-should have a float offset of [0.0,0.0] to prevent gaps.
 #Examples: dirt floor, rubble floor, gravel floor
 #
-#Accepted **kwargs in self.acceptedKWARGS:
+#Accepted **kwargs in self.accepted_kwargs:
 #-speedModifier => float value in range 0 < x < float(+inf). Represents the
 #                  change in travel speed caused by this tile. Lower values are
 #                  faster.
@@ -17,18 +17,18 @@ from matter import Matter
 class Tile(Matter):
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)
-        self.acceptedKWARGS = {'speedModifier': 1.0, 'layer': 0.1}
-        for key in self.acceptedKWARGS.keys():
+        self.accepted_kwargs = {'speedModifier': 1.0, 'layer': 0.1}
+        for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])
             else:
-                self.__setattr__(key, self.acceptedKWARGS[key])
+                self.__setattr__(key, self.accepted_kwargs[key])
         #No Tiles offset. Would create gaps. Only here as placeholder values.
-        self.floatOffset = [0.0,0.0]
-        self.pixelOffsets = [0, 0]
-    def determinePixelOffset(self):
+        self.float_offset = [0.0,0.0]
+        self.pixel_offsets = [0, 0]
+    def determine_pixel_offset(self):
         #Tiles should not be offset. Would create gaps
-        return self.pixelOffsets
-    def TICK(self, TICK): 
+        return self.pixel_offsets
+    def tick(self, TICK): 
         pass #Tiles do nothing by default when ticked atm.
     

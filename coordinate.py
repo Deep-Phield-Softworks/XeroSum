@@ -73,8 +73,8 @@ class Coordinate:
         element.parent_coordinate = None
         #Update self.empty boolean
         empty = True #Initialize to True
-        for archtype in self.contains(): #For each list in self.contains()..
-            if len(archtype) > 0:         #If len(list) > 0...
+        for archetype in self.contains(): #For each list in self.contains()..
+            if len(archetype) > 0:         #If len(list) > 0...
                 empty = False              #Empty is false
                 break                       #No need to continue... 
         self.empty = empty
@@ -89,8 +89,8 @@ class Coordinate:
     
     def tick(self, TICK):
         if not self.empty:
-            for archtype in self.contains():
-                for e in archtype:
+            for archetype in self.contains():
+                for e in archetype:
                     e.tick(TICK)
     
     def load(self):
