@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from matter import Matter
+
 #Items are objects that can be placed into inventory. They are:
 #-unable to move themselves(usually)
 #-movable from ground to inventory
@@ -17,7 +18,7 @@ from matter import Matter
 class Item(Matter):
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)
-        self.accepted_kwargs = {'tall': 0, 'floatOffset': [0.5, 0.5], 'layer': 1.5}
+        self.accepted_kwargs = {'tall': 0, 'float_offset': [0.5, 0.5], 'layer': 1.5}
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])

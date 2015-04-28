@@ -13,89 +13,90 @@ from Matter import Matter
 #-have a speed which defines how often they act
 #-have an action queue that defines their actions and the time costs
 #Examples: a dog, person
-#Accepted **kwargs in self.acceptedKWARGS:
+#Accepted **kwargs in self.accepted_kwargs:
 #-'world' => World object that contains the entity and to whom it reports its
 #            movements
-#-'coordinateKey' => key string of containing Coordinate
+#-'coordinate_key' => key string of containing Coordinate
 #-'impassible'  => Boolean value for whether the Entity makes the containing
 #                  Coordinate not be considered by Path objects. I left this as
 #                  optional but defaults to True as I can imagine incorporeal or
 #                  miniscule entities that might not block movement.
-#-'floatOffset' => list of two floats that represent how far from the center of
+#-'float_offset' => list of two floats that represent how far from the center of
 #                  the parent Coordinate the object lies. [0.5, 0.5] would be
 #                  centered on the parent Coordinate.
 #-'layer'       => Numeric value to be used in render ordering. 
-class Entity(Matter): #entity(world, coordinateKey, imageKey)
+class Entity(Matter): #entity(world, coordinate_key, imageKey)
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)
-        self.acceptedKWARGS = {'world': None,
-                               'coordinateKey': '0_0_0',
-                               'impassible': True,
-                               'layer': 1.2,
-                               'floatOffset': [0.5, 0.5]}
-        for key in self.acceptedKWARGS.keys():
+        self.accepted_kwargs = {'world': None,
+                                                 'coordinate_key': '0_0_0',
+                                                 'impassible': True,
+                                                 'layer': 1.2,
+                                                 'float_offset': [0.5, 0.5]
+                                               }
+        for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])
             else:
-                self.__setattr__(key, self.acceptedKWARGS[key]) 
+                self.__setattr__(key, self.accepted_kwargs[key]) 
         #Render related local variables..
-        self.SpriteSheet = SPRITE_MANIFEST[self.imageKey] 
-        self.width   = self.SpriteSheet.frameWidth
-        self.height  = self.SpriteSheet.frameHeight
+        self.sprite_sheet = SPRITE_MANIFEST[self.image_key] 
+        self.width   = self.sprite_sheet.frameWidth
+        self.height  = self.sprite_sheet.frameHeight
         self.tall    = self.height
-        self.lastFrame = 0 #the rendered last frame in a "strip" of frames
+        self.last_frame = 0 #the rendered last frame in a "strip" of frames
         self.facing = 5
-        self.animation = self.SpriteSheet.animations[self.facing]
-        self.frameThreshhold = 100 #167
-        self.moveThreshhold  = 500
-        self.tickAccumulator = 0
-        self.moveAccumulator = 0
+        self.animation = self.sprite_sheet.animations[self.facing]
+        self.frame_threshold = 100 #167
+        self.move_threshold  = 500
+        self.tick_accumulator = 0
+        self.move_accumulator = 0
         self.path = None
-        self.toBlit = self.animation[self.lastFrame]
-        self.pixelOffsets = self.determinePixelOffset()
+        self.to_blit = self.animation[self.last_frame]
+        self.pixel_offsets = self.determine_pixel_offset()
         
-    def determinePixelOffset(self):
-        px = ( TILE_WIDTH/2.0)  - (self.floatOffset[0] * self.width)
-        py = ( TILE_HEIGHT/2.0)
-        py = py - self.tall #- int(self.tall * self.floatOffset[1])
-        #py = py - int(self.tall * self.floatOffset[1])
+    def determine_pixel_offset(self):
+        px = (TILE_WIDTH/2.0)  - (self.float_offset[0] * self.width)
+        py = (TILE_HEIGHT/2.0)
+        py = py - self.tall #- int(self.tall * self.float_offset[1])
+        #py = py - int(self.tall * self.float_offset[1])
         return [int(px), int(py)]
     def load(self):
-        self.SpriteSheet = SPRITE_MANIFEST[self.imageKey]
-        self.animation = self.SpriteSheet.animations[self.facing]
-        self.toBlit = self.animation[self.lastFrame]
+        self.sprite_sheet = SPRITE_MANIFEST[self.image_key]
+        self.animation = self.sprite_sheet.animations[self.facing]
+        self.to_blit = self.animation[self.last_frame]
     def unload(self):
-        self.SpriteSheet = None
+        self.sprite_sheet = None
         self.animation = None
-        self.toBlit = None
+        self.to_blit = None
     def TICK(self, TICK):
         if self.path: #If path is not None
         #Check to see if enough time has accumulated to advance frames
-            self.tickAccumulator += TICK
-            if self.tickAccumulator >= self.frameThreshhold:
-                self.tickAccumulator = 0
-                if self.lastFrame < (len(self.animation)-1):
-                    self.lastFrame += 1
+            self.tick_accumulator += TICK
+            if self.tick_accumulator >= self.frame_threshold:
+                self.tick_accumulator = 0
+                if self.last_frame < (len(self.animation)-1):
+                    self.last_frame += 1
                 else:
-                    self.lastFrame = 0
-            if len(self.animation) <= self.lastFrame:
-                self.lastFrame = len(self.animation) - 1
-            self.toBlit = self.animation[self.lastFrame]
+                    self.last_frame = 0
+            if len(self.animation) <= self.last_frame:
+                self.last_frame = len(self.animation) - 1
+            self.to_blit = self.animation[self.last_frame]
         else: #If no path use idle animation
-            self.animation = self.SpriteSheet.animations[5]
-            self.toBlit = self.animation[self.facing]
+            self.animation = self.sprite_sheet.animations[5]
+            self.to_blit = self.animation[self.facing]
         if self.path: #If path is not None
-            self.moveAccumulator += TICK #Add the ticks in
-            if self.moveAccumulator >= self.moveThreshhold: #If enough ticks...
-                self.moveAccumulator = 0 #Reset Accumulator
-                lastKey = self.path.nodes[self.path.stepIndex]
+            self.move_accumulator += TICK #Add the ticks in
+            if self.move_accumulator >= self.move_threshold: #If enough ticks...
+                self.move_accumulator = 0 #Reset Accumulator
+                lastKey = self.path.nodes[self.path.step_index]
                 more = self.path.advance()      #Advance the path to the next step
                 if more:
-                    nextKey = self.path.nodes[self.path.stepIndex] #Lookup next node
-                    self.facing = self.path.facings[self.path.stepIndex]
-                    self.animation = self.SpriteSheet.animations[self.facing]
-                    self.coordinateKey = nextKey
-                    self.world.moveElement(self, lastKey, nextKey)
+                    next_key = self.path.nodes[self.path.step_index] #Lookup next node
+                    self.facing = self.path.facings[self.path.step_index]
+                    self.animation = self.sprite_sheet.animations[self.facing]
+                    self.coordinate_key = next_key
+                    self.world.moveElement(self, lastKey, next_key)
                 else:
                     self.path = None
-                    self.animation = self.SpriteSheet.animations[5]
+                    self.animation = self.sprite_sheet.animations[5]

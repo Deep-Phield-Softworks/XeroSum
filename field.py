@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-from AoE import *
+from aoe import *
+
 #Field objects are effects or facets of the environment that:
 #-can be considered to have an origin point
 #-can "radiate" from their origin
@@ -16,24 +17,26 @@ from AoE import *
 #-'name'   => either a string or None
 #-'origin' => key string of a Coordinate object that represents the "center" of
 #             a Field
-#-'AoEshape' => Shape or Shape subclass that defines the area that the field
+#-'aoe_shape' => Shape or Shape subclass that defines the area that the field
 #               encompasses
 class Field:
-    def __setattr__(self, name, value):
-        self.__dict__[name] = value
-        
     def __init__(self, **kwargs):
-        #origin, AoEShape, magnitude, name = None
-        self.acceptedKWARGS = {'name': None,
-                               'origin': '0_0_0',
-                               'AoEshape': Shape(**kwargs),
-                               'pixelOffsets': [0,0],
-                               'layer': 0.0}
-        for key in self.acceptedKWARGS.keys():
+        #origin, aoe_shape, magnitude, name = None
+        self.accepted_kwargs = {'name': None,
+                                                 'origin': '0_0_0',
+                                                 'aoe_shape': Shape(**kwargs),
+                                                 'pixelOffsets': [0,0],
+                                                 'layer': 0.0
+                                                }
+        for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])
             else:
-                self.__setattr__(key, self.acceptedKWARGS[key]) 
-    def TICK(self, TICK):
-        errorString = "Subclass of Field must implement TICK method"
-        raise NotImplementedError(errorString)
+                self.__setattr__(key, self.accepted_kwargs[key]) 
+    
+    def tick(self, TICK):
+        errorString = "Subclass of Field must impleerror_stringment tick method"
+        raise NotImplementedError(error_string)
+    
+    def __setattr__(self, name, value):
+        self.__dict__[name] = value
