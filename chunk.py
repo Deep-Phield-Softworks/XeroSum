@@ -30,28 +30,28 @@ class Chunk:
         x = self.XYZ[0] * 16
         y = self.XYZ[1] * 16
         z = self.XYZ[2] #* 16
-        xRange = [ x, x + (self.chunk_size[0]-1)]
-        yRange = [ y, y + (self.chunk_size[1]-1)]
-        zRange = [ z, z + (self.chunk_size[2]-1)]
+        xRange = [ x, x + (self.chunk_size[0])]
+        yRange = [ y, y + (self.chunk_size[1])]
+        zRange = [ z, z + (self.chunk_size[2])]
         return [xRange, yRange, zRange]
     def make_coordinates(self, ranges):
-        for x in range(ranges[0][0], (ranges[0][1] +1) ): 
-            for y in range(ranges[1][0], (ranges[1][1] +1) ):
-                for z in range(ranges[2][0], (ranges[2][1] +1) ): 
+        for x in range(*ranges[0]): 
+            for y in range(*ranges[1]):
+                for z in range(*ranges[2]): 
                     key = make_key([x,y,z]) #Make a key string
                     #Make coordinate object and store it
                     c = Coordinate(key) 
                     self.coordinates[key] = c
                     self.coordinates_list.append(c)
-    def TICK(self, TICK, game_turn):
+    def tick(self, TICK, game_turn):
         self.last_active_game_turn = game_turn
         for c in self.coordinates_list:
-            c.TICK(TICK)
-    def addElement(self, coordinateKey, element):
-        self.coordinates[coordinateKey].addElement(element)
+            c.tick(TICK)
+    def add_element(self, coordinate_key, element):
+        self.coordinates[coordinate_key].add_element(element)
     #Return a boolean of whether element removed successfully
-    def removeElement(self, coordinateKey, element):
-        self.coordinates[coordinateKey].removeElement(element)
+    def remove_element(self, coordinate_key, element):
+        self.coordinates[coordinate_key].remove_element(element)
     def load(self):
         for c in self.coordinates_list:
             c.load()
