@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from time import time
+from datetime import datetime
 
 #Given:
 #-A pair of values or a pair of lists
@@ -40,10 +42,10 @@ def key_to_XYZ(key):
 #Return: Parent chunk key string in form: "intX_intY_intZ"
 def find_parent(coordKey):
     XYZ = key_to_XYZ(coordKey)
-    parentChunk = make_key([int(XYZ[0]/16),
+    parent_chunk = make_key([int(XYZ[0]/16),
                            int(XYZ[1]/16),
                            int(XYZ[2])] )
-    return parentChunk
+    return parent_chunk
 
 #Given: (x,y) of a mouse click
 #Determine if the click is within a tile shaped diamond
@@ -55,10 +57,10 @@ def within(rect, point, width = 64, height = 32):
     C = rect.midright#((x + width),(y + (height/2))) #3 O'clock
     D = rect.midtop#((x + (width/2)),y)             #12 O'clock 
 
-    if (leftOf(A,D,point) > 0):
-        if (leftOf(B,C,point) < 0):
-            if (leftOf(D,C,point) > 0):
-                if (leftOf(A,B,point) < 0):
+    if (left_of(A,D,point) > 0):
+        if (left_of(B,C,point) < 0):
+            if (left_of(D,C,point) > 0):
+                if (left_of(A,B,point) < 0):
                     bool = True
     return bool
 
@@ -67,7 +69,7 @@ def within(rect, point, width = 64, height = 32):
 #-"left and/or above" the line (returns a positive integer),
 #-"on the line" (returns 0), or
 #-"right and/or below" the line (returns a negative integer)
-def leftOf(one, two, point):
+def left_of(one, two, point):
     X1 = one[0]
     X2 = two[0]
     Y1 = one[1]
@@ -76,3 +78,8 @@ def leftOf(one, two, point):
     Py = point[1]
     left = (X2 - X1)*(Py - Y1) - (Y2 - Y1)*(Px - X1)
     return left
+    
+#Given: Nothing
+#Return a timestamp string
+def timestamp():
+    return datetime.fromtimestamp(time()).strftime('%H%M%S_%Y-%m-%d')

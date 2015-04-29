@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-from unboundMethods import *
-from ImageManifests import SPRITE_MANIFEST
-from Matter import Matter
+from persistent.list import PersistentList as plist
 
+
+from imagemanifests import SPRITE_MANIFEST
+from matter import Matter
 #Entities are objects that are "alive". They can:
 #-move themselves
 #-be killed/destroyed
@@ -32,7 +33,7 @@ class Entity(Matter): #entity(world, coordinate_key, imageKey)
                                                  'coordinate_key': '0_0_0',
                                                  'impassible': True,
                                                  'layer': 1.2,
-                                                 'float_offset': [0.5, 0.5]
+                                                 'float_offset': plist([0.5, 0.5])
                                                }
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
@@ -41,8 +42,8 @@ class Entity(Matter): #entity(world, coordinate_key, imageKey)
                 self.__setattr__(key, self.accepted_kwargs[key]) 
         #Render related local variables..
         self.sprite_sheet = SPRITE_MANIFEST[self.image_key] 
-        self.width   = self.sprite_sheet.frameWidth
-        self.height  = self.sprite_sheet.frameHeight
+        self.width   = self.sprite_sheet.frame_width
+        self.height  = self.sprite_sheet.frame_height
         self.tall    = self.height
         self.last_frame = 0 #the rendered last frame in a "strip" of frames
         self.facing = 5
@@ -60,7 +61,7 @@ class Entity(Matter): #entity(world, coordinate_key, imageKey)
         py = (TILE_HEIGHT/2.0)
         py = py - self.tall #- int(self.tall * self.float_offset[1])
         #py = py - int(self.tall * self.float_offset[1])
-        return [int(px), int(py)]
+        return plist([int(px), int(py)])
     def load(self):
         self.sprite_sheet = SPRITE_MANIFEST[self.image_key]
         self.animation = self.sprite_sheet.animations[self.facing]
@@ -96,7 +97,7 @@ class Entity(Matter): #entity(world, coordinate_key, imageKey)
                     self.facing = self.path.facings[self.path.step_index]
                     self.animation = self.sprite_sheet.animations[self.facing]
                     self.coordinate_key = next_key
-                    self.world.moveElement(self, lastKey, next_key)
+                    self.world.move_element(self, lastKey, next_key)
                 else:
                     self.path = None
                     self.animation = self.sprite_sheet.animations[5]

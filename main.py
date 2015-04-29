@@ -1,186 +1,185 @@
 #!/usr/bin/env python
 #Main game script for "Xero Sum"
-#######Standard Python Imports#######
 import pygame, sys, os, random
-from pygame.locals import *
-#Change the CWD to wherever the main.py resides
+
+
+from pygame.locals import QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP,  KEYDOWN,  KEYUP,  K_ESCAPE,  K_F1,  K_F2
+
+
+from imagemanifests import screen_size, tracks, screen
+from world import world
+from player import Player
+from aoe import *
+from worldview import WorldView
+from path import Path
+from entity import Entity
+from tile import Tile
+from unboundmethods import make_key, within,  timestamp
+
+
 os.chdir(sys.path[0])
-#######Xero Sum Specific Imports#######
-from ImageManifests import SCREEN_SIZE, TRACKS, SCREEN
-from World import World
-from Player import Player
-from AoE import *
-from WorldView import WorldView
-from Path import Path
-from Entity import Entity
-from Tile import Tile
-from unboundMethods import *
 ####Font Variables###
 pygame.font.init()
 #AVAILABLE_FONTS = pygame.font.get_fonts() #Not needed atm. Here as a reminder.
-FONT = pygame.font.SysFont(None, 16) #None as first param loads built in pygame font
-FONT_HEIGHT = FONT.get_linesize()
-#SCREEN_TEXT & SCREEN_TEXT_TOP are global string lists that are blit to screen
-SCREEN_TEXT = [] 
-SCREEN_TEXT_TOP = []
+font = pygame.font.SysFont(None, 16) #None as first param loads built in pygame font
+font_height = font.get_linesize()
+#screen_TEXT & screen_text_top are global string lists that are blit to screen
+screen_text = [] 
+screen_text_top = []
 ###Clock###
-TICK  = 0
-CLOCK = pygame.time.Clock()
+tick  = 0
+clock = pygame.time.Clock()
 ###Controls Variables###
-SELECTED = None #Currently selected Entity
+selected = None #Currently selected Entity
 
 ###Main Loop###
-def mainLoop():
+def main_loop():
     #Check if music is (not) playing...
     #if not pygame.mixer.music.get_busy(): #If no music...
         #playRandomSong() #Play a random song
     ###Event Handling###
     for event in pygame.event.get():#Go through all events
         if event.type == QUIT: #If the little x in the window was clicked...
-            WORLD.close()
+            world.close()
             sys.exit()
         if event.type == MOUSEBUTTONDOWN:
-            mouseClick(event)
+            mouse_click(event)
         if event.type == KEYDOWN:
             keyboard(event)
         if event.type == KEYUP:
             pass
-    TICK = CLOCK.tick()
-    WORLD.TICK(TICK)
-    playerView.render()
-    SCREEN.blit(playerView.surface, (0,0))
-    drawScreenText() #Draw text onto SCREEN
+    world.tick(clock.tick())
+    player_view.render()
+    screen.blit(player_view.surface, (0,0))
+    draw_screen_text() #Draw text onto screen
     pygame.display.flip()      
 
 ###KEYBOARD CONTROLS###    
 def keyboard(event):
-    global SCREEN_TEXT    
+    global screen_text    
     pressed_keys = pygame.key.get_pressed()
     #'ESCAPE' key is for exiting the game
     if pressed_keys[K_ESCAPE]:
         #Save off more safely and unload map
-        WORLD.close()
+        world.close()
         sys.exit()
     #'K_F1' key for screenshot. This saves it to timeString().png
     if pressed_keys[K_F1]:
-        timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%H%M%S_%Y-%m-%d')
-        filename = timestamp + '.png'
-        pygame.image.save((SCREEN),filename)
-        print "Screenshot saved as " + filename
+        filename = timestamp() + '.png'
+        pygame.image.save((screen),filename)
+        print "screenshot saved as " + filename
     if pressed_keys[K_F2]:
         #Hook for the debug
         pass
 
 #Seperates mouse clicks into left and right and then call their seperate fncs
-def mouseClick(event):
+def mouse_click(event):
     mouse_pos = pygame.mouse.get_pos()
     if (event.button == 1) and (event.type == MOUSEBUTTONDOWN):
-        mouseLeftClick(event)
+        mouse_left_click(event)
     if (event.button == 1) and (event.type == MOUSEBUTTONUP):
-        mouseLeftUp(mouse_pos)
+        pass
+        #mouse_left_up(mouse_pos)
     if event.button == 3 and (event.type == MOUSEBUTTONDOWN):
-        mouseRightClick(event)
+        mouse_right_click(event)
 
 #This function is called when a left mouse click is passed
-def mouseLeftClick(event):
-    global SCREEN_TEXT_TOP
-    global SELECTED
-    SCREEN_TEXT_TOP = []
+def mouse_left_click(event):
+    global screen_text_top
+    global selected
+    screen_text_top = []
     point = (event.pos[0],event.pos[1])
     collideList = []
-    for e in playerView.hitBoxList:
-        if e[0].collidepoint(point):
+    for e in player_view.hit_box_list:
+        if e[0].collide_point(point):
             if within(e[0], point):
-                collideList.append(e)
-    for e in collideList:
-        #info = [e[0],e[1].parentCoordinate, e[1].name, e[1], e[1].floatOffset]
-        info = [e[1].parentCoordinate, e[1].name, 'float:' + str(e[1].floatOffset), 'layer: ' + str(e[1].layer), 'px,py: ', e[1].pixelOffsets]
-        #for bit in info:
-        #    SCREEN_TEXT_TOP.append(str(bit))
-        SCREEN_TEXT_TOP.append(str(info))
+                collide_list.append(e)
+    for e in collide_list:
+        info = [e[1].parent_coordinate, e[1].name, 'float:' + str(e[1].float_offset), 'layer: ' + str(e[1].layer), 'px,py: ', e[1].pixel_offsets]
+        screen_text_top.append(str(info))
         if isinstance(e[1], Entity):
-            SELECTED = e[1]
+            selected = e[1]
 
-def mouseRightClick(event):
-    if SELECTED:
+def mouse_right_click(event):
+    if selected:
         point = (event.pos[0],event.pos[1])
-        goalKeys = []
-        for e in playerView.hitBoxList:
-            if e[0].collidepoint(point):
+        for e in player_view.hit_box_list:
+            if e[0].collide_point(point):
                 if within(e[0], point):
                     if isinstance(e[1], Tile):
-                        goalDict = dict()
-                        goalDict[e[1].parentCoordinate] = 0
-                        p = Path(goalDict, SELECTED, Cube(**cubeargs))
-                        SELECTED.path = p
+                        goal_dict = dict()
+                        goal_dict[e[1].parent_coordinate] = 0
+                        p = Path(goal_dict, selected, Cube(**cubeargs))
+                        selected.path = p
 
 #Draw text to the screen.
-def drawScreenText():
-    global SCREEN_TEXT
-    y  = SCREEN_SIZE[1] - FONT_HEIGHT
-    y2 = 0 + FONT_HEIGHT
-    FPS = "FPS = " + str(CLOCK.get_fps())
-    SCREEN_TEXT.append(FPS)
-    for text in reversed(SCREEN_TEXT):
-        SCREEN.blit( FONT.render(text, True, (255, 0, 0)), (0, y) )
-        y -= FONT_HEIGHT
-    for text in reversed(SCREEN_TEXT_TOP):
-        SCREEN.blit( FONT.render(text, True, (255, 0, 0)), (0, y2) )
-        y2 += FONT_HEIGHT
-    SCREEN_TEXT = []
+def draw_screen_text():
+    global screen_text
+    y  = screen_size[1] - font_height
+    y2 = 0 + font_height
+    fps = "FPS = " + str(clock.get_fps())
+    screen_text.append(fps)
+    for text in reversed(screen_text):
+        screen.blit( font.render(text, True, (255, 0, 0)), (0, y) )
+        y -= font_height
+    for text in reversed(screen_text_top):
+        screen.blit( font.render(text, True, (255, 0, 0)), (0, y2) )
+        y2 += font_height
+    screen_text = []
 
 #Play a random song
 def playRandomSong():
-    #Pick a random int between 0 and the length of TRACKS list (-1)
-    n = random.randint(0,(len(TRACKS)-1))
+    #Pick a random int between 0 and the length of tracks list (-1)
+    n = random.randint(0,(len(tracks)-1))
     #Load the random song chosen
-    pygame.mixer.music.load(str(TRACKS[n]))
+    pygame.mixer.music.load(str(tracks[n]))
     #Play the song once
     pygame.mixer.music.play()
 
 ###Test Terrain Gen###
 def makeTestTerrain():
-    base = {'imageKey': 'grass.png'}
-    #feature(imageKey, name = None, speedModifier = 1.0, tall = 0, floatOffset = [0.5,0.5], impassible = False, blocksLOS = False)
-    rocks = {'imageKey':'rocks.png', 'speedModifier': 1.25, 'layer': 1.0}
-    bushes = {'imageKey': 'bush.png', 'speedModifier': 1.50, 'layer': 1.1}
-    trees  = {'imageKey': 'tallTree.png', 
+    base = {'image_key': 'grass.png'}
+    #feature(image_key, name = None, speed_modifier = 1.0, tall = 0, float_offset = [0.5,0.5], impassible = False, blocksLOS = False)
+    rocks = {'image_key':'rocks.png', 'speed_modifier': 1.25, 'layer': 1.0}
+    bushes = {'image_key': 'bush.png', 'speed_modifier': 1.50, 'layer': 1.1}
+    trees  = {'image_key': 'tallTree.png', 
               'tall': 20,
-              'floatOffset': [0.5, 0.5],
+              'float_offset': [0.5, 0.5],
               'layer': 1.2,
               'impassible': True,
               'blocksLOS': True }
-    for key in sorted(WORLD.active.keys()):
+    for key in sorted(world.active.keys()):
         print "##Chunk Building...##", key
-        WORLD.baseTerrainChunkFill(key, **base)
-        WORLD.randomFillChunkFeature(key, **rocks)
-        WORLD.randomFillChunkFeature(key, **bushes)
-        WORLD.randomFillChunkFeature(key, **trees)
+        world.chunk_terrain_base_fill(key, **base)
+        world.chunk_random_feature_fill(key, **rocks)
+        world.chunk_random_feature_fill(key, **bushes)
+        world.chunk_random_feature_fill(key, **trees)
 
-####TEST WORLD INIT####
-WORLD = World("TEST")
+####TEST world INIT####
+world = World("TEST")
 origin = [0,0,0]
-oKey = makeKey(origin)
-cubeargs = {'origin': oKey, 'magnitude': [10,10,0], 'towardsNegInf': False}
+origin_key = make_key(origin)
+cubeargs = {'origin': origin_key, 'magnitude': [10,10,0], 'towards_neg_inf': False}
 shape = Cube(**cubeargs)
 #If world db shelf not in existence...
-if not os.path.isfile(WORLD.db):##Run Test Terrain Gen
-    player_args = {'world':WORLD,
-                   'coordinateKey': oKey,
-                   'imageKey':'rose.png',
-                   'Shape': shape,
-                   'name':'Rose'}
-    PLAYER = Player(**player_args)
-    WORLD.addElement(oKey, PLAYER)
-    playerView = WorldView(WORLD, shape, SCREEN_SIZE)
+if not os.path.isfile(world.db_file):##Run Test Terrain Gen
+    player_args = {'world':world,
+                             'coordinate_key': origin_key,
+                             'image_key':'rose.png',
+                             'shape': shape,
+                             'name':'Rose'
+                           }
+    player = Player(**player_args)
+    world.add_element(origin_key, player)
+    player_view = WorldView(world, shape, screen_size)
     makeTestTerrain()
-else:#Else just make the playerView
-    playerView = WorldView(WORLD, shape, SCREEN_SIZE)
+else:#Else just make the player_view
+    player_view = WorldView(world, shape, screen_size)
 
 ###DEBUG###
-print "ACTIVE CHUNKS #:", len(sorted(WORLD.active.keys()))
-print "ACTIVE CHUNK IDS:", sorted(WORLD.active.keys())
+print "ACTIVE CHUNKS #:", len(sorted(world.db['active_chunks'].keys()))
+print "ACTIVE CHUNK IDS:", sorted(world.db['active_chunks'].keys())
 ###DEBUG###
 
 while True:
-    mainLoop()
+    main_loop()

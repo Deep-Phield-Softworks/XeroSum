@@ -21,11 +21,10 @@ from aoe import *
 #               encompasses
 class Field:
     def __init__(self, **kwargs):
-        #origin, aoe_shape, magnitude, name = None
         self.accepted_kwargs = {'name': None,
                                                  'origin': '0_0_0',
                                                  'aoe_shape': Shape(**kwargs),
-                                                 'pixelOffsets': [0,0],
+                                                 'pixel_offsets': [0,0],
                                                  'layer': 0.0
                                                 }
         for key in self.accepted_kwargs.keys():
@@ -35,7 +34,7 @@ class Field:
                 self.__setattr__(key, self.accepted_kwargs[key]) 
     
     def tick(self, TICK):
-        errorString = "Subclass of Field must impleerror_stringment tick method"
+        error_string = "Subclass of Field must implement tick method"
         raise NotImplementedError(error_string)
     
     def __setattr__(self, name, value):

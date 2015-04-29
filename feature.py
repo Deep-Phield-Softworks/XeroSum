@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+from persistent.list import PersistentList as plist
+
+
 from matter import Matter
 from imagemanifests import TILE_MANIFEST
 
@@ -31,8 +34,8 @@ class Feature(Matter):
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)
         self.accepted_kwargs = {'tall': 0,
-                                                  'float_offset': [0.5, 0.5],
-                                                  'float_offset_ranges': ((0.25, 0.75),(0.25, 0.75)),
+                                                  'float_offset': plist([0.5, 0.5]),
+                                                  'float_offset_ranges': plist(((0.25, 0.75),(0.25, 0.75))),
                                                   'speed_modifier': 1.0,
                                                   'layer': 1.0,
                                                   'impassible': False,
@@ -49,7 +52,7 @@ class Feature(Matter):
         px = ( self.width/2.0) - self.float_offset[0] * self.width
         py = (self.height/2.0) - self.float_offset[1] * self.height
         py = py - self.tall - int(self.tall * self.float_offset[1])
-        self.pixel_offsets = [int(px), int(py)]
+        self.pixel_offsets = plist([int(px), int(py)])
     
     def tick(self, TICK):
         pass    
