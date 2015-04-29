@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-from unboundMethods import *
-from AoE import *
-from DijkstraMap import DijkstraMap
-from Entity import Entity
-from WorldView import WorldView
-from World import World
+from unboundmethods import *
+from aoe import *
+from dmap import DijkstraMap
+from entity import Entity
+from worldview import WorldView
+from world import World
 #Path objects keep track of the path of an entity
 #Given:
 #-goalKeys, a list of coordinate object keys

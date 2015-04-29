@@ -7,14 +7,14 @@ from pygame.locals import QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP,  KEYDOWN,  KEYUP
 
 
 from imagemanifests import screen_size, tracks, screen
-from world import world
+from world import World
 from player import Player
 from aoe import *
 from worldview import WorldView
 from path import Path
 from entity import Entity
 from tile import Tile
-from unboundmethods import make_key, within,  timestamp
+from unboundmethods import make_key, within, timestamp
 
 
 os.chdir(sys.path[0])

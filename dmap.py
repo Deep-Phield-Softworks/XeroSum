@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from AoE import *
-from unboundMethods import *
+from aoe import *
+from unboundmethods import *
 
 #Djikstra Map objects that can be combined together and can find paths
 #Given:

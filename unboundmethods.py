@@ -2,6 +2,9 @@
 from time import time
 from datetime import datetime
 
+
+TILE_WIDTH = 64
+TILE_HEIGHT = 32
 #Given:
 #-A pair of values or a pair of lists
 #Return:

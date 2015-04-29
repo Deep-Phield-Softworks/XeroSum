@@ -2,7 +2,7 @@
 from persistent.list import PersistentList as plist
 
 
-from imagemanifests import SPRITE_MANIFEST
+from imagemanifests import sprite_manifest
 from matter import Matter
 #Entities are objects that are "alive". They can:
 #-move themselves
@@ -30,10 +30,10 @@ class Entity(Matter): #entity(world, coordinate_key, imageKey)
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)
         self.accepted_kwargs = {'world': None,
-                                                 'coordinate_key': '0_0_0',
-                                                 'impassible': True,
-                                                 'layer': 1.2,
-                                                 'float_offset': plist([0.5, 0.5])
+                                'coordinate_key': '0_0_0',
+                                'impassible': True,
+                                'layer': 1.2,
+                                'float_offset': plist([0.5, 0.5])
                                                }
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
@@ -41,7 +41,7 @@ class Entity(Matter): #entity(world, coordinate_key, imageKey)
             else:
                 self.__setattr__(key, self.accepted_kwargs[key]) 
         #Render related local variables..
-        self.sprite_sheet = SPRITE_MANIFEST[self.image_key] 
+        self.sprite_sheet = sprite_manifest[self.image_key] 
         self.width   = self.sprite_sheet.frame_width
         self.height  = self.sprite_sheet.frame_height
         self.tall    = self.height
@@ -63,7 +63,7 @@ class Entity(Matter): #entity(world, coordinate_key, imageKey)
         #py = py - int(self.tall * self.float_offset[1])
         return plist([int(px), int(py)])
     def load(self):
-        self.sprite_sheet = SPRITE_MANIFEST[self.image_key]
+        self.sprite_sheet = sprite_manifest[self.image_key]
         self.animation = self.sprite_sheet.animations[self.facing]
         self.to_blit = self.animation[self.last_frame]
     def unload(self):

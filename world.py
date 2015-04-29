@@ -11,7 +11,7 @@ import transaction
 
 from unboundmethods import find_parent,  key_to_XYZ,  make_key
 from chunk import Chunk
-from subclassLoader import * #Temp commented out during rewrite
+from subclassloader import * #Temp commented out during rewrite
 from aoe import Square 
 
 #World objects have the following traits:
@@ -69,7 +69,7 @@ class World:
         for key in keys:
             if not self.db['active_chunks'].has_key(key): #IF Chunk isn't active...
                 if not self.db['chunks'].has_key(key): #If Chunk does NOT exists..
-                    self.db['chunks'][key] = Chunk(key, self.gameTurn, self.CHUNK_SIZE) #Make it
+                    self.db['chunks'][key] = Chunk(key, self.db['game_turn'], self.db['CHUNK_SIZE']) #Make it
                 self.db['active_chunks'][key] = self.db['chunks'][key] #Add it to active Chunks    
                 self.db['active_chunks'][key].load() #Have Chunk load itself
         transaction.commit()
@@ -80,7 +80,7 @@ class World:
             if self.db['active_chunks'].has_key(key): #IF Chunk is active...
                 self.db['active_chunks'][key].unload()   #Unload Chunk
                 self.db['chunks'][key] = self.db['active_chunks'][key] #Save Chunk back into DB (Necessary?)
-                self.db['active_chunks'] = {keys:d[keys] for keys in d if keys != key} #Remove key from self.db['active_chunks']
+                self.db['active_chunks'] = {keys:self.db['active_chunks'][keys] for keys in self.db['active_chunks'] if keys != key} #Remove key from self.db['active_chunks']
         transaction.commit()
 
     #Given: int TICK as number of milliseconds that has passed since last time tick was called

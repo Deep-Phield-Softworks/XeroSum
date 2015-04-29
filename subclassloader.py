@@ -1,14 +1,18 @@
 #!/usr/bin/env python
+import os, sys
+
+
+from tile import Tile
+from feature import Feature
+from item import Item
+from entity import Entity
+from field import Field
+
 #SubclassLoader is meant to offer a flexible way to automatically import many
 #subclass modules for classes that need to be aware of them. Expected classes
 #that may need to be aware of all the archtype subclasses are: Coordinate,
 #Entity and possibly World.
-import os, sys
-from Tile import Tile
-from Feature import Feature
-from Item import Item
-from Entity import Entity
-from Field import Field
+
 #Change the CWD to wherever this script resides
 os.chdir(sys.path[0])
 sys.path.append(str(sys.path[0])+ os.sep + 'subclasses')

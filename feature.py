@@ -3,8 +3,6 @@ from persistent.list import PersistentList as plist
 
 
 from matter import Matter
-from imagemanifests import TILE_MANIFEST
-
 #Feature objects are facets of the world that are:
 #-unable to move themselves(usually)
 #-cannot be picked up or carried

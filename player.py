@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from matter import Matter
 from entity import Entity
-from worldView import WorldView
+from worldview import WorldView
 
 #Player is a child class of Entity that:
 #-Acts as a center point for a WorldView class object
