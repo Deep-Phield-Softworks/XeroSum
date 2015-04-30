@@ -162,7 +162,7 @@ origin_key = make_key(origin)
 cubeargs = {'origin': origin_key, 'magnitude': [10,10,0], 'towards_neg_inf': False}
 shape = Cube(**cubeargs)
 #If world db shelf not in existence...
-if not os.path.isfile(world.db_file):##Run Test Terrain Gen
+if world.db['new_game']:##Run Test Terrain Gen
     player_args = {'world':world,
                              'coordinate_key': origin_key,
                              'image_key':'rose.png',
@@ -173,6 +173,7 @@ if not os.path.isfile(world.db_file):##Run Test Terrain Gen
     world.add_element(origin_key, player)
     player_view = WorldView(world, shape, screen_size)
     makeTestTerrain()
+    world.db['new_game'] = False
 else:#Else just make the player_view
     player_view = WorldView(world, shape, screen_size)
 
