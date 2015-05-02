@@ -89,9 +89,9 @@ def mouse_left_click(event):
     global selected
     screen_text_top = []
     point = (event.pos[0],event.pos[1])
-    collideList = []
+    collide_list = []
     for e in player_view.hit_box_list:
-        if e[0].collide_point(point):
+        if e[0].collidepoint(point):
             if within(e[0], point):
                 collide_list.append(e)
     for e in collide_list:
@@ -104,7 +104,7 @@ def mouse_right_click(event):
     if selected:
         point = (event.pos[0],event.pos[1])
         for e in player_view.hit_box_list:
-            if e[0].collide_point(point):
+            if e[0].collidepoint(point):
                 if within(e[0], point):
                     if isinstance(e[1], Tile):
                         goal_dict = dict()

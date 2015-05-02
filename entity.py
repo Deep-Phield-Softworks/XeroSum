@@ -67,22 +67,23 @@ class Entity(Matter): #entity(world, coordinate_key, imageKey)
     def to_blit(self):
         return sprite_manifest[self.image_key].animations[self.facing][self.last_frame]
     
-    def TICK(self, TICK):
+    def tick(self, TICK):
+        strip = sprite_manifest[self.image_key].animations[self.facing]
         if self.path: #If path is not None
         #Check to see if enough time has accumulated to advance frames
             self.tick_accumulator += TICK
             if self.tick_accumulator >= self.frame_threshold:
                 self.tick_accumulator = 0
-                if self.last_frame < (len(self.animation)-1):
+                if self.last_frame < (len(strip)-1):
                     self.last_frame += 1
                 else:
                     self.last_frame = 0
-            if len(self.animation) <= self.last_frame:
-                self.last_frame = len(self.animation) - 1
-            self.to_blit = self.animation[self.last_frame]
+            if len(strip) <= self.last_frame:
+                self.last_frame = len(strip) - 1
+            #self.to_blit = self.animation[self.last_frame]
         else: #If no path use idle animation
-            self.animation = self.sprite_sheet.animations[5]
-            self.to_blit = self.animation[self.facing]
+            self.last_frame = 5
+            #self.to_blit = self.animation[self.facing]
         if self.path: #If path is not None
             self.move_accumulator += TICK #Add the ticks in
             if self.move_accumulator >= self.move_threshold: #If enough ticks...
@@ -92,9 +93,10 @@ class Entity(Matter): #entity(world, coordinate_key, imageKey)
                 if more:
                     next_key = self.path.nodes[self.path.step_index] #Lookup next node
                     self.facing = self.path.facings[self.path.step_index]
-                    self.animation = self.sprite_sheet.animations[self.facing]
+                    #self.animation = self.sprite_sheet.animations[self.facing]
                     self.coordinate_key = next_key
                     self.world.move_element(self, lastKey, next_key)
                 else:
                     self.path = None
-                    self.animation = self.sprite_sheet.animations[5]
+                    self.last_frame = 5
+                    #self.animation = self.sprite_sheet.animations[5]
