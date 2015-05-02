@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import pygame
+from pygame import Rect, Surface
 from operator import *
 from unboundmethods import find_parent, TILE_WIDTH, TILE_HEIGHT
 from imagemanifests import *
@@ -30,7 +30,7 @@ class WorldView:
         self.prepare_chunks() #Determine chunks needed and have world load them
         self.preload_coordinates() #Overwrite self.nD with coordinates objects
         self.screen_size = screen_size
-        self.surface     = pygame.Surface(screen_size) #Surface((width, height))
+        self.surface     = Surface(screen_size) #Surface((width, height))
         self.hit_box_list  = []
     def prepare_chunks(self):
         #Generate a list of chunks to activate
@@ -72,9 +72,9 @@ class WorldView:
                         #Determine proper image
                         if isinstance(e, Entity):
                             e.determine_pixel_offset() #Update offset info
-                            img = e.to_blit
+                            img = e.to_blit()
                         else:
-                            img = tile_manifest[e.imageKey]
+                            img = tile_manifest[e.image_key]
                         #Adjust px,py based upon e's attributes
                         px = px + e.pixel_offsets[0]
                         py = py + e.pixel_offsets[1]

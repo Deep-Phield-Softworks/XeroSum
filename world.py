@@ -72,14 +72,14 @@ class World:
                 if not self.db['chunks'].has_key(key): #If Chunk does NOT exists..
                     self.db['chunks'][key] = Chunk(key, self.db['game_turn'], self.db['CHUNK_SIZE']) #Make it
                 self.db['active_chunks'][key] = self.db['chunks'][key] #Add it to active Chunks    
-                self.db['active_chunks'][key].load() #Have Chunk load itself
+                #self.db['active_chunks'][key].load() #Have Chunk load itself
         transaction.commit()
     
     #Given: *keys as a list of Chunk object key strings for use in self.db['active_chunks']
     def deactivate_chunk(self, *keys):
         for key in keys:
             if self.db['active_chunks'].has_key(key): #IF Chunk is active...
-                self.db['active_chunks'][key].unload()   #Unload Chunk
+                #self.db['active_chunks'][key].unload()   #Unload Chunk
                 self.db['chunks'][key] = self.db['active_chunks'][key] #Save Chunk back into DB (Necessary?)
                 self.db['active_chunks'] = {keys:self.db['active_chunks'][keys] for keys in self.db['active_chunks'] if keys != key} #Remove key from self.db['active_chunks']
         transaction.commit()
@@ -128,7 +128,7 @@ class World:
         self.activate_chunk(chunk_key) #Activate the Chunk
         chunk = self.db['active_chunks'][chunk_key]  #Assign to variable chunk for clarity
         origin = chunk.coordinates_list[0].key                  #Get chunk Coordinate object origin
-        shape_args = {'origin': origin, 'magnitude':self.CHUNK_SIZE} #Make a dict of shape args
+        shape_args = {'origin': origin, 'magnitude':self.db['CHUNK_SIZE']} #Make a dict of shape args
         ground = Square(**shape_args).area_key_list #Make a shape that includes all the Chunk's Coordinates
         for c in ground: #For each Coordinate
             chunk.coordinates[c].add_element(Tile(**tile_args)) #Add a Tile object made with **tile_args as the arguements
@@ -142,7 +142,7 @@ class World:
             r = random.randint(0, out_of - 1)
             if r < chance:
                 f = Feature(**feature_args)
-                if not 'float_offset' in kwargs: #If floatOffset not specified..
+                if not 'float_offset' in feature_args: #If floatOffset not specified..
                     ranges = f.float_offset_ranges #Get ranges..
                     f.float_offset = [random.uniform(ranges[0][0],ranges[0][1]),
                                               random.uniform(ranges[1][0],ranges[1][1])]

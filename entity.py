@@ -42,19 +42,19 @@ class Entity(Matter): #entity(world, coordinate_key, imageKey)
             else:
                 self.__setattr__(key, self.accepted_kwargs[key]) 
         #Render related local variables..
-        self.sprite_sheet = sprite_manifest[self.image_key] 
-        self.width   = self.sprite_sheet.frame_width
-        self.height  = self.sprite_sheet.frame_height
+        #self.sprite_sheet = sprite_manifest[self.image_key]
+        #self.sprite_sheet = self.image_key 
+        self.width   = sprite_manifest[self.image_key].frame_width
+        self.height  = sprite_manifest[self.image_key].frame_height
         self.tall    = self.height
         self.last_frame = 0 #the rendered last frame in a "strip" of frames
         self.facing = 5
-        self.animation = self.sprite_sheet.animations[self.facing]
+        #self.animation = self.sprite_sheet.animations[self.facing]
         self.frame_threshold = 100 #167
         self.move_threshold  = 500
         self.tick_accumulator = 0
         self.move_accumulator = 0
         self.path = None
-        self.to_blit = self.animation[self.last_frame]
         self.pixel_offsets = self.determine_pixel_offset()
         
     def determine_pixel_offset(self):
@@ -63,14 +63,10 @@ class Entity(Matter): #entity(world, coordinate_key, imageKey)
         py = py - self.tall #- int(self.tall * self.float_offset[1])
         #py = py - int(self.tall * self.float_offset[1])
         return plist([int(px), int(py)])
-    def load(self):
-        self.sprite_sheet = sprite_manifest[self.image_key]
-        self.animation = self.sprite_sheet.animations[self.facing]
-        self.to_blit = self.animation[self.last_frame]
-    def unload(self):
-        self.sprite_sheet = None
-        self.animation = None
-        self.to_blit = None
+    
+    def to_blit(self):
+        return sprite_manifest[self.image_key].animations[self.facing][self.last_frame]
+    
     def TICK(self, TICK):
         if self.path: #If path is not None
         #Check to see if enough time has accumulated to advance frames

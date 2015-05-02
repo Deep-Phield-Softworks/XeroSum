@@ -148,7 +148,7 @@ def makeTestTerrain():
               'layer': 1.2,
               'impassible': True,
               'blocksLOS': True }
-    for key in sorted(world.active.keys()):
+    for key in sorted(world.db['active_chunks'].keys()):
         print "##Chunk Building...##", key
         world.chunk_terrain_base_fill(key, **base)
         world.chunk_random_feature_fill(key, **rocks)
