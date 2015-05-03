@@ -27,7 +27,7 @@ from unboundmethods import TILE_WIDTH, TILE_HEIGHT
 #                  the parent Coordinate the object lies. [0.5, 0.5] would be
 #                  centered on the parent Coordinate.
 #-'layer'       => Numeric value to be used in render ordering. 
-class Entity(Matter): #entity(world, coordinate_key, imageKey)
+class Entity(Matter): 
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)
         self.accepted_kwargs = {'world': None,
@@ -42,15 +42,13 @@ class Entity(Matter): #entity(world, coordinate_key, imageKey)
             else:
                 self.__setattr__(key, self.accepted_kwargs[key]) 
         #Render related local variables..
-        #self.sprite_sheet = sprite_manifest[self.image_key]
-        #self.sprite_sheet = self.image_key 
         self.width   = sprite_manifest[self.image_key].frame_width
         self.height  = sprite_manifest[self.image_key].frame_height
         self.tall    = self.height
-        self.last_frame = 0 #the rendered last frame in a "strip" of frames
+        self.frame = 0 #the rendered last frame in a "strip" of frames
         self.facing = 5
-        #self.animation = self.sprite_sheet.animations[self.facing]
-        self.frame_threshold = 100 #167
+        #Thresholds for changes in milliseconds
+        self.frame_threshold = 100 
         self.move_threshold  = 500
         self.tick_accumulator = 0
         self.move_accumulator = 0
@@ -60,43 +58,39 @@ class Entity(Matter): #entity(world, coordinate_key, imageKey)
     def determine_pixel_offset(self):
         px = (TILE_WIDTH/2.0)  - (self.float_offset[0] * self.width)
         py = (TILE_HEIGHT/2.0)
-        py = py - self.tall #- int(self.tall * self.float_offset[1])
-        #py = py - int(self.tall * self.float_offset[1])
+        py = py - self.tall
         return plist([int(px), int(py)])
     
     def to_blit(self):
-        return sprite_manifest[self.image_key].animations[self.facing][self.last_frame]
+        return sprite_manifest[self.image_key].animations[self.facing][self.frame]
     
     def tick(self, TICK):
+        self.tick_move(TICK)
+        self.tick_animation(TICK)
+        
+    def tick_move(self, TICK):
+        self.move_accumulator += TICK #Add the ticks in
+        if self.move_accumulator >= self.move_threshold: #If enough ticks...
+            self.move_accumulator = 0 #Reset Accumulator
+            key = self.path.nodes[self.path.step_index]
+            next = self.path.advance() 
+            if next:
+                self.facing = self.path.facings[self.path.step_index]
+                self.world.move_element(self, key, next)
+            else:
+                self.path = None
+                self.frame = 5
+    
+    def tick_animation(self, TICK):
         strip = sprite_manifest[self.image_key].animations[self.facing]
         if self.path: #If path is not None
         #Check to see if enough time has accumulated to advance frames
             self.tick_accumulator += TICK
             if self.tick_accumulator >= self.frame_threshold:
                 self.tick_accumulator = 0
-                if self.last_frame < (len(strip)-1):
-                    self.last_frame += 1
+                if self.frame < (len(strip)-1):
+                    self.frame += 1
                 else:
-                    self.last_frame = 0
-            if len(strip) <= self.last_frame:
-                self.last_frame = len(strip) - 1
-            #self.to_blit = self.animation[self.last_frame]
-        else: #If no path use idle animation
-            self.last_frame = 5
-            #self.to_blit = self.animation[self.facing]
-        if self.path: #If path is not None
-            self.move_accumulator += TICK #Add the ticks in
-            if self.move_accumulator >= self.move_threshold: #If enough ticks...
-                self.move_accumulator = 0 #Reset Accumulator
-                lastKey = self.path.nodes[self.path.step_index]
-                more = self.path.advance()      #Advance the path to the next step
-                if more:
-                    next_key = self.path.nodes[self.path.step_index] #Lookup next node
-                    self.facing = self.path.facings[self.path.step_index]
-                    #self.animation = self.sprite_sheet.animations[self.facing]
-                    self.coordinate_key = next_key
-                    self.world.move_element(self, lastKey, next_key)
-                else:
-                    self.path = None
-                    self.last_frame = 5
-                    #self.animation = self.sprite_sheet.animations[5]
+                    self.frame = 0
+            #if len(strip) <= self.frame:
+            #    self.frame = len(strip) - 1

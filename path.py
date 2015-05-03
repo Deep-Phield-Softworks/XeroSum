@@ -53,14 +53,13 @@ class Path:
         return DijkstraMap(self.shape, selected_dict)
     
     #Move the path step index forward one node
-    #Return a boolean of whether there was another step
+    #Return None if no more path or the next node key
     def advance(self):
-        more = True
-        if self.step_index + 1 >= len(self.nodes):
-            more = False
-        else:
+        next = None
+        if not self.step_index + 1 >= len(self.nodes):
             self.step_index += 1
-        return more    
+            next = self.nodes[self.step_index]
+        return next    
     
     def create_facings(self):
         self.facings = []

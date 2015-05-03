@@ -90,15 +90,19 @@ def mouse_left_click(event):
     screen_text_top = []
     point = (event.pos[0],event.pos[1])
     collide_list = []
+    selected = None
+    selected_info = None
     for e in player_view.hit_box_list:
         if e[0].collidepoint(point):
             if within(e[0], point):
                 collide_list.append(e)
     for e in collide_list:
-        info = [e[1].parent_coordinate, e[1].name, 'float:' + str(e[1].float_offset), 'layer: ' + str(e[1].layer), 'px,py: ', e[1].pixel_offsets]
+        info = [e[1].coordinate_key, e[1].name, 'float:' + str(e[1].float_offset), 'layer: ' + str(e[1].layer), 'px,py: ', e[1].pixel_offsets]
         screen_text_top.append(str(info))
         if isinstance(e[1], Entity):
             selected = e[1]
+            selected_info = info
+    screen_text_top.append("Selected: " + str(info))
 
 def mouse_right_click(event):
     if selected:
@@ -108,7 +112,7 @@ def mouse_right_click(event):
                 if within(e[0], point):
                     if isinstance(e[1], Tile):
                         goal_dict = dict()
-                        goal_dict[e[1].parent_coordinate] = 0
+                        goal_dict[e[1].coordinate_key] = 0
                         p = Path(goal_dict, selected, Cube(**cubeargs))
                         selected.path = p
 

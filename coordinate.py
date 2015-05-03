@@ -50,7 +50,7 @@ class Coordinate:
             self.entities.append(element)
         if isinstance(element, Field):
             self.fields.append(element)
-        element.parent_coordinate = self.key
+        element.coordinate_key = self.key
         self.updateLOS()
 
     #Remove an element
