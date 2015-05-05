@@ -47,13 +47,15 @@ class Entity(Matter):
         self.tall    = self.height
         self.frame = 0 #the rendered last frame in a "strip" of frames
         self.facing = 5
+        self.pixel_offsets = self.determine_pixel_offset()
         #Thresholds for changes in milliseconds
-        self.frame_threshold = 100 
+        #Thresholds for changes in milliseconds
         self.move_threshold  = 500
+        self.frame_threshold = self.move_threshold/5
         self.tick_accumulator = 0
         self.move_accumulator = 0
         self.path = None
-        self.pixel_offsets = self.determine_pixel_offset()
+        
         
     def determine_pixel_offset(self):
         px = (TILE_WIDTH/2.0)  - (self.float_offset[0] * self.width)
