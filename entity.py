@@ -72,16 +72,17 @@ class Entity(Matter):
         
     def tick_move(self, TICK):
         self.move_accumulator += TICK #Add the ticks in
-        if self.move_accumulator >= self.move_threshold: #If enough ticks...
-            self.move_accumulator = 0 #Reset Accumulator
-            key = self.path.nodes[self.path.step_index]
-            next = self.path.advance() 
-            if next:
-                self.facing = self.path.facings[self.path.step_index]
-                self.world.move_element(self, key, next)
-            else:
-                self.path = None
-                self.frame = 5
+        if self.path:
+            if self.move_accumulator >= self.move_threshold: #If enough ticks...
+                self.move_accumulator = 0 #Reset Accumulator
+                key = self.path.nodes[self.path.step_index]
+                next = self.path.advance() 
+                if next:
+                    self.facing = self.path.facings[self.path.step_index]
+                    self.world.move_element(self, key, next)
+                else:
+                    self.path = None
+                    self.frame = 5
     
     def tick_animation(self, TICK):
         strip = sprite_manifest[self.image_key].animations[self.facing]

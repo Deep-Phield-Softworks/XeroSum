@@ -88,7 +88,7 @@ class Coordinate:
         return [self.tiles, self.features, self.items, self.entities,  self.fields]
     
     def tick(self, TICK):
-        if not self.empty:
+        #if not self.empty:
             for archetype in self.contains():
                 for e in archetype:
                     e.tick(TICK)

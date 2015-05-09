@@ -26,6 +26,7 @@ class Chunk:
         self.chunk_range = self.define_chunk_range()
         self.make_coordinates(self.chunk_range)
         self.last_active_game_turn = self.game_turn_created
+    
     def define_chunk_range(self):
         x = self.XYZ[0] * 16
         y = self.XYZ[1] * 16
@@ -34,6 +35,7 @@ class Chunk:
         yRange = [ y, y + (self.chunk_size[1])]
         zRange = [ z, z + (self.chunk_size[2])]
         return [xRange, yRange, zRange]
+    
     def make_coordinates(self, ranges):
         for x in range(*ranges[0]): 
             for y in range(*ranges[1]):
@@ -43,12 +45,14 @@ class Chunk:
                     c = Coordinate(key) 
                     self.coordinates[key] = c
                     self.coordinates_list.append(c)
+    
     def tick(self, TICK, game_turn):
         self.last_active_game_turn = game_turn
         for c in self.coordinates_list:
             c.tick(TICK)
+    
     def add_element(self, coordinate_key, element):
         self.coordinates[coordinate_key].add_element(element)
-    #Return a boolean of whether element removed successfully
+    
     def remove_element(self, coordinate_key, element):
         self.coordinates[coordinate_key].remove_element(element)
