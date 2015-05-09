@@ -52,9 +52,3 @@ class Chunk:
     #Return a boolean of whether element removed successfully
     def remove_element(self, coordinate_key, element):
         self.coordinates[coordinate_key].remove_element(element)
-    def load(self):
-        for c in self.coordinates_list:
-            c.load()
-    def unload(self):
-        for c in self.coordinates_list:
-            c.unload()

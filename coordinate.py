@@ -93,12 +93,6 @@ class Coordinate:
                 for e in archetype:
                     e.tick(TICK)
     
-    def load(self):
-        [e.load() for e in self.entities]
-    
-    def unload(self):
-        [e.unload() for e in self.entities]
-    
     def updateLOS(self):
         blockLOS = False 
         elements = self.list_all()

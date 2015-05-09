@@ -148,6 +148,9 @@ class World:
                                               random.uniform(ranges[1][0],ranges[1][1])]
                 f.determine_pixel_offset()
                 c.add_element(f)
+    
+    def close(self):
+        transaction.commit()
 
 if __name__ == "__main__":
     w = World('World1')

@@ -94,5 +94,6 @@ class Entity(Matter):
                     self.frame += 1
                 else:
                     self.frame = 0
-            #if len(strip) <= self.frame:
-            #    self.frame = len(strip) - 1
+            #Test for asymetrical strip sizes
+            if len(strip) <= self.frame: #If current strip was longer than last strip...
+                self.frame = len(strip) - 1    #Skip to the end of current strip

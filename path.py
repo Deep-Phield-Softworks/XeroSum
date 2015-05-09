@@ -100,25 +100,3 @@ class Path:
         else:
             self.facings.append(self.entity.facing)
         self.facings.append(self.facings[-1])
-   
-if __name__ == '__main__':
-    #Exercise the path
-    
-    WORLD = World("TEST")
-    entity = Entity(WORLD, '10_10_0', 'rose.png', 'Rose')
-    origin = [0,0,0]
-    oKey = makeKey(origin)
-    goal_dict = dict()
-    goal_dict[oKey] = 0
-    shape = Cube(oKey, [21,21,1], True)
-    SCREEN_SIZE = [1366, 768]
-    playerView = WorldView(WORLD, shape, SCREEN_SIZE)
-    p = Path(goal_dict, entity, playerView.shape)
-    print p.nodes
-    print p.facings
-    
-    #for x in range(0,len(p.DMAP.coordinates)):
-    #    for y in range(0,len(p.DMAP.coordinates[x])):
-    #        for z in range(0,len(p.DMAP.coordinates[x][y])):
-    #            print p.DMAP.coordinates[x][y][z].key, p.DMAP.MapVals[p.DMAP.coordinates[x][y][z].key]
-    #

@@ -24,8 +24,10 @@ class Item(Matter):
                 self.__setattr__(key, kwargs[key])
             else:
                 self.__setattr__(key, self.accepted_kwargs[key])
+    
     def tick(self, TICK):
         pass #Default items do nothing on Tick
+    
     def determine_pixel_offset(self):
         px = ( self.width/2.0) - self.float_offset[0] * self.width
         py = (self.height/2.0) - self.float_offset[1] * self.height

@@ -30,11 +30,15 @@ class Matter:
                 self.name = name
             except:
                 pass
-    def __setattr__(self, name, value):
-        self.__dict__[name] = value
+    
     def tick(self, TICK):
         error_string = "Subclass of Matter must implement tick method"
         raise NotImplementedError(error_string)
+    
     def determine_pixel_offset(self):
         error_string = "Subclass of Matter must have determine_pixel_offset method"
         raise NotImplementedError(error_string)
+    
+    def __setattr__(self, name, value):
+        self.__dict__[name] = value
+    
