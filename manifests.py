@@ -2,7 +2,6 @@
 import pygame, sys, os
 
 from persistent.mapping import PersistentMapping as pdict
-#from pygame.locals import * #WILDCARD FIX HERE
 
 from unboundmethods import TILE_WIDTH, TILE_HEIGHT
 from spritesheet import SpriteSheet
@@ -67,5 +66,5 @@ for fx in os.listdir(fx_dir):
     fx_manifest[str(fx)] = sound
     
 #Initialize the pygame mixer
-pygame.mixer.init(frequency=22050, size=-16, channels=4, buffer=4096)
+pygame.mixer.init(frequency=22050, size=-16, channels=8, buffer=4096)
 ###########Initilizations####################
