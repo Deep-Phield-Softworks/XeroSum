@@ -2,7 +2,7 @@
 from persistent.list import PersistentList as plist
 
 
-from imagemanifests import sprite_manifest
+from manifests import sprite_manifest
 from matter import Matter
 from unboundmethods import TILE_WIDTH, TILE_HEIGHT 
 #Entities are objects that are "alive". They can:

@@ -5,6 +5,7 @@ from persistent.mapping import PersistentMapping as pdict
 
 from unboundmethods import TILE_WIDTH, TILE_HEIGHT
 from spritesheet import SpriteSheet
+
 ###Initialize pygame display###
 pygame.init()
 ###Determine platform###
@@ -57,14 +58,14 @@ for track in os.listdir(music_dir):
     music_manifest[str(track)] = str(music_dir) + str(track) #Add track to manifest
     tracks.append(str(music_dir) + str(track)) #Add track to random list of songs
 ###Sound Effects Initialization###
-#!!!BROKEN ATM!!!
 fx_manifest = pdict()
 fx_dir = os.getcwd() + os.sep + "sound" + os.sep + "FX" + os.sep
 for fx in os.listdir(fx_dir):
-    filename = str(fx_dir) + str(track)
+    filename = str(fx_dir) + str(fx)
     sound = pygame.mixer.Sound(filename)
-    fx_manifest[str(fx)] = sound
+    key = fx.split('.')[0] #Split filename on '.' and keep first half for use as fx_manifest dict key
+    fx_manifest[str(key)] = sound
     
 #Initialize the pygame mixer
-pygame.mixer.init(frequency=22050, size=-16, channels=8, buffer=4096)
+pygame.mixer.init()
 ###########Initilizations####################

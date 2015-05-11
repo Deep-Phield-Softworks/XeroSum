@@ -2,7 +2,7 @@
 from pygame import Rect, Surface
 from operator import *
 from unboundmethods import find_parent, TILE_WIDTH, TILE_HEIGHT
-from imagemanifests import *
+from manifests import *
 from subclassloader import *
 #from Tile import Tile
 #from Feature import Feature

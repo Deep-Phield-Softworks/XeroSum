@@ -6,7 +6,7 @@ import pygame, sys, os, random
 from pygame.locals import QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP,  KEYDOWN,  KEYUP,  K_ESCAPE,  K_F1,  K_F2,  K_F3
 
 
-from imagemanifests import screen_size, tracks, screen,  fx_manifest
+from manifests import screen_size, tracks, screen,  fx_manifest
 from world import World
 from player import Player
 from aoe import *
@@ -34,9 +34,8 @@ selected = None #Currently selected Entity
 
 ###Main Loop###
 def main_loop():
-    #Check if music is (not) playing...
-#    if not pygame.mixer.music.get_busy(): #If no music...
-#        playRandomSong() #Play a random song
+    if not pygame.mixer.music.get_busy(): #If no music...
+        playRandomSong() #Play a random song
     ###Event Handling###
     for event in pygame.event.get():#Go through all events
         if event.type == QUIT: #If the little x in the window was clicked...
@@ -72,13 +71,9 @@ def keyboard(event):
         #Hook for the debug
         pass
     if pressed_keys[K_F3]:
-        #Play sound
-#        fx_manifest['explosion.ogg'].play()
-        channel = pygame.mixer.find_channel()
-        channel.play(fx_manifest['handgun.ogg'])
-#        fx_manifest['rifle.ogg'].play()
-        
-    
+        #Play random sound
+        fx_manifest[random.choice(fx_manifest.keys())].play()
+
 #Seperates mouse clicks into left and right and then call their seperate fncs
 def mouse_click(event):
     mouse_pos = pygame.mouse.get_pos()
