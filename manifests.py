@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 import pygame, sys, os
 
-from persistent.mapping import PersistentMapping as pdict
-
 from unboundmethods import TILE_WIDTH, TILE_HEIGHT
 from spritesheet import SpriteSheet
 
@@ -34,8 +32,8 @@ py_offset = (screen_size[1]/2) - ((viewpoint_max_size * TILE_HEIGHT)/2)
 art_dir    = os.getcwd() + os.sep + "pngs" + os.sep
 tile_dir   = os.getcwd() + os.sep + "pngs" + os.sep + "tiles"   + os.sep 
 sprite_dir = os.getcwd() + os.sep + "pngs" + os.sep + "sprites" + os.sep 
-tile_manifest   = pdict()
-sprite_manifest = pdict()
+tile_manifest   = dict()
+sprite_manifest = dict()
 
 for tile in os.listdir(tile_dir):
     #Make a tile_manifest entry with filename key and pygame.image value   
@@ -52,13 +50,13 @@ for sprite in os.listdir(sprite_dir):
 tracks = []
 #Dictionary of tracks with filenames as keys and filepath as values for playing
 #a particular chosen piece
-music_manifest = pdict()
+music_manifest = dict()
 music_dir = os.getcwd() + os.sep + "sound" + os.sep + "music" + os.sep
 for track in os.listdir(music_dir):
     music_manifest[str(track)] = str(music_dir) + str(track) #Add track to manifest
     tracks.append(str(music_dir) + str(track)) #Add track to random list of songs
 ###Sound Effects Initialization###
-fx_manifest = pdict()
+fx_manifest = dict()
 fx_dir = os.getcwd() + os.sep + "sound" + os.sep + "FX" + os.sep
 for fx in os.listdir(fx_dir):
     filename = str(fx_dir) + str(fx)
