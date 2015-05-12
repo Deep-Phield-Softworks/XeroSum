@@ -34,7 +34,7 @@ from unboundmethods import midpoint,  make_key,  key_to_XYZ
 #-a multidimensional array with lengths equal to the magnitudes
 # in the given list
 def make_n_dimension(dimensions, contains = None):
-    if hasattr(dimensions, '__iter__'):
+    if hasattr(dimensions, '__iter__'): #If dimensions arguement has __iter__ attribute (is a list ie)...
         nD = None
         if len(dimensions) == 2:
             nD = []
@@ -50,9 +50,9 @@ def make_n_dimension(dimensions, contains = None):
                     nD[x].append([])
                     for z in range(dimensions[2]):
                         nD[x][y].append(contains)
-    else:
+    else:                                                 #If dimensions arguement is not an iterable...         
         nD = []
-        nD = [nD.append(None) for i in range(dimensions)]
+        nD = [nD.append(contains) for i in range(dimensions)]
     return nD
 
 #A base class for other shapes. Usable also as a sort of null shape.

@@ -33,7 +33,8 @@ class World:
                                    'TILE_SIZE' : TILE_SIZE, 
                                    'active_chunks' :  pdict(),
                                    'chunks' :  pdict(),
-                                   'game_turn' : 0, 
+                                   'game_turn' : 0,
+                                   'play_music': True,  
                                    'tick_accumulator' : 0, 
                                    'new_game': True, 
                                    'player': None
@@ -73,7 +74,6 @@ class World:
                 if not self.db['chunks'].has_key(key): #If Chunk does NOT exists..
                     self.db['chunks'][key] = Chunk(key, self.db['game_turn'], self.db['CHUNK_SIZE']) #Make it
                 self.db['active_chunks'][key] = self.db['chunks'][key] #Add it to active Chunks    
-                #self.db['active_chunks'][key].load() #Have Chunk load itself
         transaction.commit()
     
     #Given: *keys as a list of Chunk object key strings for use in self.db['active_chunks']

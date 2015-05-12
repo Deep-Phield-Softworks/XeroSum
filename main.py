@@ -2,7 +2,7 @@
 #Main game script for "Xero Sum"
 import pygame, sys, os, random
 
-
+import transaction
 from pygame.locals import QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP,  KEYDOWN,  KEYUP,  K_ESCAPE,  K_F1,  K_F2,  K_F3
 
 
@@ -34,8 +34,9 @@ selected = None #Currently selected Entity
 
 ###Main Loop###
 def main_loop():
-    if not pygame.mixer.music.get_busy(): #If no music...
-        playRandomSong() #Play a random song
+    if world.db['play_music']:
+        if not pygame.mixer.music.get_busy(): #If no music...
+            playRandomSong() #Play a random song
     ###Event Handling###
     for event in pygame.event.get():#Go through all events
         if event.type == QUIT: #If the little x in the window was clicked...
@@ -62,14 +63,16 @@ def keyboard(event):
         #Save off more safely and unload map
         world.close()
         sys.exit()
-    #'K_F1' key for screenshot. This saves it to timeString().png
+    #'K_F1' key to toggle music
     if pressed_keys[K_F1]:
+        pygame.mixer.music.stop()
+        world.db['play_music'] = not world.db['play_music']
+        transaction.commit()
+    #'K_F2' key for screenshot. This saves it to timeString().png    
+    if pressed_keys[K_F2]:
         filename = timestamp() + '.png'
         pygame.image.save((screen),filename)
         print "screenshot saved as " + filename
-    if pressed_keys[K_F2]:
-        #Hook for the debug
-        pass
     if pressed_keys[K_F3]:
         #Play random sound
         fx_manifest[random.choice(fx_manifest.keys())].play()
@@ -98,13 +101,14 @@ def mouse_left_click(event):
         if e[0].collidepoint(point):
             if within(e[0], point):
                 collide_list.append(e)
-    for e in collide_list:
-        info = [e[1].coordinate_key, e[1].name, 'float:' + str(e[1].float_offset), 'layer: ' + str(e[1].layer), 'px,py: ', e[1].pixel_offsets]
-        screen_text_top.append(str(info))
-        if isinstance(e[1], Entity):
-            selected = e[1]
-            selected_info = info
-    screen_text_top.append("Selected: " + str(info))
+    if collide_list:
+        for e in collide_list:
+            info = [e[1].coordinate_key, e[1].name, 'float:' + str(e[1].float_offset), 'layer: ' + str(e[1].layer), 'px,py: ', e[1].pixel_offsets]
+            screen_text_top.append(str(info))
+            if isinstance(e[1], Entity):
+                selected = e[1]
+                selected_info = info
+                #screen_text_top.append("Selected: " + str(info))
 
 def mouse_right_click(event):
     if selected:

@@ -1,30 +1,31 @@
 #!/usr/bin/env python
 
-from AoE import *
+from aoe import *
+from unboundmethods import make_key
 import unittest
 
 class TestAoETemplates(unittest.TestCase):
     #Initialize test environmental variables and objects
     def setUp(self):
-        self.oKey = makeKey([0,0,0])
-        self.sq1 = square(self.oKey, [3,2])
-        self.sq2 = square(self.oKey, [3,2], True)
-        self.sq3 = square(self.oKey, 2)
-        self.sq4 = sq = square(self.oKey, 2, True)
-        self.nD1 = makeNDimension(6)
-        self.nD2 = makeNDimension([3,4])
-        self.nD3 = makeNDimension([2,3,4])
-        self.cube1 = cube(self.oKey, [2,3,4])
-        self.cube2 = cube(self.oKey, [2,3,4], True)
-        self.cube3 = cube(self.oKey, 3)
-        self.cube4 = cube(self.oKey, 2, True)
+        self.origin_key = make_key([0,0,0])
+        self.sq1 = Square(self.origin_key, [3,2])
+        self.sq2 = Square(self.origin_key, [3,2], True)
+        self.sq3 = Square(self.origin_key, 2)
+        self.sq4 = Square(self.origin_key, 2, True)
+        self.nD1 = make_n_dimension(6)
+        self.nD2 = make_n_dimension([3,4])
+        self.nD3 = make_n_dimension([2,3,4])
+        self.cube1 = Cube(self.origin_key, [2,3,4])
+        self.cube2 = Cube(self.origin_key, [2,3,4], True)
+        self.cube3 = Cube(self.origin_key, 3)
+        self.cube4 = Cube(self.origin_key, 2, True)
     
     #Test that keys are produced as expected
-    def test_makeKey(self):
-        expectedKey = '0_0_0'
-        self.assertTrue(self.oKey == expectedKey)
+    def test_make_key(self):
+        expected_key = '0_0_0'
+        self.assertTrue(self.origin_key == expected_key)
     
-    #Exercise the areaKeyList of the 4 test squares
+    #Exercise the areaKeyList of the 4 test Squares
     def test_SquareAreas(self):
         sq1ExpectedArea = (self.sq1.magnitude[0]*2 + 1) * (self.sq1.magnitude[1]*2 + 1)
         self.assertTrue(len(self.sq1.areaKeyList) == sq1ExpectedArea)
