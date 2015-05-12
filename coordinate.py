@@ -8,6 +8,7 @@ from feature import Feature
 from item import Item
 from entity import Entity
 from field import Field
+
 #Coordinates objects represent a location in a x,y,z coordinate plane.
 #Coordinates have the properties:
 #-Low level container of the other data object types
@@ -21,6 +22,7 @@ from field import Field
 #-Coordinates can tick their contents
 #-Coordinates can sort their contents by using floatOffsets (Deprecated, done in worldview.render())
 #-Coordinates know whether their contents block Line of Sight
+
 class Coordinate:
     def __init__(self, key):
         self.key = key

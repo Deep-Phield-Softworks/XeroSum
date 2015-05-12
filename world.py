@@ -35,7 +35,8 @@ class World:
                                    'chunks' :  pdict(),
                                    'game_turn' : 0, 
                                    'tick_accumulator' : 0, 
-                                   'new_game': True 
+                                   'new_game': True, 
+                                   'player': None
                                  } 
         self.init(**self.init_args)
 

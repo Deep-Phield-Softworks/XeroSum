@@ -172,16 +172,14 @@ if world.db['new_game']:##Run Test Terrain Gen
     player_args = {'world':world,
                              'coordinate_key': origin_key,
                              'image_key':'rose.png',
-                             'shape': shape,
                              'name':'Rose'
                            }
     player = Player(**player_args)
     world.add_element(origin_key, player)
-    player_view = WorldView(world, shape, screen_size)
     makeTestTerrain()
     world.db['new_game'] = False
-else:#Else just make the player_view
-    player_view = WorldView(world, shape, screen_size)
+
+player_view = WorldView(world, shape, screen_size)
 
 ###DEBUG###
 print "ACTIVE CHUNKS #:", len(sorted(world.db['active_chunks'].keys()))

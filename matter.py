@@ -15,7 +15,8 @@ class Matter:
         self.accepted_kwargs = {'image_key': 'ISO_BASIC_64x32.png',
                                                  'name': None,
                                                  'height': 64,
-                                                 'width': 32
+                                                 'width': 32, 
+                                                 'coordinate_key': None
                                                }
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
