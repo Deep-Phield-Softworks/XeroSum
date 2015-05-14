@@ -6,7 +6,6 @@ from pygame import Rect, Surface
 
 
 from unboundmethods import find_parent 
-#from manifests import *
 
 #worldView is an object made to render a portion of the world.
 #Given:
