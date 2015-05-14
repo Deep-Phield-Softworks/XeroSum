@@ -64,6 +64,7 @@ class Entity(Matter):
         return plist([int(px), int(py)])
     
     def to_blit(self):
+        self.determine_pixel_offset()
         return sprite_manifest[self.image_key].animations[self.facing][self.frame]
     
     def tick(self, TICK):

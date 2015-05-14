@@ -5,8 +5,6 @@ from operator import *
 from pygame import Rect, Surface
 
 
-from manifests import tile_manifest
-from entity import Entity
 from unboundmethods import find_parent 
 #from manifests import *
 
@@ -75,11 +73,7 @@ class WorldView:
                     contents = c.list_all()    #get all contents
                     for e in contents:
                         #Determine proper image
-                        if isinstance(e, Entity):
-                            e.determine_pixel_offset() #Update offset info
-                            img = e.to_blit()
-                        else:
-                            img = tile_manifest[e.image_key]
+                        img = e.to_blit()
                         #Adjust px,py based upon e's attributes
                         px = px + e.pixel_offsets[0]
                         py = py + e.pixel_offsets[1]
