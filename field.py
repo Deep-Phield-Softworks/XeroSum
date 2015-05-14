@@ -33,6 +33,10 @@ class Field:
             else:
                 self.__setattr__(key, self.accepted_kwargs[key]) 
     
+    def to_blit(self):
+        error_string = "Subclass of Field must have to_blit method"
+        raise NotImplementedError(error_string)
+    
     def tick(self, TICK):
         error_string = "Subclass of Field must implement tick method"
         raise NotImplementedError(error_string)

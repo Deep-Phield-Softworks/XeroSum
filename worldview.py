@@ -1,14 +1,15 @@
 #!/usr/bin/env python
-from pygame import Rect, Surface
 from operator import *
-from unboundmethods import find_parent, TILE_WIDTH, TILE_HEIGHT
-from manifests import *
-from subclassloader import *
-#from Tile import Tile
-#from Feature import Feature
-#from Item import Item
-#from Entity import Entity
-#from Field import Field
+
+
+from pygame import Rect, Surface
+
+
+from manifests import tile_manifest
+from entity import Entity
+from unboundmethods import find_parent 
+#from manifests import *
+
 #worldView is an object made to render a portion of the world.
 #Given:
 #-world object
@@ -22,9 +23,13 @@ from subclassloader import *
 #-Stores a list of hit boxes for objects rendered in list with elements in
 # form: [pygame.Rect, Object]
 class WorldView:
-    def __init__(self, world, shape, screen_size):
+    def __init__(self, world, shape, screen_size, px_offset,  py_offset,   TILE_WIDTH = 64, TILE_HEIGHT = 32):
         self.world       = world 
-        self.shape       = shape 
+        self.shape       = shape
+        self.px_offset = px_offset
+        self.py_offset = py_offset
+        self.TILE_WIDTH = TILE_WIDTH
+        self.TILE_HEIGHT = TILE_HEIGHT
         self.area_key_list = self.shape.area_key_list
         self.nD          = self.shape.n_dimensional_array
         self.prepare_chunks() #Determine chunks needed and have world load them
@@ -44,15 +49,15 @@ class WorldView:
                 chunks.append(parent_chunk)  #Add it...
         self.world.activate_chunk(*chunks)
     def preload_coordinates(self):
-        half_tile_wide = int(TILE_WIDTH  / 2 ) #imported from unboundMethods
-        half_tile_high = int(TILE_HEIGHT / 2 ) #imported from unboundMethods
+        half_tile_wide = int(self.TILE_WIDTH  / 2 ) 
+        half_tile_high = int(self.TILE_HEIGHT / 2 ) 
         for x in range(len(self.nD)):
             for y in range(len(self.nD[x])) :
                 for z in range(len(self.nD[x][y])):
                     cKey = self.nD[x][y][z]
                     c = self.world.db['active_chunks'][find_parent(cKey)].coordinates[cKey]
-                    basepx = (x - y) * half_tile_wide + px_offset
-                    basepy = (x + y) * half_tile_high + py_offset
+                    basepx = (x - y) * half_tile_wide + self.px_offset
+                    basepy = (x + y) * half_tile_high + self.py_offset
                     self.nD[x][y][z] = c, (basepx, basepy)
     def render(self):
         self.surface.fill((0,0,0)) #Fill surface to avoid map edge slug trails 

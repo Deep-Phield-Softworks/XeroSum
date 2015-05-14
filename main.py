@@ -6,7 +6,7 @@ import transaction
 from pygame.locals import QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP,  KEYDOWN,  KEYUP,  K_ESCAPE,  K_F1,  K_F2,  K_F3
 
 
-from manifests import screen_size, tracks, screen,  fx_manifest
+from manifests import tracks,  fx_manifest
 from world import World
 from player import Player
 from aoe import *
@@ -14,9 +14,26 @@ from worldview import WorldView
 from path import Path
 from entity import Entity
 from tile import Tile
-from unboundmethods import make_key, within, timestamp
+from unboundmethods import make_key, within, timestamp,  TILE_WIDTH,  TILE_HEIGHT
 
+###Initialize pygame display###
+pygame.init()
 
+platform = sys.platform
+screen_size = [pygame.display.Info().current_w, pygame.display.Info().current_h]
+COLORKEY = pygame.Color('#0080ff')
+screen = pygame.display.set_mode(screen_size, pygame.FULLSCREEN)
+screen.set_colorkey(COLORKEY)
+
+screen_height_in_tiles = (screen_size[1] / TILE_HEIGHT)
+screen_width_in_tiles  = (screen_size[0] / TILE_WIDTH)
+if screen_height_in_tiles < screen_width_in_tiles:
+    viewpoint_max_size = screen_height_in_tiles
+else:
+    viewpoint_max_size = screen_width_in_tiles
+#Initialize px, py offsets
+px_offset = (screen_size[0]/2) - (TILE_WIDTH/2)
+py_offset = (screen_size[1]/2) - ((viewpoint_max_size * TILE_HEIGHT)/2)
 os.chdir(sys.path[0])
 ####Font Variables###
 pygame.font.init()
@@ -183,7 +200,7 @@ if world.db['new_game']:##Run Test Terrain Gen
     makeTestTerrain()
     world.db['new_game'] = False
 
-player_view = WorldView(world, shape, screen_size)
+player_view = WorldView(world, shape, screen_size,  px_offset,  py_offset)
 
 ###DEBUG###
 print "ACTIVE CHUNKS #:", len(sorted(world.db['active_chunks'].keys()))

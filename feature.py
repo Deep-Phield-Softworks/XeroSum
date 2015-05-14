@@ -3,6 +3,8 @@ from persistent.list import PersistentList as plist
 
 
 from matter import Matter
+from manifests import tile_manifest
+
 #Feature objects are facets of the world that are:
 #-unable to move themselves(usually)
 #-cannot be picked up or carried
@@ -45,6 +47,9 @@ class Feature(Matter):
             else:
                 self.__setattr__(key, self.accepted_kwargs[key])
         self.pixel_offsets = self.determine_pixel_offset()
+    
+    def to_blit(self):
+        return tile_manifest[self.image_key]
     
     def determine_pixel_offset(self):
         px = ( self.width/2.0) - self.float_offset[0] * self.width

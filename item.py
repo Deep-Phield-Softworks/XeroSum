@@ -1,5 +1,9 @@
 #!/usr/bin/env python
+from persistent.list import PersistentList as plist
+
+
 from matter import Matter
+from manifests import item_manifest
 
 #Items are objects that can be placed into inventory. They are:
 #-unable to move themselves(usually)
@@ -14,16 +18,20 @@ from matter import Matter
 #-'floatOffset' => list of two floats that represent how far from the center of
 #                  the parent Coordinate the object lies. [0.5, 0.5] would be
 #                  centered on the parent Coordinate.
-#-'layer'       => Numeric value to be used in render ordering. 
+#-'layer'    => Numeric value to be used in render ordering.
+#-'frame'  =>  Tuple describing frame position in the ItemSheet referenced by item_manifest['image_key']
 class Item(Matter):
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)
-        self.accepted_kwargs = {'tall': 0, 'float_offset': [0.5, 0.5], 'layer': 1.5}
+        self.accepted_kwargs = {'tall': 0, 'float_offset': plist([0.5, 0.5]), 'layer': 1.5,  'frame': (0, 0)}
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])
             else:
                 self.__setattr__(key, self.accepted_kwargs[key])
+    
+    def to_blit(self):
+        return item_manifest[self.image_key].frames[self.frame[0]][self.frame[1]]
     
     def tick(self, TICK):
         pass #Default items do nothing on Tick

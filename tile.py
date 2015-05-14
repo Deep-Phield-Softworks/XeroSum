@@ -1,5 +1,10 @@
 #!/usr/bin/env python
+from persistent.list import PersistentList as plist
+
+
 from matter import Matter
+from manifests import tile_manifest
+
 #Tile objects are the ground.
 #Tile objects are: 
 #-immobile
@@ -24,8 +29,11 @@ class Tile(Matter):
             else:
                 self.__setattr__(key, self.accepted_kwargs[key])
         #No Tiles offset. Would create gaps. Only here as placeholder values.
-        self.float_offset = [0.0,0.0]
-        self.pixel_offsets = [0, 0]
+        self.float_offset = plist([0.0,0.0])
+        self.pixel_offsets = plist([0, 0])
+    
+    def to_blit(self):
+        return tile_manifest[self.image_key]
     
     def determine_pixel_offset(self):
         #Tiles should not be offset. Would create gaps

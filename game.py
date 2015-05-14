@@ -12,7 +12,7 @@ from worldview import WorldView
 from path import Path
 from entity import Entity
 from tile import Tile
-from unboundmethods import find_parent
+from unboundmethods import find_parent,  TILE_WIDTH, TILE_HEIGHT
 
 #Game Class for Xero Sum
 #Game is a high level wrapper that has the following attributes:
@@ -20,11 +20,16 @@ from unboundmethods import find_parent
 
 class Game:
     def __init__(self,  world_name = 'Test',  player_start_coordinate_key = '0_0_0'):
-        self.clock = pygame.time.Clock()
-        self.world = self.world_init(world_name,  player_start_coordinate_key)
+        pygame.init() 
+        pygame.mixer.init()
+        self.platform = sys.platform #Determine operating system
+        self.world = self.world_init(world_name,  player_start_coordinate_key) #Create world object
         self.db = self.world.db #Convenience renaming here 
-        self.tick  = self.db['tick_accumulator']
         #self.player_view = WorldView(world, shape, screen_size)
+        self.screen_size = screen_size
+        self.screen = self.render_surface_init()
+        self.clock = pygame.time.Clock() #Clock object to tick
+        self.tick  = self.db['tick_accumulator'] #Load last clock tick value
         
     def world_init(self,  name = 'Test',  player_start_coordinate_key = '0_0_0'):
         world = World(name)
@@ -77,6 +82,23 @@ class Game:
             world.db['new_game'] = False
         transaction.commit()    
         return world 
+
+    def render_surface_init(self):
+        self.screen_height_in_tiles = (self.screen_size[1] / TILE_HEIGHT)
+        self.screen_width_in_tiles  = (self.screen_size[0] / TILE_WIDTH)
+        self.viewpoint_max_size = self.screen_width_in_tiles
+        if self.screen_height_in_tiles > self.screen_width_in_tiles:
+            self.viewpoint_max_size = self.screen_height_in_tiles
+        #Initialize px, py offsets
+        self.px_offset = (self.screen_size[0]/2) - (TILE_WIDTH/2)
+        self.py_offset = (self.screen_size[1]/2) - ((viewpoint_max_size * TILE_HEIGHT)/2)
+        return screen
+
+    
+    def ui_surface_init(self):
+        pass
+    
+    
 
 if __name__ == '__main__':
     g = Game()
