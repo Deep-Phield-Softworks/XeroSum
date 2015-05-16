@@ -23,10 +23,12 @@ screen.set_colorkey(COLORKEY)
 art_dir    = os.getcwd() + os.sep + "pngs" + os.sep
 tile_dir   = os.getcwd() + os.sep + "pngs" + os.sep + "tiles"   + os.sep
 item_dir = os.getcwd() + os.sep + "pngs" + os.sep + "items"   + os.sep
-sprite_dir = os.getcwd() + os.sep + "pngs" + os.sep + "sprites" + os.sep 
+sprite_dir = os.getcwd() + os.sep + "pngs" + os.sep + "sprites" + os.sep
+ui_dir = os.getcwd() + os.sep + "pngs" + os.sep + "ui" + os.sep 
 tile_manifest     = dict()
 sprite_manifest = dict()
 item_manifest   = dict()
+ui_manifest   = dict()
 
 for tile in os.listdir(tile_dir):
     #Make a tile_manifest entry with filename key and pygame.image value   
@@ -41,6 +43,10 @@ for item_sheet in os.listdir(item_dir):
     #Make a item_manifest entry with filename key and pygame.image object value
     if '.png' in str(item_sheet):
         item_manifest[str(item_sheet)] = ItemSheet(item_sheet,  item_dir)
+for ui_img in os.listdir(ui_dir):
+    #Make a ui_manifest entry with filename key and pygame.image value   
+    if '.png' in str(ui_img):
+        ui_manifest[str(ui_img)] = pygame.image.load(ui_dir+ui_img)
     
 ###Music Initialization###
 pygame.mixer.init()
