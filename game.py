@@ -90,7 +90,7 @@ class Game:
         if self.screen_height_in_tiles > self.screen_width_in_tiles:
             self.viewpoint_max_size = self.screen_height_in_tiles
         self.px_offset = (self.screen_size[0]/2) - (TILE_WIDTH/2)
-        self.py_offset = (self.screen_size[1]/2) - ((viewpoint_max_size * TILE_HEIGHT)/2)
+        self.py_offset = (self.screen_size[1]/2) - ((self.viewpoint_max_size * TILE_HEIGHT)/2)
         return screen
 
     

@@ -6,7 +6,7 @@ import transaction
 from pygame.locals import QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP,  KEYDOWN,  KEYUP,  K_ESCAPE,  K_F1,  K_F2,  K_F3
 
 
-from manifests import tracks,  fx_manifest
+from manifests import tracks, fx_manifest, ui_manifest
 from world import World
 from player import Player
 from aoe import *
@@ -68,6 +68,7 @@ def main_loop():
     world.tick(clock.tick())
     player_view.render()
     screen.blit(player_view.surface, (0,0))
+    draw_ui()
     draw_screen_text() #Draw text onto screen
     pygame.display.flip()      
 
@@ -162,6 +163,18 @@ def playRandomSong():
     pygame.mixer.music.load(str(tracks[n]))
     #Play the song once
     pygame.mixer.music.play()
+
+def draw_ui():
+    trim_dimensions = ui_manifest['trim.png'].get_size()
+    vertical_trim_dimensions = ui_manifest['vertical_trim.png'].get_size()
+    horizontal_trims = screen_size[0]/trim_dimensions[0] + 1
+    vertical_trims = screen_size[1]/trim_dimensions[1] + 1
+    for i in range(horizontal_trims):
+        screen.blit(ui_manifest['trim.png'],(i*trim_dimensions[0],0))
+        screen.blit(ui_manifest['trim.png'],(i*trim_dimensions[0], screen_size[1]-trim_dimensions[1]))
+    for i in range(vertical_trims):
+        screen.blit(ui_manifest['vertical_trim.png'],(0,i*vertical_trim_dimensions[1]))
+        screen.blit(ui_manifest['vertical_trim.png'],(screen_size[0] - vertical_trim_dimensions[0], i*vertical_trim_dimensions[1]))
 
 ###Test Terrain Gen###
 def makeTestTerrain():
