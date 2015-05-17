@@ -4,6 +4,7 @@ from persistent.list import PersistentList as plist
 
 from matter import Matter
 from manifests import item_manifest
+from manifests import fx_manifest 
 
 #Items are objects that can be placed into inventory. They are:
 #-unable to move themselves(usually)
@@ -20,10 +21,14 @@ from manifests import item_manifest
 #                  centered on the parent Coordinate.
 #-'layer'    => Numeric value to be used in render ordering.
 #-'frame'  =>  Tuple describing frame position in the ItemSheet referenced by item_manifest['image_key']
+#-'weight' => Float value describing the weight of the item
+#-'use_sound' => Value points to the .ogg file of the sound the item makes on use. Default for now is explosion
+
 class Item(Matter):
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)
-        self.accepted_kwargs = {'tall': 0, 'float_offset': plist([0.5, 0.5]), 'layer': 1.5,  'frame': (0, 0)}
+        self.accepted_kwargs = {'tall': 0, 'float_offset': plist([0.5, 0.5]), 'layer': 1.5,
+                                'frame': (0, 0), 'weight' : 0.0, 'use_sound' : 'explosion.ogg'}
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])
@@ -40,4 +45,4 @@ class Item(Matter):
         px = ( self.width/2.0) - self.float_offset[0] * self.width
         py = (self.height/2.0) - self.float_offset[1] * self.height
         py = py - element.tall - int(element.tall * element.float_offset[1])
-        self.pixel_offsets = [int(px), int(py)]
+        self.pixel_offsets = [int(px), int(py)] 

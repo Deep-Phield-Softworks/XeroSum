@@ -25,8 +25,4 @@ class Weapon (Item) :
         error_string = "Subclass of weapon must properly implement it's own attack method!"
         raise NotImplementedError(error_string)
 
-
-# add in Item  a self.kwarg of weight that is a float and a use_sound in single quotes and a sound.mpr3 or whatever
-# from manifest import fx_manifest
-
     
