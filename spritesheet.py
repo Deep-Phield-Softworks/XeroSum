@@ -4,11 +4,10 @@ import pygame
 
 class SpriteSheet:
     #Constructor
-    def __init__(self, image_key, sprite_dir, frames_wide, frames_high, COLORKEY = pygame.Color('#0080ff') ): 
+    def __init__(self, image_key, sprite_path, frames_wide, frames_high, COLORKEY = pygame.Color('#0080ff') ): 
         self.image_key = image_key   #Image file name
-        self.image_path = sprite_dir + image_key
-        #self.surface = pygame.image.load(self.image_path).convert()
-        self.surface = pygame.image.load(self.image_path)
+        self.image_path = sprite_path
+        self.surface = pygame.image.load(self.image_path).convert()
         self.surface.set_colorkey(COLORKEY)
         self.frames_wide = frames_wide #How many animation frames wide is image
         self.frames_high = frames_high #How many animation frames high is image
