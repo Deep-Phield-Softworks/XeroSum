@@ -1,13 +1,13 @@
 #!/usr/bin/env python
-#Generic entity object class
+#Generic item sheet object class
 import pygame
 
 
 class ItemSheet:
     #Constructor
-    def __init__(self, image_key, item_dir,  COLORKEY = pygame.Color('#0080ff') ): 
+    def __init__(self, image_key, image_path,  COLORKEY = pygame.Color('#0080ff') ): 
         self.image_key = image_key   #Image file name
-        self.image_path = item_dir + image_key
+        self.image_path = image_path
         self.surface = pygame.image.load(self.image_path)
         self.surface.set_colorkey(COLORKEY)
         

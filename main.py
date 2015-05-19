@@ -54,7 +54,7 @@ selected = None #Currently selected Entity
 def main_loop():
     if world.db['play_music']:
         if not pygame.mixer.music.get_busy(): #If no music...
-            playRandomSong() #Play a random song
+            play_random_song() #Play a random song
     ###Event Handling###
     for event in pygame.event.get():#Go through all events
         if event.type == QUIT: #If the little x in the window was clicked...
@@ -69,7 +69,7 @@ def main_loop():
     world.tick(clock.tick())
     player_view.render()
     screen.blit(player_view.surface, (0,0))
-    draw_ui()
+    #draw_ui()
     draw_screen_text() #Draw text onto screen
     pygame.display.flip()      
 
@@ -157,13 +157,16 @@ def draw_screen_text():
     screen_text = []
 
 #Play a random song
-def playRandomSong():
+def play_random_song():
     #Pick a random int between 0 and the length of tracks list (-1)
-    n = random.randint(0,(len(tracks)-1))
-    #Load the random song chosen
-    pygame.mixer.music.load(str(tracks[n]))
-    #Play the song once
-    pygame.mixer.music.play()
+    try:
+        n = random.randint(0,(len(tracks)-1))
+        #Load the random song chosen
+        pygame.mixer.music.load(str(tracks[n]))
+        #Play the song once
+        pygame.mixer.music.play()
+    except pygame.error as Error:
+        print "Error: ", Error
 
 def draw_ui():
     trim_dimensions = ui_manifest['trim.png'].get_size()
