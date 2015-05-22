@@ -22,7 +22,7 @@ from manifests import tile_manifest
 class Tile(Matter):
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)
-        self.accepted_kwargs = {'speedModifier': 1.0, 'layer': 0.1}
+        self.accepted_kwargs = {'speedModifier': 1.0, 'layer': 0.1, 'pathable': True}
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])

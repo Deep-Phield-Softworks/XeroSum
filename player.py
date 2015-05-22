@@ -13,7 +13,7 @@ from worldview import WorldView
 class Player(Entity):
     def __init__(self, **kwargs):
         Entity.__init__(self, **kwargs)
-        self.accepted_kwargs = {
+        self.accepted_kwargs = { 'controllable': True
                                }
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
