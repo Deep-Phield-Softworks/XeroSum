@@ -34,7 +34,8 @@ class Entity(Matter):
                                 'coordinate_key': '0_0_0',
                                 'impassible': True,
                                 'layer': 1.2,
-                                'float_offset': plist([0.5, 0.5])
+                                'float_offset': plist([0.5, 0.5]), 
+                                'controllable': False
                                                }
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
