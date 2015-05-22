@@ -138,8 +138,8 @@ class Game:
     
     def path(self):
         if self.selected and  self.path_target:
-            goal_dict = {self.selected.coordinate_key: 0}  #Set target to 0 for DMAP
-            self.selected.path = Path(goal_dict, self.selected, self.world.db['view_shape'])
+            #goal_dict = {self.selected.coordinate_key: 0}  #Set target to 0 for DMAP
+            #self.selected.path = Path(goal_dict, self.selected, self.world.db['view_shape'])
             self.path_target = None
     
     def main_loop(self):

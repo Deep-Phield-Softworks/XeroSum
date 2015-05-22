@@ -65,6 +65,7 @@ class DijkstraMap:
     # Returns the tuple of info on lowest neighbor it can find.        
     def lowest_neighbor_value(self, key):
         low_key = None
+        print "key",  key
         XYZ = key_to_XYZ(key)
         for mod in self.mods:
             initial = [(XYZ[0] + mod[0]), (XYZ[1] + mod[1]), (XYZ[2] + mod[2])]
