@@ -58,7 +58,6 @@ class Coordinate:
         if isinstance(element, Field):
             self.fields.append(element)
         element.coordinate_key = self.key
-        element.parent_coordinate = self
         self.updateLOS()
 
     # Remove an element
@@ -78,8 +77,6 @@ class Coordinate:
         if isinstance(element, Field):
             if element in self.fields:
                 self.fields.remove(element)
-        #Remove ownership of element
-        element.coordinate_key      = None
         element.parent_coordinate = None
         # Update self.empty boolean
         empty = True  # Initialize to True
