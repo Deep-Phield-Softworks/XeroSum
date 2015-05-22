@@ -1,7 +1,7 @@
 #!/usr/bin/env python
+
+
 from persistent.list import PersistentList as plist
-
-
 from unboundmethods import key_to_XYZ,  make_key
 from tile import Tile
 from feature import Feature
@@ -9,19 +9,24 @@ from item import Item
 from entity import Entity
 from field import Field
 
-#Coordinates objects represent a location in a x,y,z coordinate plane.
-#Coordinates have the properties:
-#-Low level container of the other data object types
-#-The chunk that contains a given coordinate can be determined mathematically
-# by using integer division of the coordinate's (x,y,z) by the chunkSize
-#-Coordinates know whether they are empty or not
-#-Coordinates have a list for each base type they can contain
-#-Coordinates can be told to add elements of the base types and will add them
-# to the respective list
-#-Coordinates can return their contents by using the contains() method
-#-Coordinates can tick their contents
-#-Coordinates can sort their contents by using floatOffsets (Deprecated, done in worldview.render())
-#-Coordinates know whether their contents block Line of Sight
+
+'''
+Coordinates objects represent a location in a x,y,z coordinate plane.
+Coordinates have the properties:
+-Low level container of the other data object types
+-The chunk that contains a given coordinate can be determined mathematically
+ by using integer division of the coordinate's (x,y,z) by the chunkSize
+-Coordinates know whether they are empty or not
+-Coordinates have a list for each base type they can contain
+-Coordinates can be told to add elements of the base types and will add them
+ to the respective list
+-Coordinates can return their contents by using the contains() method
+-Coordinates can tick their contents
+-Coordinates can sort their contents by using floatOffsets
+ (Deprecated, done in worldview.render())
+-Coordinates know whether their contents block Line of Sight
+'''
+
 
 class Coordinate:
     def __init__(self, key):
@@ -31,15 +36,15 @@ class Coordinate:
         self.y = self.XYZ[1]
         self.z = self.XYZ[2]
         self.empty = True
-        self.tiles  = plist([])
+        self.tiles = plist([])
         self.features = plist([])
-        self.items    = plist([])
+        self.items = plist([])
         self.entities = plist([])
-        self.fields   = plist([])
-        self.parent_chunk  = make_key([self.x/16, self.y/16, self.z])
+        self.fields = plist([])
+        self.parent_chunk = make_key([self.x/16, self.y/16, self.z])
         self.blockLOS = False
     
-    #Add an element to a list of corresponding types
+    # Add an element to a list of corresponding types
     def add_element(self, element):
         self.empty = False
         if isinstance(element, Tile):
@@ -55,7 +60,7 @@ class Coordinate:
         element.coordinate_key = self.key
         self.updateLOS()
 
-    #Remove an element
+    # Remove an element
     def remove_element(self, element):
         if isinstance(element, Tile):
             if element in self.tiles:
@@ -73,24 +78,26 @@ class Coordinate:
             if element in self.fields:
                 self.fields.remove(element)
         element.parent_coordinate = None
-        #Update self.empty boolean
-        empty = True #Initialize to True
-        for archetype in self.contains(): #For each list in self.contains()..
-            if len(archetype) > 0:         #If len(list) > 0...
-                empty = False              #Empty is false
-                break                       #No need to continue... 
+        # Update self.empty boolean
+        empty = True  # Initialize to True
+        for archetype in self.contains():  # For each list in self.contains()..
+            if len(archetype) > 0:         # If len(list) > 0...
+                empty = False              # Empty is false
+                break                      # No need to continue... 
         self.empty = empty
         self.updateLOS()
-    #Return a flat list of all contained elements
+    
+    # Return a flat list of all contained elements
     def list_all(self):
         return self.tiles+self.features+self.items+self.entities+self.fields
         
-    #Return ordered list of lists by object archetype.
+    # Return ordered list of lists by object archetype.
     def contains(self):
-        return [self.tiles, self.features, self.items, self.entities,  self.fields]
+        return [self.tiles, self.features, self.items,
+                self.entities,  self.fields]
     
     def tick(self, TICK):
-        #if not self.empty:
+        # if not self.empty:
             for archetype in self.contains():
                 for e in archetype:
                     e.tick(TICK)
