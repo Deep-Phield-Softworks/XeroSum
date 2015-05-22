@@ -38,6 +38,7 @@ def make_key(XYZ):
 #Given:  String in form: "int_int_int"
 #Return: List of ints
 def key_to_XYZ(key):
+    #print "KEY:",  key
     XYZ = [int(i) for i in key.split('_')]
     return XYZ
 

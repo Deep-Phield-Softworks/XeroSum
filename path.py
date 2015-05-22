@@ -3,7 +3,6 @@ from unboundmethods import *
 from aoe import *
 from dmap import DijkstraMap
 from entity import Entity
-from worldview import WorldView
 from world import World
 #Path objects keep track of the path of an entity
 #Given:
