@@ -127,6 +127,7 @@ def mouse_left_click(event):
             if isinstance(e[1], Entity):
                 selected = e[1]
                 selected_info = info
+                #screen_text_top.append("Selected: " + str(info))
 
 def mouse_right_click(event):
     if selected:
