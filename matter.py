@@ -16,7 +16,8 @@ class Matter:
                                                  'name': None,
                                                  'height': 64,
                                                  'width': 32, 
-                                                 'coordinate_key': None
+                                                 'coordinate_key': None, 
+                                                 'parent_coordinate': None
                                                }
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
