@@ -87,3 +87,12 @@ def left_of(one, two, point):
 #Return a timestamp string
 def timestamp():
     return datetime.fromtimestamp(time()).strftime('%H%M%S_%Y-%m-%d')
+
+def adjacent(a, b):
+    adjacent = False
+    ab = zip(a, b)
+    for pair in ab:
+        if abs(pair[0] - pair[1]) == 1:
+            adjacent = True
+            break
+    return adjacent

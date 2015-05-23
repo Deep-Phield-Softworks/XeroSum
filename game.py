@@ -36,6 +36,7 @@ class Game:
         self.controller = Controller(self)
         self.clock = pygame.time.Clock()  #Clock object to tick
         self.tick  = self.db['tick_accumulator']  #Load last clock tick value
+        self.reality_bubble_range = 1  #How far into inactive chunks tick reaches
         self.screen_text_top = []
         self.screen_text = [] 
         self.selected = None  #Entities left clicked
@@ -141,6 +142,9 @@ class Game:
             #goal_dict = {self.selected.coordinate_key: 0}  #Set target to 0 for DMAP
             #self.selected.path = Path(goal_dict, self.selected, self.world.db['view_shape'])
             self.path_target = None
+    
+    def reality_bubble_check(self, *elements):
+        pass
     
     def main_loop(self):
         if not self.run: 
