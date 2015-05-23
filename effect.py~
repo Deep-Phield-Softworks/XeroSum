@@ -25,15 +25,14 @@ its self.contents as a list of dictionaries.
 class Effect:
 
     def __init__(self,  **kwargs):
-        self.accepted_kwargs = {
-                                'type': 'damage',
-                                'image_key': 'icons.png',
-                                'frame': (0, 0),
-                                'magnitude': 1,
-                                'duration': 0,
-                                'tick_threshold': 0,
-                                'tick_accumulator': 0
-                               }
+        self.accepted_kwargs = {'type': 'damage',
+                                                 'image_key': 'icons.png',
+                                                 'frame': (0, 0),
+                                                 'magnitude': 1,
+                                                 'duration': 0,
+                                                 'tick_threshold': 0,
+                                                 'tick_accumulator': 0
+                                                }
         self.contents = pdict({})
         for k in self.accepted_kwargs:
             if k in kwargs:
