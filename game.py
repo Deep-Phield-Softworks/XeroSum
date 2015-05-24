@@ -168,7 +168,9 @@ class Game:
         for event in pygame.event.get(): 
             self.controller.handle_event(event) #Send Events to Controller
         self.path()
+        
         self.world.tick(self.clock.tick())
+        self.world.process_effects()
         self.view.render()
         self.screen.blit(self.view.surface, (0,0))
         #self.draw_screen_text() #Draw text onto screen
