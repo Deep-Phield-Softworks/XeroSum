@@ -41,10 +41,15 @@ class World:
         self.name = name
         self.db_file = 'XSDB.fs'
         self.db = self.open(name,  db_file)
-        self.init_args = {'CHUNK_SIZE': CHUNK_SIZE, 'TILE_SIZE': TILE_SIZE,
-                          'active_chunks':  pdict(), 'chunks': pdict(),
-                          'game_turn': 0, 'play_music': True,
-                          'tick_accumulator': 0, 'new_game': True,
+        self.init_args = {'CHUNK_SIZE': CHUNK_SIZE,
+                          'TILE_SIZE': TILE_SIZE,
+                          'active_chunks':  pdict(),
+                          'tick_roster': pdict(),
+                          'chunks': pdict(),
+                          'game_turn': 0,
+                          'play_music': True,
+                          'tick_accumulator': 0,
+                          'new_game': True,
                           'player': None}
         self.init(**self.init_args)
 
@@ -66,11 +71,11 @@ class World:
 
     '''
     Given: **kwargs as a dictionary of string keys and any typed values.
-    These entries will be stored in the top level of the World.db
+    These entries will be stored in the top level of the World.db. Creates
+    the key or loads it as needed.
     '''
     def init(self,  **kwargs):
         for key,  val in kwargs.iteritems():
-            # PEP8 has_key is deprecated, use 'in'
             if key not in self.db:
                 self.db[key] = val
         transaction.commit()

@@ -18,8 +18,10 @@ Accepted **kwargs in self.acceptedKWARGS:
 class Matter:
     def __init__(self, **kwargs):
         self.accepted_kwargs = {'image_key': 'ISO_BASIC_64x32.png',
-                                'name': None, 'height': 64,
-                                'width': 32, 'coordinate_key': None,
+                                'name': None,
+                                'height': 64,
+                                'width': 32,
+                                'coordinate_key': None,
                                 'parent_coordinate': None}
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
@@ -40,7 +42,7 @@ class Matter:
         raise NotImplementedError(error_string)
 
     def determine_pixel_offset(self):
-        error_string = "Subclass of Matter must have determine_pixel_offset method"
+        error_string = "Subclass of Matter needs determine_pixel_offset method"
         raise NotImplementedError(error_string)
 
     def to_blit(self):
