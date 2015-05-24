@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from persistent.list import PersistentList as plist
+
 
 '''
 Matter objects are:
@@ -22,7 +24,9 @@ class Matter:
                                 'height': 64,
                                 'width': 32,
                                 'coordinate_key': None,
-                                'parent_coordinate': None}
+                                'parent_coordinate': None,
+                                'effects': plist([])
+                                }
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])
@@ -39,6 +43,10 @@ class Matter:
 
     def tick(self, TICK):
         error_string = "Subclass of Matter must implement tick method"
+        raise NotImplementedError(error_string)
+
+    def process_effects(self):
+        error_string = "Subclass of Matter needs process_effects method"
         raise NotImplementedError(error_string)
 
     def determine_pixel_offset(self):
