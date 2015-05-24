@@ -62,8 +62,8 @@ class WorldView:
             for y in range(len(self.nD[x])):
                 for z in range(len(self.nD[x][y])):
                     cKey = self.nD[x][y][z]
-                    # PEP8 line too long. Can't change
-                    c = self.world.db['active_chunks'][find_parent(cKey)].coordinates[cKey]
+                    chunk = self.world.db['active_chunks'][find_parent(cKey)]
+                    c = chunk.coordinates[cKey]
                     basepx = (x - y) * half_tile_wide + self.px_offset
                     basepy = (x + y) * half_tile_high + self.py_offset
                     self.nD[x][y][z] = c, (basepx, basepy)
