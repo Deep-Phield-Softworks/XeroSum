@@ -59,7 +59,7 @@ class World:
         cnx = db.open()
         root = cnx.root()
         # PEP8 has_key is deprecated, use 'in'
-        if not root.has_key(key):
+        if key not in root:
             root[key] = OOBTree()
             transaction.commit()
         return root[key]
@@ -71,7 +71,7 @@ class World:
     def init(self,  **kwargs):
         for key,  val in kwargs.iteritems():
             # PEP8 has_key is deprecated, use 'in'
-            if not self.db.has_key(key):
+            if key not in self.db:
                 self.db[key] = val
         transaction.commit()
 
@@ -90,10 +90,10 @@ class World:
         for key in keys:
             # IF Chunk isn't active...
             # PEP8 has_key is deprecated, use 'in'
-            if not self.db['active_chunks'].has_key(key):
+            if key not in self.db['active_chunks']:
                 # If Chunk does NOT exist...
                 # PEP8 has_key is deprecated, use 'in'
-                if not self.db['chunks'].has_key(key):
+                if key not in self.db['chunks']:
                     # Make it
                     self.db['chunks'][key] = Chunk(key, self.db['game_turn'],
                                                    self.db['CHUNK_SIZE'])
@@ -106,18 +106,15 @@ class World:
     in self.db['active_chunks']
     '''
     def deactivate_chunk(self, *keys):
+        # Convenience reassignment for line length here
+        act = self.db['active_chunks']
+        sto = self.db['chunks']
         for key in keys:
-            # PEP8 has_key is deprecated, use 'in'
-            if self.db['active_chunks'].has_key(key):  # IF Chunk is active...
-                # self.db['active_chunks'][key].unload()   # Unload Chunk
-                # Save Chunk back into DB (Necessary?)
-                self.db['chunks'][key] = self.db['active_chunks'][key]
-                # Remove key from self.db['active_chunks']
-                # PEP8 118 & 119 are too long. Getting rid of space around
-                # = operator works but then raises a different flag.
-                self.db['active_chunks'] = {keys: self.db['active_chunks'][keys]
-                                            for keys in self.db['active_chunks']
-                                            if keys != key}
+            if key in act:  # IF Chunk is active...
+                sto[key] = act[key]
+                # Remake dict of active chunks without key to deactivate
+                act = {keys: act[keys] for keys in act if keys != key}
+        self.db['active_chunks'] = pdict(act)
         transaction.commit()
 
     '''
@@ -167,9 +164,8 @@ class World:
     Given: coordinate_key as Coordinate object key string
     Return: Coordinate object's reference
     '''
-    def get_coordinate_obj(self, coordinate_key):
-        # PEP8 line too long
-        return self.db['chunks'][find_parent(coordinate_key)].coordinates[coordinate_key]
+    def get_coordinate_obj(self, coord_key):
+        return self.db['chunks'][find_parent(coord_key)].coordinates[coord_key]
 
     '''
     Given: chunk_key as Chunk object key string, **tile_args as
