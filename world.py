@@ -45,6 +45,7 @@ class World:
                           'TILE_SIZE': TILE_SIZE,
                           'active_chunks':  pdict(),
                           'tick_roster': pdict(),
+                          'effect_queue': plist(),
                           'chunks': pdict(),
                           'game_turn': 0,
                           'play_music': True,
@@ -149,6 +150,31 @@ class World:
         self.activate_chunk(pchunk)
         self.db['active_chunks'][pchunk].add_element(coordinate_key, element)
         transaction.commit()
+
+    """
+    Add effects to a persistent list. Requires effects to be in form [effect, target]
+    for use with World.add_effect().
+    """
+    def queue_effects(self, *effects):
+        for e in effects:
+            self.db['effect_queue'].append(e)
+    
+    """
+    Process all queued effects. Effects are processed FILO as lists aren't efficient
+    to pop() from front.
+    """
+    def process_effects(self):
+        while self.db['effect_queue']:
+            self.add_effect(*self.db['effect_queue'].pop())
+    
+    """
+    Add an effect to target and add target to the tick roster. 
+    """
+    def add_effect(self, effect, target):
+        if hasattr(target, 'effects'):
+            target.effects.append(effect)
+            if not(target in self.db['tick_roster']):
+                self.db['tick_roster'][target]=target
 
     '''
     Given: element as an object reference, and aKey and bKey as Coordinate
