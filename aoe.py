@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+from BTrees.OOBTree import OOBTree
+from persistent.mapping import PersistentMapping as pdict
+from persistent.list import PersistentList as plist
+
 
 from unboundmethods import midpoint,  make_key,  key_to_XYZ
 

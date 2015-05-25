@@ -29,8 +29,10 @@ class Controller:
         #'K_F1' key to toggle music
         if pressed_keys[K_F1]:
             pygame.mixer.music.stop()
-            self.game.db['play_music'] = not self.game.db['play_music']
-            
+            key = 'play_music'
+            value = not self.game.db['play_music']
+            self.game.db_event(key, value)
+
         #'K_F2' key for screenshot. This saves it to timeString().png    
         if pressed_keys[K_F2]:
             try:

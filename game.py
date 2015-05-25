@@ -154,6 +154,10 @@ class Game:
     
     def pixel_collison(self, rect, ):
         pass
+    
+    def db_event(self, key, value):
+        self.db[str(key)] = value
+        transaction.commit()
 
     def main_loop(self):
         if not self.run: 
