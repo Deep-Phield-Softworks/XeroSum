@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import pygame
 from pygame.locals import QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP,  KEYDOWN,  KEYUP,  K_ESCAPE,  K_F1,  K_F2,  K_F3
-
+import transaction
 
 from unboundmethods import timestamp,  within
 
@@ -30,7 +30,7 @@ class Controller:
         if pressed_keys[K_F1]:
             pygame.mixer.music.stop()
             self.game.db['play_music'] = not self.game.db['play_music']
-            self.game.commit()
+            
         #'K_F2' key for screenshot. This saves it to timeString().png    
         if pressed_keys[K_F2]:
             try:

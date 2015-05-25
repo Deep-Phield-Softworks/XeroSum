@@ -52,9 +52,6 @@ class Game:
         self.path_target = None  # Path Finding Target
         self.run = True  # Run while true
 
-    def commit(self):
-        transaction.commit()
-
     def world_init(self, name='Test', start_coordinate_key='0_0_0'):
         world = World(name)
         if world.db['new_game']:  # If 'new_game'...
@@ -105,7 +102,7 @@ class Game:
                 world.add_element(origin_key, player)
                 world.db['player'] = player
             world.db['new_game'] = False
-        self.commit()    
+        transaction.commit()    
         return world 
 
     def render_surface_init(self):
@@ -181,3 +178,5 @@ if __name__ == '__main__':
     g = Game()
     while g.run:
         g.main_loop()
+    g.world.close()
+    sys.exit()
