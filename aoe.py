@@ -22,11 +22,7 @@ And return objects with the attributes:
             be in isometric render order (iterate through y, then x, then z)
 -shaped_array; a multi-dimensional list with Coordinate key
                 string values.
-'''
 
-
-
-'''
 A base class for other shapes. Usable also as a sort of null shape.
 Accepted **kwargs in self.accepted_kwargs:
 -'origin' => string of Coordinate object key in form 'x_y_z'
@@ -57,9 +53,9 @@ class Cuboid(Shape):
     def __init__(self, **kwargs):
         Shape.__init__(self, **kwargs)
         self.n_dim = plist(n_dim(self.origin, self.magnitude))
-        sorted_tuples = sorted(self.n_dim, key= itemgetter(1,0,2))
-        self.render_key_list = plist([make_key(tuple) for tuple in sorted_tuples])
-        self.shaped_3d_array= shaped_3d_array(self.origin, self.magnitude)
+        sorted_tuples = sorted(self.n_dim, key=itemgetter(1, 0, 2))
+        self.render_key_list = plist([make_key(t) for t in sorted_tuples])
+        self.shaped_3d_array = shaped_3d_array(self.origin, self.magnitude)
 
 
 def n_dim(origin=[0, 0, 0], dimensions=[1, 1, 1]):
@@ -67,11 +63,9 @@ def n_dim(origin=[0, 0, 0], dimensions=[1, 1, 1]):
 
 
 def shaped_3d_array(origin=[0, 0, 0], dimensions=[1, 1, 1]):
-    n = zip(origin,dimensions)
-    s = [[[make_key((x,y,z)) for z in axis(*n[2])] for y in axis(*n[1])] for x in axis(*n[0])]
+    n = [axis(*z) for z in zip(origin, dimensions)]
+    s = [[[make_key((x, y, z)) for z in n[2]] for y in n[1]] for x in n[0]]
     return s
-    #n = [abs(pair[0] - pair[1]) for pair in zip(origin,dimensions)]
-    #s = [[[None for k in xrange(n[2])] for j in xrange(n[1])] for i in xrange(n[0])]
 
 
 def axis(start, stop):
@@ -87,4 +81,3 @@ if __name__ == "__main__":
     args = {'origin': o, 'magnitude': d}
     c = Cuboid(**args)
     pprint.pprint(c.shaped_3d_array)
-    
