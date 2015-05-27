@@ -3,6 +3,7 @@ from itertools import product
 from operator import itemgetter
 import pprint
 
+
 from BTrees.OOBTree import OOBTree
 from persistent.mapping import PersistentMapping as pdict
 from persistent.list import PersistentList as plist
@@ -20,7 +21,7 @@ Accepted **kwargs in self.accepted_kwargs:
 And return objects with the attributes:
 -render_key_list; a list of coordinate object keys in that area.The list should
             be in isometric render order (iterate through y, then x, then z)
--shaped_array; a multi-dimensional list with Coordinate key
+-shaped_3d_array; a multi-dimensional list with Coordinate key
                 string values.
 
 A base class for other shapes. Usable also as a sort of null shape.
@@ -73,11 +74,3 @@ def axis(start, stop):
     if start > stop:
         i = -1
     return list(xrange(start, stop, i))
-
-
-if __name__ == "__main__":
-    o = [0, 0, 0]
-    d = [3, -2, 1]
-    args = {'origin': o, 'magnitude': d}
-    c = Cuboid(**args)
-    pprint.pprint(c.shaped_3d_array)
