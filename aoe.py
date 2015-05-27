@@ -23,20 +23,20 @@ And return objects with the attributes:
 '''
 
 
-def n_dim(origin = [0,0,0], dimensions = [1,1,1]):
+def n_dim(origin=[0, 0, 0], dimensions=[1, 1, 1]):
     return list(product(*[axis(*pair) for pair in zip(origin, dimensions)]))
-    
+
+
 def axis(start, stop):
     i = 1
     if start > stop:
         i = -1
     return range(start, stop, i)
-    
 
-def make_n_dimension(dimensions, contains = None):
-    
+
+def make_n_dimension(dimensions, contains=None):
     # If dimensions arguement has __iter__ attribute (is a list ie)...
-    if hasattr(dimensions, '__iter__'): 
+    if hasattr(dimensions, '__iter__'):
         nD = None
         if len(dimensions) == 2:
             nD = []
@@ -52,7 +52,7 @@ def make_n_dimension(dimensions, contains = None):
                     nD[x].append([])
                     for z in range(dimensions[2]):
                         nD[x][y].append(contains)
-    else:  # If dimensions arguement is not an iterable...         
+    else:  # If dimensions arguement is not an iterable...
         nD = []
         nD = [nD.append(contains) for i in range(dimensions)]
     return nD
@@ -77,37 +77,34 @@ Accepted **kwargs in self.accepted_kwargs:
 
 
 class Shape:
-   
+
     def __setattr__(self, name, value):
         self.__dict__[name] = value
 
     def __init__(self, **kwargs):
         self.accepted_kwargs = {'origin': '0_0_0',
-                                'magnitude': [1,1,1] }
+                                'magnitude': [1, 1, 1]}
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])
             else:
-                self.__setattr__(key, self.accepted_kwargs[key]) 
-
-
-# Given:
+                self.__setattr__(key, self.accepted_kwargs[key])
 
 
 class Cube(Shape):
-   
+
     def __init__(self, **kwargs):
         Shape.__init__(self, **kwargs)
         # convert key to [x,y,z]
         XYZ = [int(i) for i in self.origin.split('_')]
         # reassign variables for code clarity
-        x, y, z = XYZ[0], XYZ[1], XYZ[2]  
+        x, y, z = XYZ[0], XYZ[1], XYZ[2]
 
         # Create ranges for creating coordinate list
         # If magnitude is a list of dimensions...
         if hasattr(self.magnitude, '__iter__'):
             # PEP8 suggests changing this to 'is False' ???
-            if self.towards_neg_inf == False:  # origin == center...
+            if not self.towards_neg_inf:  # origin == center...
                 r = int(self.magnitude[0])
                 x_range = [x - r, x + r + 1]
                 r = int(self.magnitude[1])
@@ -127,7 +124,7 @@ class Cube(Shape):
                 nD = self.magnitude
         else:  # if magnitude is not a list
             # PEP 8 suggests changing to 'is False' ???
-            if self.towards_neg_inf == False:  # origin == center...
+            if not self.towards_neg_inf:  # origin == center...
                 # ranges == [origin - magnitude, origin + magnitude]
                 r = int(self.magnitude)
                 x_range = [x - r, x + r]
@@ -166,8 +163,8 @@ class Cube(Shape):
                     self.area_key_list.append(key)  # Put in flat list
 
 if __name__ == "__main__":
-    o = [0,0,0]
-    d = [3,-3,3]
-    l = n_dim(o,d)
+    o = [0, 0, 0]
+    d = [3, -3, 3]
+    l = n_dim(o, d)
     for i in l:
         print i
