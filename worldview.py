@@ -32,8 +32,8 @@ class WorldView:
         self.py_offset = py_offset
         self.TILE_WIDTH = TILE_WIDTH
         self.TILE_HEIGHT = TILE_HEIGHT
-        self.area_key_list = self.shape.area_key_list
-        self.nD = self.shape.n_dimensional_array
+        self.render_key_list = self.shape.render_key_list
+        self.nD = self.shape.shaped_3d_array
         # Determine chunks needed and have world load them
         self.prepare_chunks()
         # Overwrite self.nD with coordinates objects
@@ -47,7 +47,7 @@ class WorldView:
         # Generate a list of chunks to activate
         chunks = []
         # For each coordinate key in self.area
-        for coord_key in self.area_key_list:
+        for coord_key in self.render_key_list:
             # determine coordinates parent chunk
             parent_chunk = find_parent(coord_key)
             # check if chunk key is in the list...

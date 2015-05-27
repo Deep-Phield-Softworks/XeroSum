@@ -17,7 +17,7 @@ from worldview import WorldView
 from path import Path
 from entity import Entity
 from tile import Tile
-from unboundmethods import find_parent, TILE_WIDTH, TILE_HEIGHT, adjacent
+from unboundmethods import key_to_XYZ, find_parent, TILE_WIDTH, TILE_HEIGHT, adjacent
 
 """
 Game Class for Xero Sum
@@ -61,36 +61,46 @@ class Game:
             else:  # Else if player exists...
                 origin_key = world.db['player'].coordinate_key
             # Generate a cube shape
-            cubeargs = {'origin': origin_key}
-            cubeargs['magnitude'] = [10, 10, 0]
-            cubeargs['towards_neg_inf'] = False
-            shape = Cube(**cubeargs)
+            cubeargs = {
+                                'origin': key_to_XYZ(origin_key),
+                                'magnitude': [32, 32, 1]
+                                }
+            shape = Cuboid(**cubeargs)
             world.db['view_shape'] = shape
             # Use shape to determine initial actuve chunks
             chunks = []
             # For each coordinate key in shape.area_key_list
-            for coordinate_key in shape.area_key_list:
+            for coordinate_key in shape.render_key_list:
                 parent_chunk = find_parent(coordinate_key)
                 if parent_chunk not in chunks:  # If not...
                     chunks.append(parent_chunk)  # Add it...
             world.activate_chunk(*chunks)
             # Generate random base terrain for active chunks
             base = {'image_key': 'grass.png'}
-            rocks = {'image_key': 'rocks.png', 'speed_modifier': 1.25}
-            bushes = {'image_key': 'bush.png', 'speed_modifier': 1.50, 'layer': 1.1}
-            trees = {'image_key': 'tallTree.png',
+            rocks = {
+                            'image_key': 'rocks.png',
+                            'speed_modifier': 1.25
+                            }
+            bushes = {
+                            'image_key': 'bush.png',
+                            'speed_modifier': 1.50,
+                            'layer': 1.1
+                            }
+            trees = {
+                            'image_key': 'tallTree.png',
                             'tall': 20,
                             'float_offset': [0.5, 0.5],
                             'layer': 1.2,
                             'impassible': True,
-                            'blocksLOS': True}
+                            'blocksLOS': True
+                            }
             for key in sorted(world.db['active_chunks'].keys()):
                 print "##Chunk Building...##", key
                 world.chunk_terrain_base_fill(key, **base)
                 world.chunk_random_feature_fill(key, **rocks)
                 world.chunk_random_feature_fill(key, **bushes)
                 world.chunk_random_feature_fill(key, **trees)
-            #Initialize player
+            # Initialize player
             if world.db['player'] == None:
                 player_args = {'world':world,
                              'coordinate_key': origin_key,

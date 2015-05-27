@@ -13,7 +13,8 @@ import transaction
 from unboundmethods import find_parent,  key_to_XYZ,  make_key
 from chunk import Chunk
 from subclassloader import *  # Temp commented out during rewrite
-from aoe import Square
+from aoe import Cuboid
+
 
 '''
 World objects have the following traits:
@@ -208,11 +209,12 @@ class World:
         # Assign to variable chunk for clarity
         chunk = self.db['active_chunks'][chunk_key]
         # Get chunk Coordinate object origin
-        origin = chunk.coordinates_list[0].key
+        origin_key = chunk.coordinates_list[0].key
+        origin = key_to_XYZ(origin_key)
         # Make a dict of shape args
         shape_args = {'origin': origin, 'magnitude': self.db['CHUNK_SIZE']}
         # Make a shape that includes all the Chunk's Coordinates
-        ground = Square(**shape_args).area_key_list
+        ground = Cuboid(**shape_args).render_key_list
         for c in ground:  # For each Coordinate
             # Add a Tile object made with **tile_args as the arguements
             chunk.coordinates[c].add_element(Tile(**tile_args))
