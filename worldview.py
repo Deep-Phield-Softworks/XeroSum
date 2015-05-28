@@ -5,6 +5,7 @@ from operator import *
 from pygame import Rect, Surface
 
 
+from aoe import Cuboid
 from unboundmethods import find_parent
 
 '''
@@ -24,10 +25,10 @@ Return: a worldView object which:
 
 
 class WorldView:
-    def __init__(self, world, shape, screen_size, px_offset,  py_offset,
+    def __init__(self, world, shape_args, screen_size, px_offset,  py_offset,
                  TILE_WIDTH=64, TILE_HEIGHT=32):
         self.world = world
-        self.shape = shape
+        self.shape = Cuboid(**shape_args)
         self.px_offset = px_offset
         self.py_offset = py_offset
         self.TILE_WIDTH = TILE_WIDTH

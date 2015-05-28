@@ -9,7 +9,7 @@ import transaction
 
 
 from controller import Controller
-from manifests import screen, screen_size, tracks, fx_manifest
+from manifests import screen, screen_size, tracks, fx_manifest, COLORKEY
 from world import World
 from player import Player
 from aoe import *
@@ -55,6 +55,7 @@ class Game:
     def world_init(self, name='Test', start_coordinate_key='0_0_0'):
         world = World(name)
         if world.db['new_game']:  # If 'new_game'...
+            print "NEW GAME"
             # Determine origin_key to activate chunks...
             if world.db['player'] == None:  # If no player yet...
                 origin_key = start_coordinate_key  # Use default origin_key
@@ -66,7 +67,7 @@ class Game:
                                 'magnitude': [32, 32, 1]
                                 }
             shape = Cuboid(**cubeargs)
-            world.db['view_shape'] = shape
+            world.db['view_shape_args'] = cubeargs
             # Use shape to determine initial actuve chunks
             chunks = []
             # For each coordinate key in shape.area_key_list
@@ -126,7 +127,7 @@ class Game:
     
     def world_view_init(self):
         #World View Object arguements== WorldView(world, shape, screen_size,  px_offset,  py_offset)
-        return WorldView(self.world, self.world.db['view_shape'], self.screen_size,  self.px_offset,  self.py_offset)
+        return WorldView(self.world, self.world.db['view_shape_args'], self.screen_size,  self.px_offset,  self.py_offset)
 
     def ui_surface_init(self):
         pass
@@ -162,9 +163,15 @@ class Game:
     def reality_bubble_check(self, *elements):
         pass
     
-    def pixel_collison(self, rect, ):
-        pass
-    
+    def pixel_collison(self, point, surface, COLORKEY = '#0080ff'):
+        collide = False
+        colorkey = pygame.Color(COLORKEY)
+        # Point needs to be adjusted here to have its (x,y) relative
+        # to target surface
+        if not (surface.get_at(point) == colorkey):
+            collide = True
+        return collide
+
     def db_event(self, key, value):
         self.db[str(key)] = value
         transaction.commit()
