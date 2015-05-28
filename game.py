@@ -36,6 +36,7 @@ class Game:
     def __init__(self,  world_name='Test', start_coordinate_key='0_0_0'):
         pygame.init()
         pygame.mixer.init()
+        self.font_init()
         self.platform = sys.platform  # Determine operating system
         self.world = self.world_init(world_name,  start_coordinate_key)
         self.db = self.world.db  # Convenience renaming here
@@ -134,13 +135,9 @@ class Game:
     
     def font_init(self):
         pygame.font.init()
-        #AVAILABLE_FONTS = pygame.font.get_fonts() #Not needed atm. Here as a reminder.
-        font = pygame.font.SysFont(None, 16) #None as first param loads built in pygame font
-        #font_height = font.get_linesize()
-        #screen_TEXT & screen_text_top are global string lists that are blit to screen
-        #screen_text = [] 
-        #screen_text_top = []
-        return font
+        AVAILABLE_FONTS = pygame.font.get_fonts() #Not needed atm. Here as a reminder.
+        self.font = pygame.font.SysFont(None, 16) #None as first param loads built in pygame font
+        self.font_height = self.font.get_linesize()
 
     #Play a random song
     def play_random_song(self):
@@ -172,6 +169,32 @@ class Game:
             collide = True
         return collide
 
+    def draw_screen_text(self):
+        self.screen_text
+        y  = self.screen_size[1] - self.font_height
+        y2 = 0 + self.font_height
+        fps = "FPS = " + str(self.clock.get_fps())
+        self.screen_text.append(fps)
+        for text in reversed(self.screen_text):
+            self.screen.blit(self.font.render(text, True, (255, 0, 0)), (0, y) )
+            y -= self.font_height
+        for text in reversed(self.screen_text_top):
+            self.screen.blit(self.font.render(text, True, (255, 0, 0)), (0, y2) )
+            y2 += self.font_height
+        self.screen_text = []
+    
+    def draw_ui(self):
+        trim_dimensions = ui_manifest['trim.png'].get_size()
+        vertical_trim_dimensions = ui_manifest['vertical_trim.png'].get_size()
+        horizontal_trims = screen_size[0]/trim_dimensions[0] + 1
+        vertical_trims = screen_size[1]/trim_dimensions[1] + 1
+        for i in range(horizontal_trims):
+            screen.blit(ui_manifest['trim.png'],(i*trim_dimensions[0],0))
+            screen.blit(ui_manifest['trim.png'],(i*trim_dimensions[0], screen_size[1]-trim_dimensions[1]))
+        for i in range(vertical_trims):
+            screen.blit(ui_manifest['vertical_trim.png'],(0,i*vertical_trim_dimensions[1]))
+            screen.blit(ui_manifest['vertical_trim.png'],(screen_size[0] - vertical_trim_dimensions[0], i*vertical_trim_dimensions[1]))
+
     def db_event(self, key, value):
         self.db[str(key)] = value
         transaction.commit()
@@ -186,12 +209,11 @@ class Game:
         for event in pygame.event.get(): 
             self.controller.handle_event(event) #Send Events to Controller
         self.path()
-        
         self.world.tick(self.clock.tick())
         self.world.process_effects()
         self.view.render()
         self.screen.blit(self.view.surface, (0,0))
-        #self.draw_screen_text() #Draw text onto screen
+        self.draw_screen_text() #Draw text onto screen
         pygame.display.flip()    
 
 if __name__ == '__main__':
