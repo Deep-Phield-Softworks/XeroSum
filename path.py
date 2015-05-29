@@ -3,22 +3,29 @@ from unboundmethods import *
 from aoe import *
 from dmap import DijkstraMap
 from world import World
-#Path objects keep track of the path of an entity
-#Given:
-#-goalKeys, a list of coordinate object keys
-#-entity, the Entity object to whom the path belongs
-#-shape, the shape object that contains info on coordinates involved
-#Produce a Path object which has:
-#-self.nodes, list of coordinate keys from self.entity.parentCoordinate to
-# one of the goalKeys
-#-self.step_index, an int of the index of the current step along self.nodes
-#-self.facings, a list of int headings that correspond to SpriteSheet strip
-# indexes and set the apparent heading for each step index
+
+
+"""
+Path objects keep track of the path of an entity
+Given:
+-goalKeys, a list of coordinate object keys
+-entity, the Entity object to whom the path belongs
+-shape, the shape object that contains info on coordinates involved
+Produce a Path object which has:
+-self.nodes, list of coordinate keys from self.entity.parentCoordinate to
+ one of the goalKeys
+-self.step_index, an int of the index of the current step along self.nodes
+-self.facings, a list of int headings that correspond to SpriteSheet strip
+ indexes and set the apparent heading for each step index
+"""
+
+
 class Path:
-    def __init__(self, goal_dict, origin_coordinate_key, shape,  last_facing = 5):
+    def __init__(self, goal_dict, origin_key, shape,  last_facing=5):
         self.goal_dict = goal_dict
         self.shape = shape
         self.last_facing = last_facing
+"""
         #Create an empty DMAP & Set Goals
 #        self.DMAP = DijkstraMap(shape, self.goal_dict)
         #Make DMAP with Terrain Speed modifier Data and impassible data
@@ -32,7 +39,6 @@ class Path:
 #        self.step_index = 0
         #Create facing list
 #        self.create_facings()
-    
 #    #Create DMAP populated with Terrain speeds and impassible terrain
 #    def make_speed_map(self):
 #        selected_dict = dict()
@@ -49,7 +55,6 @@ class Path:
 #                                val = None
 #            selected_dict[key] = val
 #        return DijkstraMap(self.shape, selected_dict)
-    
 #    #Move the path step index forward one node
 #    #Return None if no more path or the next node key
 #    def advance(self):
@@ -57,8 +62,8 @@ class Path:
 #        if not self.step_index + 1 >= len(self.nodes):
 #            self.step_index += 1
 #            next = self.nodes[self.step_index]
-#        return next    
-#    
+#        return next
+#
 #    def create_facings(self):
 #        self.facings = []
 #        #If there is more than one node in path...
@@ -90,11 +95,12 @@ class Path:
 #                    if y2 < y1: #Heading Due N
 #                        face = 8
 #                    elif y2 == y1: #Heading NW
-#                        face = 7 
+#                        face = 7
 #                    else: #Heading Due W
-#                        face = 4  
-#                self.facings.append(face)    
+#                        face = 4
+#                self.facings.append(face)
 #                start = self.nodes[node]
 #        else:
 #            self.facings.append(self.last_facing)
 #        self.facings.append(self.facings[-1])
+"""

@@ -49,7 +49,8 @@ class ItemSheet:
         strip = []
         # The bottom rows follow different rules than top rows
         for x in range(self.frames_wide):  # For each frame in the strip
-            Rect = pygame.Rect((left, top), (self.frame_width, self.frame_height))
+            size = (self.frame_width, self.frame_height)
+            Rect = pygame.Rect((left, top), size)
             frame = self.surface.subsurface(Rect)
             strip.append(frame)
             left += width  # Add width for each

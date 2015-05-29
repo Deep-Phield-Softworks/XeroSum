@@ -45,8 +45,9 @@ class Item(Matter):
                 self.__setattr__(key, self.accepted_kwargs[key])
 
     def to_blit(self):
-        # PEP8 line too long
-        return item_manifest[self.image_key].frames[self.frame[0]][self.frame[1]]
+        item = item_manifest[self.image_key]
+        frame = item.frames[self.frame[0]][self.frame[1]]
+        return frame
 
     def tick(self, TICK):
         pass  # Default items do nothing on Tick

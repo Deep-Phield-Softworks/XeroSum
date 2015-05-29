@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import os, sys
+import os
+import sys
 
 
 from tile import Tile
@@ -8,22 +9,24 @@ from item import Item
 from entity import Entity
 from field import Field
 
+
+"""
 #SubclassLoader is meant to offer a flexible way to automatically import many
 #subclass modules for classes that need to be aware of them. Expected classes
 #that may need to be aware of all the archtype subclasses are: Coordinate,
 #Entity and possibly World.
+"""
 
-#Change the CWD to wherever this script resides
 os.chdir(sys.path[0])
-sys.path.append(str(sys.path[0])+ os.sep + 'subclasses')
-#Create the list of modules to load
+sys.path.append(str(sys.path[0]) + os.sep + 'subclasses')
+
 libnames = []
-unsplit = os.listdir('subclasses') #Pull a list of files in 'subclasses' folder
-for name in unsplit:
-    s = str(name).split(".") #Split filenames on the '.'
-    if s[1] == 'py':         #If second half of the filename split is 'py'...
-        libnames.append(s[0])#Then include it in the list. 
-#This code snippet is from Stack Overflow. Thank you Stack Overflow!
+filenames = os.listdir('subclasses')
+for name in filenames:
+    s = str(name).split(".")
+    if s[1] == 'py':
+        libnames.append(s[0])
+
 for libname in libnames:
     try:
         lib = __import__(libname)
@@ -32,4 +35,4 @@ for libname in libnames:
     else:
         globals()[libname] = lib
 if __name__ == '__main__':
-    print testCase.test    
+    print testCase.test

@@ -54,45 +54,45 @@ class Entity(Matter):
         self.frame = 0
         self.facing = 5
         self.pixel_offsets = self.determine_pixel_offset()
-        self.move_threshold  = 500
+        self.move_threshold = 500
         self.frame_threshold = self.move_threshold/5
         self.tick_accumulator = 0
         self.move_accumulator = 0
         self.path = None
-        
-        
+
     def determine_pixel_offset(self):
-        px = (TILE_WIDTH/2.0)  - (self.float_offset[0] * self.width)
+        px = (TILE_WIDTH/2.0) - (self.float_offset[0] * self.width)
         py = (TILE_HEIGHT/2.0)
         py = py - self.tall
         return plist([int(px), int(py)])
-    
+
     def to_blit(self):
         self.determine_pixel_offset()
-        return sprite_manifest[self.image_key].animations[self.facing][self.frame]
-    
+        sprite = sprite_manifest[self.image_key]
+        frame = sprite.animations[self.facing][self.frame]
+        return frame
+
     def tick(self, TICK):
         self.tick_move(TICK)
         self.tick_animation(TICK)
-        
+
     def tick_move(self, TICK):
-        self.move_accumulator += TICK #Add the ticks in
+        self.move_accumulator += TICK
         if self.path:
-            if self.move_accumulator >= self.move_threshold: #If enough ticks...
-                self.move_accumulator = 0 #Reset Accumulator
+            if self.move_accumulator >= self.move_threshold:
+                self.move_accumulator = 0
                 key = self.path.nodes[self.path.step_index]
-                next = self.path.advance() 
+                next = self.path.advance()
                 if next:
                     self.facing = self.path.facings[self.path.step_index]
                     self.world.move_element(self, key, next)
                 else:
                     self.path = None
                     self.frame = 5
-    
+
     def tick_animation(self, TICK):
         strip = sprite_manifest[self.image_key].animations[self.facing]
-        if self.path: #If path is not None
-        #Check to see if enough time has accumulated to advance frames
+        if self.path:
             self.tick_accumulator += TICK
             if self.tick_accumulator >= self.frame_threshold:
                 self.tick_accumulator = 0
@@ -100,6 +100,5 @@ class Entity(Matter):
                     self.frame += 1
                 else:
                     self.frame = 0
-            #Test for asymetrical strip sizes
-            if len(strip) <= self.frame: #If current strip was longer than last strip...
-                self.frame = len(strip) - 1    #Skip to the end of current strip
+            if len(strip) <= self.frame:
+                self.frame = len(strip) - 1
