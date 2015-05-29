@@ -169,6 +169,8 @@ class Game:
         self.screen_text
         y = self.screen_size[1] - self.font_height
         y2 = 0 + self.font_height
+        elements = "Elements = " + str(self.view.e_on_screen)
+        self.screen_text.append(elements)
         fps = "FPS = " + str(self.clock.get_fps())
         self.screen_text.append(fps)
         for text in reversed(self.screen_text):

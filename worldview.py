@@ -78,6 +78,7 @@ class WorldView:
         x_range = range(len(self.nD))
         y_range = range(len(self.nD[0]))
         # Render Tiles
+        self.e_on_screen = 0
         for y in y_range:
             for x in x_range:
                 for z in range(len(self.nD[x][y])):
@@ -99,4 +100,5 @@ class WorldView:
         # Sort render elements by layer, py, px
         render_list = sorted(unsorted, key=itemgetter(1, 2, 3))
         for e in render_list:
+            self.e_on_screen += 1
             self.surface.blit(e[0], (e[3], e[2]))
