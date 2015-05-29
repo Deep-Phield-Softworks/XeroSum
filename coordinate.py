@@ -43,7 +43,7 @@ class Coordinate:
         self.fields = plist([])
         self.parent_chunk = make_key([self.x/16, self.y/16, self.z])
         self.blockLOS = False
-    
+
     # Add an element to a list of corresponding types
     def add_element(self, element):
         self.empty = False
@@ -78,35 +78,35 @@ class Coordinate:
         if isinstance(element, Field):
             if element in self.fields:
                 self.fields.remove(element)
-        #Remove ownership of element
-        element.coordinate_key      = None
+        # Remove ownership of element
+        element.coordinate_key = None
         element.parent_coordinate = None
         # Update self.empty boolean
         empty = True  # Initialize to True
         for archetype in self.contains():  # For each list in self.contains()..
             if len(archetype) > 0:         # If len(list) > 0...
-                empty = False              # Empty is false
-                break                      # No need to continue... 
+                empty = False              # Empty is false, break
+                break
         self.empty = empty
         self.updateLOS()
-    
+
     # Return a flat list of all contained elements
     def list_all(self):
         return self.tiles+self.features+self.items+self.entities+self.fields
-        
+
     # Return ordered list of lists by object archetype.
     def contains(self):
         return [self.tiles, self.features, self.items,
                 self.entities,  self.fields]
-    
+
     def tick(self, TICK):
         # if not self.empty:
             for archetype in self.contains():
                 for e in archetype:
                     e.tick(TICK)
-    
+
     def updateLOS(self):
-        blockLOS = False 
+        blockLOS = False
         elements = self.list_all()
         for e in elements:
             if hasattr(e, 'blocksLOS'):

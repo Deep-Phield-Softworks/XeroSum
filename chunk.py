@@ -21,7 +21,7 @@ either active or inactive. Chunks have the following properties:
 
 class Chunk:
 
-    def __init__(self, key, game_turn, chunk_size = [16, 16, 1]):
+    def __init__(self, key, game_turn, chunk_size=[16, 16, 1]):
         self.key = key
         self.XYZ = key_to_XYZ(key)
         self.chunk_size = chunk_size
@@ -47,7 +47,7 @@ class Chunk:
                 for z in range(*ranges[2]):
                     key = make_key([x, y, z])  # Make a key string
                     # Make coordinate object and store it
-                    c = Coordinate(key) 
+                    c = Coordinate(key)
                     self.coordinates[key] = c
                     self.coordinates_list.append(c)
 

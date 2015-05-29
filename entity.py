@@ -4,53 +4,56 @@ from persistent.list import PersistentList as plist
 
 from manifests import sprite_manifest
 from matter import Matter
-from unboundmethods import TILE_WIDTH, TILE_HEIGHT 
-#Entities are objects that are "alive". They can:
-#-move themselves
-#-be killed/destroyed
-#-may pick and drop up items
-#-may have an inventory
-#-may use items
-#-may interact with features
-#-have a speed which defines how often they act
-#-have an action queue that defines their actions and the time costs
-#Examples: a dog, person
-#Accepted **kwargs in self.accepted_kwargs:
-#-'world' => World object that contains the entity and to whom it reports its
-#            movements
-#-'coordinate_key' => key string of containing Coordinate
-#-'impassible'  => Boolean value for whether the Entity makes the containing
-#                  Coordinate not be considered by Path objects. I left this as
-#                  optional but defaults to True as I can imagine incorporeal or
-#                  miniscule entities that might not block movement.
-#-'float_offset' => list of two floats that represent how far from the center of
-#                  the parent Coordinate the object lies. [0.5, 0.5] would be
-#                  centered on the parent Coordinate.
-#-'layer'       => Numeric value to be used in render ordering. 
-class Entity(Matter): 
+from unboundmethods import TILE_WIDTH, TILE_HEIGHT
+
+
+"""
+Entities are objects that are "alive". They can:
+-move themselves
+-be killed/destroyed
+-may pick and drop up items
+-may have an inventory
+-may use items
+-may interact with features
+-have a speed which defines how often they act
+-have an action queue that defines their actions and the time costs
+Examples: a dog, person
+Accepted **kwargs in self.accepted_kwargs:
+-'world' => World object that contains the entity and to whom it reports its
+            movements
+-'coordinate_key' => key string of containing Coordinate
+-'impassible'  => Boolean value for whether the Entity makes the containing
+                  Coordinate not be considered by Path objects. I left this as
+                  optional but defaults to True as I can imagine incorporeal or
+                  miniscule entities that might not block movement.
+-'float_offset' => list of two floats that represent how far from the center of
+                  the parent Coordinate the object lies. [0.5, 0.5] would be
+                  centered on the parent Coordinate.
+-'layer'       => Numeric value to be used in render ordering.
+"""
+
+
+class Entity(Matter):
     def __init__(self, **kwargs):
         Matter.__init__(self, **kwargs)
         self.accepted_kwargs = {'world': None,
                                 'coordinate_key': '0_0_0',
                                 'impassible': True,
                                 'layer': 1.2,
-                                'float_offset': plist([0.5, 0.5]), 
+                                'float_offset': plist([0.5, 0.5]),
                                 'controllable': False
-                                               }
+                                }
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])
             else:
-                self.__setattr__(key, self.accepted_kwargs[key]) 
-        #Render related local variables..
-        self.width   = sprite_manifest[self.image_key].frame_width
-        self.height  = sprite_manifest[self.image_key].frame_height
-        self.tall    = self.height
-        self.frame = 0 #the rendered last frame in a "strip" of frames
+                self.__setattr__(key, self.accepted_kwargs[key])
+        self.width = sprite_manifest[self.image_key].frame_width
+        self.height = sprite_manifest[self.image_key].frame_height
+        self.tall = self.height
+        self.frame = 0
         self.facing = 5
         self.pixel_offsets = self.determine_pixel_offset()
-        #Thresholds for changes in milliseconds
-        #Thresholds for changes in milliseconds
         self.move_threshold  = 500
         self.frame_threshold = self.move_threshold/5
         self.tick_accumulator = 0
