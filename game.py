@@ -9,7 +9,7 @@ import transaction
 
 
 from controller import Controller
-from manifests import screen, screen_size, tracks, fx_manifest, COLORKEY, ui_manifest
+from manifests import screen, screen_size, tracks, COLORKEY, ui_manifest
 from world import World
 from player import Player
 from aoe import *
@@ -132,9 +132,6 @@ class Game:
         size = self.screen_size
         return WorldView(world, args, size,  self.px_offset,  self.py_offset)
 
-    def ui_surface_init(self):
-        pass
-
     def font_init(self):
         pygame.font.init()
         self.font = pygame.font.SysFont(None, 16)
@@ -182,40 +179,47 @@ class Game:
             self.screen.blit(render)
             y2 += self.font_height
         self.screen_text = []
-    
+
+    def ui_surface_init(self):
+        pass
+
     def draw_ui(self):
-        trim_dimensions = ui_manifest['trim.png'].get_size()
-        vertical_trim_dimensions = ui_manifest['vertical_trim.png'].get_size()
-        horizontal_trims = screen_size[0]/trim_dimensions[0] + 1
-        vertical_trims = screen_size[1]/trim_dimensions[1] + 1
+        horiz_trim_size = ui_manifest['trim.png'].get_size()
+        vert_trim_size = ui_manifest['vertical_trim.png'].get_size()
+        horiz_trims = screen_size[0]/trim_dimensions[0] + 1
+        vert_trims = screen_size[1]/vert_trim_size[1] + 1
         for i in range(horizontal_trims):
-            screen.blit(ui_manifest['trim.png'],(i*trim_dimensions[0],0))
-            screen.blit(ui_manifest['trim.png'],(i*trim_dimensions[0], screen_size[1]-trim_dimensions[1]))
+            ix = i*trim_dimensions[0]
+            py = screen_size[1]-trim_dimensions[1]
+            screen.blit(ui_manifest['trim.png'], (ix, 0))
+            screen.blit(ui_manifest['trim.png'], (ix, py))
         for i in range(vertical_trims):
-            screen.blit(ui_manifest['vertical_trim.png'],(0,i*vertical_trim_dimensions[1]))
-            screen.blit(ui_manifest['vertical_trim.png'],(screen_size[0] - vertical_trim_dimensions[0], i*vertical_trim_dimensions[1]))
+            iy = i*vertical_trim_dimensions[1]
+            right = screen_size[0] - vertical_trim_dimensions[0]
+            screen.blit(ui_manifest['vertical_trim.png'], (0, iy))
+            screen.blit(ui_manifest['vertical_trim.png'], (right, iy))
 
     def db_event(self, key, value):
         self.db[str(key)] = value
         transaction.commit()
 
     def main_loop(self):
-        if not self.run: 
+        if not self.run:
             self.world.close()
             sys.exit()
-        if self.db['play_music']: #If music setting in DB..
-            if not pygame.mixer.music.get_busy(): #If no music...
-                self.play_random_song() #Play a random song
-        for event in pygame.event.get(): 
-            self.controller.handle_event(event) #Send Events to Controller
+        if self.db['play_music']:
+            if not pygame.mixer.music.get_busy():
+                self.play_random_song()
+        for event in pygame.event.get():
+            self.controller.handle_event(event)
         self.path()
         self.world.tick(self.clock.tick())
         self.world.process_effects()
         self.view.render()
         # self.draw_ui()
-        self.screen.blit(self.view.surface, (0,0))
-        self.draw_screen_text() #Draw text onto screen
-        pygame.display.flip()    
+        self.screen.blit(self.view.surface, (0, 0))
+        self.draw_screen_text()
+        pygame.display.flip()
 
 if __name__ == '__main__':
     os.chdir(sys.path[0])
