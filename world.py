@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import random
+from random import uniform, randint
 
 
 from ZODB import FileStorage, DB
@@ -230,16 +230,16 @@ class World:
                                   out_of=10, **feature_args):
         self.activate_chunk(chunk_key)
         for c in self.db['active_chunks'][chunk_key].coordinates_list:
-            r = random.randint(0, out_of - 1)
+            r = randint(0, out_of - 1)
             if r < chance:
                 f = Feature(**feature_args)
                 # If floatOffset not specified
                 if 'float_offset' not in feature_args:
                     ranges = f.float_offset_ranges  # Get ranges..
-                    f.float_offset = [random.uniform(ranges[0][0],
-                                                     ranges[0][1]),
-                                      random.uniform(ranges[1][0],
-                                                     ranges[1][1])]
+                    f.float_offset = [uniform(ranges[0][0],
+                                              ranges[0][1]),
+                                      uniform(ranges[1][0],
+                                              ranges[1][1])]
                 f.determine_pixel_offset()
                 c.add_element(f)
 
