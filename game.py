@@ -9,7 +9,7 @@ import transaction
 
 
 from controller import Controller
-from manifests import screen, screen_size, tracks, fx_manifest, COLORKEY
+from manifests import screen, screen_size, tracks, fx_manifest, COLORKEY, ui_manifest
 from world import World
 from player import Player
 from aoe import *
@@ -17,7 +17,8 @@ from worldview import WorldView
 from path import Path
 from entity import Entity
 from tile import Tile
-from unboundmethods import key_to_XYZ, find_parent, TILE_WIDTH, TILE_HEIGHT, adjacent
+from unboundmethods import key_to_XYZ, find_parent, adjacent
+from unboundmethods import TILE_WIDTH, TILE_HEIGHT
 
 """
 Game Class for Xero Sum
@@ -104,63 +105,61 @@ class Game:
                 world.chunk_random_feature_fill(key, **trees)
             # Initialize player
             if world.db['player'] == None:
-                player_args = {'world':world,
-                             'coordinate_key': origin_key,
-                             'image_key':'rose.png',
-                             'shape': shape,
-                             'name':'Rose'
+                player_args = {
+                            'world': world,
+                            'coordinate_key': origin_key,
+                            'image_key': 'rose.png',
+                            'shape': shape,
+                            'name': 'Rose'
                            }
                 player = Player(**player_args)
                 world.add_element(origin_key, player)
                 world.db['player'] = player
             world.db['new_game'] = False
-        transaction.commit()    
-        return world 
+        transaction.commit()
+        return world
 
     def render_surface_init(self):
-        self.screen_height_in_tiles = (self.screen_size[1] / TILE_HEIGHT)
-        self.screen_width_in_tiles  = (self.screen_size[0] / TILE_WIDTH)
-        self.viewpoint_max_size = self.screen_width_in_tiles
-        if self.screen_height_in_tiles > self.screen_width_in_tiles:
-            self.viewpoint_max_size = self.screen_height_in_tiles
-        self.px_offset = (self.screen_size[0]/2) - (TILE_WIDTH/2)
-        self.py_offset = (self.screen_size[1]/2) - ((self.viewpoint_max_size * TILE_HEIGHT)/2)
-    
+        self.screen_tiles_wide = (self.screen_size[0] / TILE_WIDTH)
+        self.screen_tiles_high = (self.screen_size[1] / TILE_HEIGHT)
+        self.px_offset = (self.screen_size[0] / 2) - (TILE_WIDTH / 2)
+        pixel_y = self.screen_tiles_wide * TILE_HEIGHT
+        self.py_offset = (self.screen_size[1] / 2) - (pixel_y / 2)
+
     def world_view_init(self):
-        #World View Object arguements== WorldView(world, shape, screen_size,  px_offset,  py_offset)
-        return WorldView(self.world, self.world.db['view_shape_args'], self.screen_size,  self.px_offset,  self.py_offset)
+        world = self.world
+        args = self.world.db['view_shape_args']
+        size = self.screen_size
+        return WorldView(world, args, size,  self.px_offset,  self.py_offset)
 
     def ui_surface_init(self):
         pass
-    
+
     def font_init(self):
         pygame.font.init()
-        AVAILABLE_FONTS = pygame.font.get_fonts() #Not needed atm. Here as a reminder.
-        self.font = pygame.font.SysFont(None, 16) #None as first param loads built in pygame font
+        self.font = pygame.font.SysFont(None, 16)
         self.font_height = self.font.get_linesize()
 
-    #Play a random song
     def play_random_song(self):
-        #Pick a random int between 0 and the length of tracks list (-1)
         try:
-            n = random.randint(0,(len(tracks)-1))
-            #Load the random song chosen
+            n = random.randint(0, (len(tracks)-1))
             pygame.mixer.music.load(str(tracks[n]))
-            #Play the song once
             pygame.mixer.music.play()
         except pygame.error as Error:
             print "Error: ", Error
-    
+
     def path(self):
-        if self.selected and  self.path_target:
-            #goal_dict = {self.selected.coordinate_key: 0}  #Set target to 0 for DMAP
-            #self.selected.path = Path(goal_dict, self.selected, self.world.db['view_shape'])
+        if self.selected and self.path_target:
+            # goal_dict = {self.selected.coordinate_key: 0}
+            # sel = self.selected
+            # args = self.world.db['view_shape_args']
+            # self.selected.path = Path(goal_dict, self.selected, args)
             self.path_target = None
-    
+
     def reality_bubble_check(self, *elements):
         pass
-    
-    def pixel_collison(self, point, surface, COLORKEY = '#0080ff'):
+
+    def pixel_collison(self, point, surface, COLORKEY='#0080ff'):
         collide = False
         colorkey = pygame.Color(COLORKEY)
         # Point needs to be adjusted here to have its (x,y) relative
@@ -171,15 +170,16 @@ class Game:
 
     def draw_screen_text(self):
         self.screen_text
-        y  = self.screen_size[1] - self.font_height
+        y = self.screen_size[1] - self.font_height
         y2 = 0 + self.font_height
         fps = "FPS = " + str(self.clock.get_fps())
         self.screen_text.append(fps)
         for text in reversed(self.screen_text):
-            self.screen.blit(self.font.render(text, True, (255, 0, 0)), (0, y) )
+            self.screen.blit(self.font.render(text, True, (255, 0, 0)), (0, y))
             y -= self.font_height
         for text in reversed(self.screen_text_top):
-            self.screen.blit(self.font.render(text, True, (255, 0, 0)), (0, y2) )
+            render = self.font.render(text, True, (255, 0, 0)), (0, y2)
+            self.screen.blit(render)
             y2 += self.font_height
         self.screen_text = []
     
@@ -212,6 +212,7 @@ class Game:
         self.world.tick(self.clock.tick())
         self.world.process_effects()
         self.view.render()
+        # self.draw_ui()
         self.screen.blit(self.view.surface, (0,0))
         self.draw_screen_text() #Draw text onto screen
         pygame.display.flip()    
