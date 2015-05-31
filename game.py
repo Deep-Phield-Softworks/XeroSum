@@ -17,7 +17,8 @@ from worldview import WorldView
 from path import Path
 from entity import Entity
 from tile import Tile
-from unboundmethods import key_to_XYZ, find_parent, adjacent
+from unboundmethods import key_to_XYZ, find_parent
+from unboundmethods import adjacent, find_adjacents
 from unboundmethods import TILE_WIDTH, TILE_HEIGHT
 
 """
@@ -157,11 +158,15 @@ class Game:
         retire = []
         active_or_adjacent = {}
         for k in world.db['active_chunks']:
-            if bool(k not in active_or_adjacent):
-                active_or_adjacent[k] = k
+            add = find_adjacents(k)
+            for k in add:
+                active_or_adjacent[k] = None
         for e in elements:
-            c = e.parent_coordinate
             key = e.coordinate_key
+            if key not in active_or_adjacent:
+                retire.append(e)
+        for e in retire:
+            e.deactivate()
 
     def pixel_collison(self, point, surface, COLORKEY='#0080ff'):
         collide = False

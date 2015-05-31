@@ -48,6 +48,10 @@ class Matter:
     def process_effects(self):
         error_string = "Subclass of Matter needs process_effects method"
         raise NotImplementedError(error_string)
+    
+    def deactivate(self):
+        error_string = "Subclass of Matter needs deactivate method"
+        raise NotImplementedError(error_string)
 
     def determine_pixel_offset(self):
         error_string = "Subclass of Matter needs determine_pixel_offset method"
