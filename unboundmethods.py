@@ -93,6 +93,13 @@ def adjacent(a, b):
     return adjacent
 
 
+def find_adjacents(key):
+    dimensions = key_to_XYZ(key)
+    o = [d - 1 for d in dimensions]
+    d = [2 for d in dimensions]
+    return [make_key(i) for i in n_dim(o,d)]
+
+
 def n_dim(origin=[0, 0, 0], dimensions=[1, 1, 1]):
     return list(product(*[axis(*pair) for pair in zip(origin, dimensions)]))
 
