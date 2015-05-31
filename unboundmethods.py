@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from time import time
 from datetime import datetime
+from itertools import product
 
 
 TILE_WIDTH = 64
@@ -90,3 +91,20 @@ def adjacent(a, b):
         elif v > 1:
             return False
     return adjacent
+
+
+def n_dim(origin=[0, 0, 0], dimensions=[1, 1, 1]):
+    return list(product(*[axis(*pair) for pair in zip(origin, dimensions)]))
+
+
+def shaped_3d_array(origin=[0, 0, 0], dimensions=[1, 1, 1]):
+    n = [axis(*z) for z in zip(origin, dimensions)]
+    s = [[[make_key((x, y, z)) for z in n[2]] for y in n[1]] for x in n[0]]
+    return s
+
+
+def axis(start, stop):
+    i = 1
+    if start > stop:
+        i = -1
+    return list(xrange(start, stop, i))

@@ -1,15 +1,6 @@
 #!/usr/bin/env python
-from itertools import product
-from operator import itemgetter
-import pprint
-
-
-from BTrees.OOBTree import OOBTree
-from persistent.mapping import PersistentMapping as pdict
-from persistent.list import PersistentList as plist
-
-
 from unboundmethods import midpoint,  make_key,  key_to_XYZ
+from unboundmethods import axis, n_dim, shaped_3d_array
 
 '''
 This is a collection of Area of Effect template objects.
@@ -57,20 +48,3 @@ class Cuboid(Shape):
         sorted_tuples = sorted(self.n_dim, key=itemgetter(1, 0, 2))
         self.render_key_list = [make_key(t) for t in sorted_tuples]
         self.shaped_3d_array = shaped_3d_array(self.origin, self.magnitude)
-
-
-def n_dim(origin=[0, 0, 0], dimensions=[1, 1, 1]):
-    return list(product(*[axis(*pair) for pair in zip(origin, dimensions)]))
-
-
-def shaped_3d_array(origin=[0, 0, 0], dimensions=[1, 1, 1]):
-    n = [axis(*z) for z in zip(origin, dimensions)]
-    s = [[[make_key((x, y, z)) for z in n[2]] for y in n[1]] for x in n[0]]
-    return s
-
-
-def axis(start, stop):
-    i = 1
-    if start > stop:
-        i = -1
-    return list(xrange(start, stop, i))
