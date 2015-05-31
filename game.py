@@ -97,7 +97,7 @@ class Game:
                             'impassible': True,
                             'blocksLOS': True
                             }
-            for key in sorted(world.db['active_chunks'].keys()):
+            for key in sorted(world.db['active_chunks']):
                 print "##Chunk Building...##", key
                 world.chunk_terrain_base_fill(key, **base)
                 world.chunk_random_feature_fill(key, **rocks)
@@ -154,7 +154,14 @@ class Game:
             self.path_target = None
 
     def reality_bubble_check(self, *elements):
-        pass
+        retire = []
+        active_or_adjacent = {}
+        for k in world.db['active_chunks']:
+            if bool(k not in active_or_adjacent):
+                active_or_adjacent[k] = k
+        for e in elements:
+            c = e.parent_coordinate
+            key = e.coordinate_key
 
     def pixel_collison(self, point, surface, COLORKEY='#0080ff'):
         collide = False

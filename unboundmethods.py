@@ -29,8 +29,7 @@ def make_key(XYZ):
 
 
 def key_to_XYZ(key):
-    XYZ = [int(i) for i in key.split('_')]
-    return XYZ
+    return [int(i) for i in key.split('_')]
 
 
 def find_parent(coordKey):
