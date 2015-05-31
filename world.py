@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from random import uniform, randint
-from Queue import Queue
 
 
 from ZODB import FileStorage, DB
