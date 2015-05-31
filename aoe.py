@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+from operator import itemgetter
+
+
 from unboundmethods import midpoint,  make_key,  key_to_XYZ
 from unboundmethods import axis, n_dim, shaped_3d_array
 
