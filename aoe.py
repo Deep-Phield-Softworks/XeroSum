@@ -5,29 +5,29 @@ from operator import itemgetter
 from unboundmethods import midpoint,  make_key,  key_to_XYZ
 from unboundmethods import axis, n_dim, shaped_3d_array
 
+
 '''
 This is a collection of Area of Effect template objects.
 They should take **kwarg:
 Accepted **kwargs in self.accepted_kwargs:
 -'origin' => string of Coordinate object key in form 'x_y_z'
 -'magnitude' =>  int list that describes how far to extend
-                            along each axis; values can be positive or negative
+    along each axis; values can be positive or negative
 And return objects with the attributes:
 -render_key_list; a list of coordinate object keys in that area.The list should
-            be in isometric render order (iterate through y, then x, then z)
+    be in isometric render order (iterate through y, then x, then z)
 -shaped_3d_array; a multi-dimensional list with Coordinate key
-                string values.
-
-A base class for other shapes. Usable also as a sort of null shape.
-Accepted **kwargs in self.accepted_kwargs:
--'origin' => string of Coordinate object key in form 'x_y_z'
--'magnitude' => int list that describes how far to extend
-                along each axis and in what direction with sign
+    string values.
 '''
 
 
 class Shape:
-
+    '''A base class for other shapes. Usable also as a sort of null shape.
+    Accepted **kwargs in self.accepted_kwargs:
+    -'origin' => string of Coordinate object key in form 'x_y_z'
+    -'magnitude' => int list that describes how far to extend
+        along each axis and in what direction with sign
+    '''
     def __init__(self, **kwargs):
         self.accepted_kwargs = {
                                 'origin': [0, 0, 0],
@@ -44,7 +44,18 @@ class Shape:
 
 
 class Cuboid(Shape):
-
+    '''Cuboid shape covers most use cases from lines to cubes.
+    Accepted **kwargs in self.accepted_kwargs:
+    -'origin' => string of Coordinate object key in form 'x_y_z'
+    -'magnitude' => int list that describes how far to extend
+        along each axis and in what direction with sign
+    All Cuboids should return an object with the attributes:
+    -render_key_list; flat list of coordinate object keys in that area.
+        The list should be in isometric render order (iterate
+        through y, then x, then z)
+    -shaped_3d_array; a multi-dimensional list with Coordinate key
+        string values.
+    '''
     def __init__(self, **kwargs):
         Shape.__init__(self, **kwargs)
         self.n_dim = n_dim(self.origin, self.magnitude)
