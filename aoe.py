@@ -53,9 +53,9 @@ class Cuboid(Shape):
 
     def __init__(self, **kwargs):
         Shape.__init__(self, **kwargs)
-        self.n_dim = plist(n_dim(self.origin, self.magnitude))
+        self.n_dim = n_dim(self.origin, self.magnitude)
         sorted_tuples = sorted(self.n_dim, key=itemgetter(1, 0, 2))
-        self.render_key_list = plist([make_key(t) for t in sorted_tuples])
+        self.render_key_list = [make_key(t) for t in sorted_tuples]
         self.shaped_3d_array = shaped_3d_array(self.origin, self.magnitude)
 
 
