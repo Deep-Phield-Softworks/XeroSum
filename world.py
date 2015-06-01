@@ -12,6 +12,8 @@ import transaction
 
 from unboundmethods import find_parent,  key_to_XYZ,  make_key
 from chunk import Chunk
+from tile import Tile
+from feature import Feature
 from aoe import Cuboid
 
 
@@ -23,13 +25,12 @@ class World:
         self.db = self.open(name,  db_file)
         self.init_args = {'CHUNK_SIZE': CHUNK_SIZE,
                           'TILE_SIZE': TILE_SIZE,
-                          'active_chunks':  pdict(),
-                          'tick_roster': pdict(),
+                          'tick_roster': OOBTree(),
                           'effect_queue': plist(),
-                          'chunks': pdict(),
+                          'chunks': OOBTree(),
                           'game_turn': 0,
                           'play_music': True,
-                          'tick_accumulator': 0,
+                          'turn_accumulator': 0,
                           'new_game': True,
                           'player': None}
         self.db_init(**self.init_args)
@@ -53,38 +54,6 @@ class World:
         transaction.commit()
 
     def close(self):
-        '''Deactivate all chunks and close the db.'''
-        self.deactivate_chunk(*self.db['active_chunks'].keys())
-        transaction.commit()
-
-    '''
-    Given: *keys as a list of Chunk object key strings for use in
-    self.db['active_chunks']. Activates the given Chunk objects
-    (loading their images ie) and creating new Chunks if needed.
-    '''
-    def activate_chunk(self, *keys):
-        '''Load into self.db['active_chunks'] and generate chunks as needed.'''
-        for k in keys:
-            if k not in self.db['active_chunks']:
-                if k not in self.db['chunks']:
-                    self.db['chunks'][k] = Chunk(k,
-                                                 self.db['game_turn'],
-                                                 self.db['CHUNK_SIZE']
-                                                 )
-                self.db['active_chunks'][k] = self.db['chunks'][k]
-        transaction.commit()
-
-    def deactivate_chunk(self, *keys):
-        '''Save active chunks into db.'''
-        # Convenience reassignment for line length here
-        act = self.db['active_chunks']
-        sto = self.db['chunks']
-        for key in keys:
-            if key in act:  # IF Chunk is active...
-                sto[key] = act[key]
-                # Remake dict of active chunks without key to deactivate
-                act = {k: act[k] for k in act if k != key}
-        self.db['active_chunks'] = pdict(act)
         transaction.commit()
 
     '''
@@ -96,14 +65,13 @@ class World:
     -TICK is being stored in ZODB. Not sure of performace ramifications here.
     '''
     def tick(self, TICK):
-        self.db['tick_accumulator'] += TICK  # Increment tick accumulator
-        if self.db['tick_accumulator'] % 1000:  # If % 1000 leaves a remainder
+        self.db['turn_accumulator'] += TICK  # Increment tick accumulator
+        if self.db['turn_accumulator'] % 1000:  # If % 1000 leaves a remainder
             self.db['game_turn'] += 1  # Increment game turn
             # Get tick accumulator remainder
-            self.db['tick_accumulator'] = self.db['tick_accumulator'] % 1000
-        for key in self.db['active_chunks'].keys():  # For each active chunk
-            # Cascade the game turn
-            self.db['active_chunks'][key].tick(TICK, self.db['game_turn'])
+            self.db['turn_accumulator'] = self.db['turn_accumulator'] % 1000
+        '''for key in self.db['chunks'].keys():
+            self.db['chunks'][key].tick(TICK, self.db['game_turn'])'''
 
     '''
     Given: coordinate_key as string and an object reference as element
@@ -111,8 +79,7 @@ class World:
     '''
     def add_element(self, coordinate_key, element):
         pchunk = find_parent(coordinate_key)
-        self.activate_chunk(pchunk)
-        self.db['active_chunks'][pchunk].add_element(coordinate_key, element)
+        self.db['chunks'][pchunk].add_element(coordinate_key, element)
         transaction.commit()
 
     """
@@ -148,11 +115,10 @@ class World:
         # Find Chunks involved
         aChunk = find_parent(aKey)
         bChunk = find_parent(bKey)
-        self.activate_chunk(aChunk,  bChunk)  # Make sure they are active
         # Remove from aKey
-        self.db['active_chunks'][aChunk].remove_element(aKey, element)
+        self.db['chunks'][aChunk].remove_element(aKey, element)
         # Move to bKey
-        self.db['active_chunks'][bChunk].add_element(bKey, element)
+        self.db['chunks'][bChunk].add_element(bKey, element)
         transaction.commit()
 
     def activate_elements(self, *elements):
@@ -160,12 +126,18 @@ class World:
             if e not in self.db['tick_roster']:
                 self.db['tick_roster'][e] = e
 
-    '''
-    Given: coordinate_key as Coordinate object key string
-    Return: Coordinate object's reference
-    '''
-    def get_coordinate_obj(self, coord_key):
+    def get_coordinate_obj(self, key):
+        '''Return Coordinate object.'''
         return self.db['chunks'][find_parent(coord_key)].coordinates[coord_key]
+
+    def get_chunk(self, key):
+        if key not in self.db['chunks']:
+            self.db['chunks'][key] = Chunk(
+                            key,
+                            self.db['game_turn'],
+                            self.db['CHUNK_SIZE']
+                                          )
+        return self.db['chunks'][key]
 
     '''
     Given: chunk_key as Chunk object key string, **tile_args as
@@ -173,9 +145,7 @@ class World:
     Make a terrain layer of Tile objects for the given Chunk
     '''
     def chunk_terrain_base_fill(self, chunk_key, **tile_args):
-        self.activate_chunk(chunk_key)  # Activate the Chunk
-        # Assign to variable chunk for clarity
-        chunk = self.db['active_chunks'][chunk_key]
+        chunk = self.db['chunks'][chunk_key]
         # Get chunk Coordinate object origin
         origin_key = chunk.coordinates_list[0].key
         origin = key_to_XYZ(origin_key)
@@ -196,8 +166,7 @@ class World:
     '''
     def chunk_random_feature_fill(self, chunk_key, chance=1,
                                   out_of=10, **feature_args):
-        self.activate_chunk(chunk_key)
-        for c in self.db['active_chunks'][chunk_key].coordinates_list:
+        for c in self.db['chunks'][chunk_key].coordinates_list:
             r = randint(0, out_of - 1)
             if r < chance:
                 f = Feature(**feature_args)

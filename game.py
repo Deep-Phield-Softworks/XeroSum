@@ -16,7 +16,6 @@ from aoe import *
 from worldview import WorldView
 from path import Path
 from entity import Entity
-from tile import Tile
 from unboundmethods import key_to_XYZ, find_parent
 from unboundmethods import adjacent, find_adjacents
 from unboundmethods import TILE_WIDTH, TILE_HEIGHT
@@ -48,7 +47,7 @@ class Game:
         self.view = self.world_view_init()
         self.controller = Controller(self)
         self.clock = pygame.time.Clock()  # Clock object to tick
-        self.tick = self.db['tick_accumulator']  # Load last clock tick value
+        self.tick = self.db['turn_accumulator']  # Load last clock tick value
         self.screen_text_top = []
         self.screen_text = []
         self.selected = None  # Entities left clicked
@@ -78,7 +77,7 @@ class Game:
                 parent_chunk = find_parent(coordinate_key)
                 if parent_chunk not in chunks:  # If not...
                     chunks.append(parent_chunk)  # Add it...
-            world.activate_chunk(*chunks)
+                    world.get_chunk(parent_chunk)
             # Generate random base terrain for active chunks
             base = {'image_key': 'grass.png'}
             rocks = {
@@ -98,7 +97,7 @@ class Game:
                             'impassible': True,
                             'blocksLOS': True
                             }
-            for key in sorted(world.db['active_chunks']):
+            for key in sorted(chunks):
                 print "##Chunk Building...##", key
                 world.chunk_terrain_base_fill(key, **base)
                 world.chunk_random_feature_fill(key, **rocks)

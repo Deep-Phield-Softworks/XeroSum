@@ -33,8 +33,8 @@ def key_to_XYZ(key):
     return [int(i) for i in key.split('_')]
 
 
-def find_parent(coordKey):
-    XYZ = key_to_XYZ(coordKey)
+def find_parent(coord_key):
+    XYZ = key_to_XYZ(coord_key)
     parent_chunk = make_key([int(XYZ[0]/16), int(XYZ[1]/16), int(XYZ[2])])
     return parent_chunk
 
@@ -97,7 +97,7 @@ def find_adjacents(key):
     dimensions = key_to_XYZ(key)
     o = [d - 1 for d in dimensions]
     d = [2 for d in dimensions]
-    return [make_key(i) for i in n_dim(o,d)]
+    return [make_key(i) for i in n_dim(o, d)]
 
 
 def n_dim(origin=[0, 0, 0], dimensions=[1, 1, 1]):
