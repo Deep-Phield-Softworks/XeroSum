@@ -12,31 +12,10 @@ import transaction
 
 from unboundmethods import find_parent,  key_to_XYZ,  make_key
 from chunk import Chunk
-from subclassloader import *  # Temp commented out during rewrite
 from aoe import Cuboid
 
 
-'''
-World objects have the following traits:
--World object is not persistent. It is meant to be intitialized each session.
--World object is a controller for persistent Chunk objects.
- Active Chunks are stored in self.active.
--World receives the clock TICK, updates the game turn and sends the TICK
- to active Chunks.
--World object opens the ZODB filestorage database and accesses its root.
- In the root, it looks for a key
- equal to its self.name.
-'''
-
-
 class World:
-    '''
-    Given: String name, and (optional) bool debug for verbose debug
-        info, (optional) CHUNK_SIZE int list defining XYZ dimensions of Chunk
-        objects, and (optional) TILE_SIZE int list equal to Tile [width,height]
-        in pixels, db_file as optional string file name of DB
-    Return: World object
-    '''
     def __init__(self, name, debug=False,  CHUNK_SIZE=[16, 16, 1],
                  TILE_SIZE=[64, 32],  db_file='XSDB.fs'):
         self.name = name
@@ -53,15 +32,10 @@ class World:
                           'tick_accumulator': 0,
                           'new_game': True,
                           'player': None}
-        self.init(**self.init_args)
+        self.db_init(**self.init_args)
 
-    '''
-    Given: key as string key to open in DB, db_file as string file name
-    of DB to open
-    Return: The given key to an OOBTree in given DB, making one if one
-    doesn't already exist
-    '''
     def open(self, key, db_file):
+        '''Open the ZODB FileStorage and return the World's root.'''
         db = DB(FileStorage.FileStorage(db_file))
         cnx = db.open()
         root = cnx.root()
@@ -71,20 +45,15 @@ class World:
             transaction.commit()
         return root[key]
 
-    '''
-    Given: **kwargs as a dictionary of string keys and any typed values.
-    These entries will be stored in the top level of the World.db. Creates
-    the key or loads it as needed.
-    '''
-    def init(self,  **kwargs):
+    def db_init(self,  **kwargs):
+        '''Initalize db and create entries as needed.'''
         for key,  val in kwargs.iteritems():
             if key not in self.db:
                 self.db[key] = val
         transaction.commit()
 
-    # Given: No args
-    # Close the chunks and save the DB
     def close(self):
+        '''Deactivate all chunks and close the db.'''
         self.deactivate_chunk(*self.db['active_chunks'].keys())
         transaction.commit()
 
@@ -94,25 +63,19 @@ class World:
     (loading their images ie) and creating new Chunks if needed.
     '''
     def activate_chunk(self, *keys):
-        for key in keys:
-            # IF Chunk isn't active...
-            # PEP8 has_key is deprecated, use 'in'
-            if key not in self.db['active_chunks']:
-                # If Chunk does NOT exist...
-                # PEP8 has_key is deprecated, use 'in'
-                if key not in self.db['chunks']:
-                    # Make it
-                    self.db['chunks'][key] = Chunk(key, self.db['game_turn'],
-                                                   self.db['CHUNK_SIZE'])
-                    # Add it to active Chunks
-                self.db['active_chunks'][key] = self.db['chunks'][key]
+        '''Load into self.db['active_chunks'] and generate chunks as needed.'''
+        for k in keys:
+            if k not in self.db['active_chunks']:
+                if k not in self.db['chunks']:
+                    self.db['chunks'][k] = Chunk(k,
+                                                 self.db['game_turn'],
+                                                 self.db['CHUNK_SIZE']
+                                                 )
+                self.db['active_chunks'][k] = self.db['chunks'][k]
         transaction.commit()
 
-    '''
-    Given: *keys as a list of Chunk object key strings for use
-    in self.db['active_chunks']
-    '''
     def deactivate_chunk(self, *keys):
+        '''Save active chunks into db.'''
         # Convenience reassignment for line length here
         act = self.db['active_chunks']
         sto = self.db['chunks']
@@ -120,7 +83,7 @@ class World:
             if key in act:  # IF Chunk is active...
                 sto[key] = act[key]
                 # Remake dict of active chunks without key to deactivate
-                act = {keys: act[keys] for keys in act if keys != key}
+                act = {k: act[k] for k in act if k != key}
         self.db['active_chunks'] = pdict(act)
         transaction.commit()
 
@@ -174,7 +137,7 @@ class World:
     def add_effect(self, effect, target):
         if hasattr(target, 'effects'):
             target.effects.append(effect)
-            if not(target in self.db['tick_roster']):
+            if target not in self.db['tick_roster']:
                 self.db['tick_roster'][target] = target
 
     '''
@@ -191,6 +154,11 @@ class World:
         # Move to bKey
         self.db['active_chunks'][bChunk].add_element(bKey, element)
         transaction.commit()
+
+    def activate_elements(self, *elements):
+        for e in elements:
+            if e not in self.db['tick_roster']:
+                self.db['tick_roster'][e] = e
 
     '''
     Given: coordinate_key as Coordinate object key string
