@@ -99,6 +99,7 @@ class WorldView:
                     px = self.nD[x][y][z][1][0]
                     py = self.nD[x][y][z][1][1]
                     for e in c.list_all():
+                        self.e_on_screen += 1
                         img = e.to_blit()
                         px = px + e.pixel_offsets[0]
                         py = py + e.pixel_offsets[1]
@@ -106,10 +107,10 @@ class WorldView:
                                                img.get_height()))
                         k = (e.layer, py, px, e)
                         if k not in self.b:
-                            self.dirty = k
+                            if e in self.e:
+                                self.dirty = k
         for k in self.b:
             e = self.b[k]
-            self.e_on_screen += 1
             self.surface.blit(e.to_blit(), (k[2], k[1]))
 
     def render_old(self):
