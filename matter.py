@@ -12,8 +12,13 @@ they inherit from
 
 Accepted **kwargs in self.acceptedKWARGS:
 -'imageKey' => string in form 'foo.png', which should correspond
-            to a key in one of the imageManifests
+            to a key in one of the image Manifests
 -'name' => either a string or None
+-'width' => width in pixels
+-'height' => length in pixels
+-'coordinate_key' => string key of coordinate object that contains matter
+-'parent_coordinate' => reference to coordinate object that contains matter
+-'effects' => persistent list for containing Effects affecting the Matter
 '''
 
 
@@ -21,8 +26,8 @@ class Matter:
     def __init__(self, **kwargs):
         self.accepted_kwargs = {'image_key': 'ISO_BASIC_64x32.png',
                                 'name': None,
-                                'height': 64,
                                 'width': 32,
+                                'height': 64,
                                 'coordinate_key': None,
                                 'parent_coordinate': None,
                                 'effects': plist([])
@@ -48,7 +53,7 @@ class Matter:
     def process_effects(self):
         error_string = "Subclass of Matter needs process_effects method"
         raise NotImplementedError(error_string)
-    
+
     def deactivate(self):
         error_string = "Subclass of Matter needs deactivate method"
         raise NotImplementedError(error_string)
