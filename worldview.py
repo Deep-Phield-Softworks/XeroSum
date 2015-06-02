@@ -43,10 +43,10 @@ class WorldView:
         self.preload_coordinates()
         self.screen_size = screen_size
         self.surface = Surface(screen_size)
-        self.rects = {}
+        self.rects = []
         self.b = OOBTree()
         self.e = OOBTree()
-        self.dirty = OOBTree()
+        self.dirty = True
         self.init_b()
 
     def prepare_chunks(self):
@@ -87,11 +87,16 @@ class WorldView:
                         k = (e.layer, py, px, e)
                         self.b[k] = e
                         self.e[e] = k
+        for k in self.b:
+            e = self.b[k]
+            self.surface.blit(e.to_blit(), (k[2], k[1]))
 
     def render(self):
+        self.dirty = False
         self.e_on_screen = 0
         self.surface.fill((0, 0, 0))
-        self.rects = {}
+        self.rects = []
+        remove = []
         for y in xrange(len(self.nD[0])):
             for x in range(len(self.nD)):
                 for z in range(len(self.nD[x][y])):
@@ -107,8 +112,13 @@ class WorldView:
                                                img.get_height()))
                         k = (e.layer, py, px, e)
                         if k not in self.b:
+                            self.dirty = True
+                            self.b[k] = e
                             if e in self.e:
-                                self.dirty = k
+                                remove.append(self.e[k])
+                            self.b[e] = k
+        for r in remove:
+            self.b.remove(r)
         for k in self.b:
             e = self.b[k]
             self.surface.blit(e.to_blit(), (k[2], k[1]))
