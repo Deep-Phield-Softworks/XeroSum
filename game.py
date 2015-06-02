@@ -70,13 +70,11 @@ class Game:
                                 }
             shape = Cuboid(**cubeargs)
             world.db['view_shape_args'] = cubeargs
-            # Use shape to determine initial actuve chunks
             chunks = []
-            # For each coordinate key in shape.area_key_list
             for coordinate_key in shape.render_key_list:
                 parent_chunk = find_parent(coordinate_key)
-                if parent_chunk not in chunks:  # If not...
-                    chunks.append(parent_chunk)  # Add it...
+                if parent_chunk not in chunks:
+                    chunks.append(parent_chunk)
                     world.get_chunk(parent_chunk)
             # Generate random base terrain for active chunks
             base = {'image_key': 'grass.png'}
@@ -97,7 +95,7 @@ class Game:
                             'impassible': True,
                             'blocksLOS': True
                             }
-            for key in sorted(chunks):
+            for key in chunks:
                 print "##Chunk Building...##", key
                 world.chunk_terrain_base_fill(key, **base)
                 world.chunk_random_feature_fill(key, **rocks)

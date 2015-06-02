@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from operator import *
+from operator import itemgetter
 
 
 from pygame import Rect, Surface

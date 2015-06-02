@@ -128,7 +128,7 @@ class World:
 
     def get_coordinate_obj(self, key):
         '''Return Coordinate object.'''
-        return self.db['chunks'][find_parent(coord_key)].coordinates[coord_key]
+        return self.db['chunks'][find_parent(key)].coordinates[key]
 
     def get_chunk(self, key):
         if key not in self.db['chunks']:
@@ -148,9 +148,11 @@ class World:
         chunk = self.db['chunks'][chunk_key]
         # Get chunk Coordinate object origin
         origin_key = chunk.coordinates_list[0].key
-        origin = key_to_XYZ(origin_key)
+        o = key_to_XYZ(origin_key)
+        size = self.db['CHUNK_SIZE']
+        magnitude = [(o[i] + size[i]) for i in xrange(len(o))]
         # Make a dict of shape args
-        shape_args = {'origin': origin, 'magnitude': self.db['CHUNK_SIZE']}
+        shape_args = {'origin': o, 'magnitude':  magnitude}
         # Make a shape that includes all the Chunk's Coordinates
         ground = Cuboid(**shape_args).render_key_list
         for c in ground:  # For each Coordinate
