@@ -54,7 +54,7 @@ class Controller:
         point = (event.pos[0], event.pos[1])
         collide_list = []
         selected_info = None
-        for e in self.game.view.hit_box_list:
+        for e in self.game.view.rects:
             if e[0].collidepoint(point):
                 if within(e[0], point):
                     collide_list.append(e)

@@ -3,6 +3,7 @@ from operator import itemgetter
 
 
 from pygame import Rect, Surface
+from BTrees.OOBTree import OOBTree
 
 
 from aoe import Cuboid
@@ -42,7 +43,11 @@ class WorldView:
         self.preload_coordinates()
         self.screen_size = screen_size
         self.surface = Surface(screen_size)
-        self.hit_box_list = []
+        self.rects = {}
+        self.b = OOBTree()
+        self.e = OOBTree()
+        self.dirty = OOBTree()
+        self.init_b()
 
     def prepare_chunks(self):
         '''Generate a list of chunks in view. Ensure they are created.'''
@@ -53,6 +58,7 @@ class WorldView:
                 self.world.get_chunk(parent_chunk)
 
     def preload_coordinates(self):
+        '''Pre-calculate the on screen position and load each coordinate.'''
         half_tile_wide = int(self.TILE_WIDTH / 2)
         half_tile_high = int(self.TILE_HEIGHT / 2)
         for x in range(len(self.nD)):
@@ -65,7 +71,48 @@ class WorldView:
                     basepy = (x + y) * half_tile_high + self.py_offset
                     self.nD[x][y][z] = c, (basepx, basepy)
 
+    def init_b(self):
+        for y in xrange(len(self.nD[0])):
+            for x in range(len(self.nD)):
+                for z in range(len(self.nD[x][y])):
+                    c = self.nD[x][y][z][0]
+                    px = self.nD[x][y][z][1][0]
+                    py = self.nD[x][y][z][1][1]
+                    for e in c.list_all():
+                        img = e.to_blit()
+                        px = px + e.pixel_offsets[0]
+                        py = py + e.pixel_offsets[1]
+                        rect = Rect((px, py), (img.get_width(),
+                                               img.get_height()))
+                        k = (e.layer, py, px, e)
+                        self.b[k] = e
+                        self.e[e] = k
+
     def render(self):
+        self.e_on_screen = 0
+        self.surface.fill((0, 0, 0))
+        self.rects = {}
+        for y in xrange(len(self.nD[0])):
+            for x in range(len(self.nD)):
+                for z in range(len(self.nD[x][y])):
+                    c = self.nD[x][y][z][0]
+                    px = self.nD[x][y][z][1][0]
+                    py = self.nD[x][y][z][1][1]
+                    for e in c.list_all():
+                        img = e.to_blit()
+                        px = px + e.pixel_offsets[0]
+                        py = py + e.pixel_offsets[1]
+                        rect = Rect((px, py), (img.get_width(),
+                                               img.get_height()))
+                        k = (e.layer, py, px, e)
+                        if k not in self.b:
+                            self.dirty = k
+        for k in self.b:
+            e = self.b[k]
+            self.e_on_screen += 1
+            self.surface.blit(e.to_blit(), (k[2], k[1]))
+
+    def render_old(self):
         # Fill surface to avoid map edge slug trails
         self.surface.fill((0, 0, 0))
         # Empty hit_box_list
