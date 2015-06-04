@@ -130,7 +130,7 @@ class Game:
         size = self.screen_size
         px = self.px_offset
         py = self.py_offset
-        return WorldView(self.screen, world, args, px, py)
+        return WorldView(world, args, px, py)
 
     def font_init(self):
         pygame.font.init()
@@ -177,7 +177,6 @@ class Game:
         return collide
 
     def draw_screen_text(self):
-        self.screen_text
         y = self.screen_size[1] - self.font_height
         y2 = 0 + self.font_height
         elements = "Elements = " + str(self.view.e_on_screen)
@@ -231,7 +230,7 @@ class Game:
         self.view.render()
         # self.draw_ui()
         self.draw_screen_text()
-        pygame.display.flip()
+        #pygame.display.flip()
 
 if __name__ == '__main__':
     os.chdir(sys.path[0])

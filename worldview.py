@@ -2,7 +2,7 @@
 from operator import itemgetter
 
 
-from pygame import Rect, Surface
+from pygame import Rect, Surface, display
 from BTrees.OOBTree import OOBTree
 
 
@@ -26,11 +26,11 @@ Return: a worldView object which:
 
 
 class WorldView:
-    def __init__(self, screen, world, shape_args, px_offset,  py_offset,
+    def __init__(self, world, shape_args, px_offset,  py_offset,
                  TILE_WIDTH=64, TILE_HEIGHT=32):
         self.world = world
-        self.screen = screen
-        self.screen_size = screen.get_size()
+        self.screen = display.get_surface()
+        self.screen_size = self.screen.get_size()
         self.chunks = []
         self.shape = Cuboid(**shape_args)
         self.px_offset = px_offset
@@ -42,12 +42,14 @@ class WorldView:
         self.background = Surface(self.screen_size)
         self.text = Surface((120, 40))
         self.text_pxy = (0, (self.screen_size[1] - self.text.get_size()[1]))
+        self.text_rect = Rect((self.text_pxy),(120, 40))
         self.loaded = {}
         # Determine chunks needed and have world load them
         self.prepare_chunks()
         # Overwrite self.nD with coordinates objects
         self.preload()
         self.rects = []
+        self.dirty = []
         self.iso = OOBTree()
         self.elements = OOBTree()
 
@@ -83,6 +85,8 @@ class WorldView:
         self.screen.blit(self.text, self.text_pxy)
         self.e_on_screen = 0
         self.rects = []
+        self.dirty = []
+        self.redraw = OOBTree()
         remove = []
         for cKey in self.loaded:
             c = self.loaded[cKey][0]
@@ -96,48 +100,21 @@ class WorldView:
                     py = py + e.pixel_offsets[1]
                     rect = Rect((px, py), (img.get_width(),
                                            img.get_height()))
-                    k = (e.layer, py, px, e, rect)
+                    self.rects.append(rect)
+                    k = (e.layer, py, px, e)
                     if k not in self.iso:
                         self.iso[k] = e
+                        self.redraw[k] = e
+                        self.dirty.append(rect)
                         if e in self.elements:
-                            remove.append(self.elements[k])
-                        self.elements[e] = k
+                            self.dirty.append(e[-1])
+                            remove.append(self.elements[e])
+                        self.elements[e] = (k, rect)
         for r in remove:
             self.iso.remove(r)
-        for k in self.iso:
+        for k in self.redraw:
             e = self.iso[k]
             self.screen.blit(e.to_blit(), (k[2], k[1]))
-
-    def render_old(self):
-        # Fill surface to avoid map edge slug trails
-        self.screen.fill((0, 0, 0))
-        # Empty hit_box_list
-        self.hit_box_list = []
-        unsorted = []
-        x_range = xrange(len(self.nD))
-        y_range = xrange(len(self.nD[0]))
-        # Render Tiles
-        self.e_on_screen = 0
-        for y in y_range:
-            for x in x_range:
-                for z in range(len(self.nD[x][y])):
-                    c = self.nD[x][y][z][0]  # c is now the Coordinate object
-                    px = self.nD[x][y][z][1][0]
-                    py = self.nD[x][y][z][1][1]
-                    contents = c.list_all()  # get all contents
-                    for e in contents:
-                        # Determine proper image
-                        img = e.to_blit()
-                        # Adjust px,py based upon e's attributes
-                        px = px + e.pixel_offsets[0]
-                        py = py + e.pixel_offsets[1]
-                        # Create hit box rect and add to hit_box_list
-                        rect = Rect((px, py), (img.get_width(),
-                                               img.get_height()))
-                        self.hit_box_list.append([rect, e])
-                        unsorted.append([img, e.layer, py, px, e])
-        # Sort render elements by layer, py, px
-        render_list = sorted(unsorted, key=itemgetter(1, 2, 3))
-        for e in render_list:
-            self.e_on_screen += 1
-            self.screen.blit(e[0], (e[3], e[2]))
+        if bool(len(self.dirty)):
+            display.update(self.dirty)
+            display.flip()
