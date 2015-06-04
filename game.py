@@ -128,7 +128,9 @@ class Game:
         world = self.world
         args = self.world.db['view_shape_args']
         size = self.screen_size
-        return WorldView(world, args, size,  self.px_offset,  self.py_offset)
+        px = self.px_offset
+        py = self.py_offset
+        return WorldView(self.screen, world, args, px, py)
 
     def font_init(self):
         pygame.font.init()
@@ -228,7 +230,6 @@ class Game:
         self.world.process_effects()
         self.view.render()
         # self.draw_ui()
-        self.screen.blit(self.view.surface, (0, 0))
         self.draw_screen_text()
         pygame.display.flip()
 

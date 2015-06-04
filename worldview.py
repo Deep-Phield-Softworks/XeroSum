@@ -26,9 +26,11 @@ Return: a worldView object which:
 
 
 class WorldView:
-    def __init__(self, world, shape_args, screen_size, px_offset,  py_offset,
+    def __init__(self, screen, world, shape_args, px_offset,  py_offset,
                  TILE_WIDTH=64, TILE_HEIGHT=32):
         self.world = world
+        self.screen = screen
+        self.screen_size = screen.get_size()
         self.chunks = []
         self.shape = Cuboid(**shape_args)
         self.px_offset = px_offset
@@ -37,12 +39,11 @@ class WorldView:
         self.TILE_HEIGHT = TILE_HEIGHT
         self.render_key_list = self.shape.render_key_list
         self.nD = self.shape.shaped_3d_array
+        self.loaded = {}
         # Determine chunks needed and have world load them
         self.prepare_chunks()
         # Overwrite self.nD with coordinates objects
         self.preload_coordinates()
-        self.screen_size = screen_size
-        self.surface = Surface(screen_size)
         self.rects = []
         self.b = OOBTree()
         self.e = OOBTree()
@@ -69,15 +70,13 @@ class WorldView:
                     c = chunk.coordinates[cKey]
                     basepx = (x - y) * half_tile_wide + self.px_offset
                     basepy = (x + y) * half_tile_high + self.py_offset
-                    self.nD[x][y][z] = c, (basepx, basepy)
+                    self.loaded[cKey] = [c, basepx, basepy]
 
     def init_b(self):
-        for y in xrange(len(self.nD[0])):
-            for x in xrange(len(self.nD)):
-                for z in xrange(len(self.nD[x][y])):
-                    c = self.nD[x][y][z][0]
-                    px = self.nD[x][y][z][1][0]
-                    py = self.nD[x][y][z][1][1]
+        for cKey in self.loaded:
+                    c = self.loaded[cKey][0]
+                    px = self.loaded[cKey][1]
+                    py = self.loaded[cKey][2]
                     for e in c.list_all():
                         img = e.to_blit()
                         px = px + e.pixel_offsets[0]
@@ -89,43 +88,41 @@ class WorldView:
                         self.e[e] = k
         for k in self.b:
             e = self.b[k]
-            self.surface.blit(e.to_blit(), (k[2], k[1]))
+            self.screen.blit(e.to_blit(), (k[2], k[1]))
 
     def render(self):
         self.dirty = False
         self.e_on_screen = 0
-        self.surface.fill((0, 0, 0))
+        self.screen.fill((0, 0, 0))
         self.rects = []
         remove = []
-        for y in xrange(len(self.nD[0])):
-            for x in xrange(len(self.nD)):
-                for z in xrange(len(self.nD[x][y])):
-                    c = self.nD[x][y][z][0]
-                    px = self.nD[x][y][z][1][0]
-                    py = self.nD[x][y][z][1][1]
-                    for e in c.list_all():
-                        self.e_on_screen += 1
-                        img = e.to_blit()
-                        px = px + e.pixel_offsets[0]
-                        py = py + e.pixel_offsets[1]
-                        rect = Rect((px, py), (img.get_width(),
-                                               img.get_height()))
-                        k = (e.layer, py, px, e)
-                        if k not in self.b:
-                            self.dirty = True
-                            self.b[k] = e
-                            if e in self.e:
-                                remove.append(self.e[k])
-                            self.b[e] = k
+        for cKey in self.loaded:
+            c = self.loaded[cKey][0]
+            px = self.loaded[cKey][1]
+            py = self.loaded[cKey][2]
+            for e in c.list_all():
+                self.e_on_screen += 1
+                img = e.to_blit()
+                px = px + e.pixel_offsets[0]
+                py = py + e.pixel_offsets[1]
+                rect = Rect((px, py), (img.get_width(),
+                                       img.get_height()))
+                k = (e.layer, py, px, e)
+                if k not in self.b:
+                    self.dirty = True
+                    self.b[k] = e
+                    if e in self.e:
+                        remove.append(self.e[k])
+                    self.b[e] = k
         for r in remove:
             self.b.remove(r)
         for k in self.b:
             e = self.b[k]
-            self.surface.blit(e.to_blit(), (k[2], k[1]))
+            self.screen.blit(e.to_blit(), (k[2], k[1]))
 
     def render_old(self):
         # Fill surface to avoid map edge slug trails
-        self.surface.fill((0, 0, 0))
+        self.screen.fill((0, 0, 0))
         # Empty hit_box_list
         self.hit_box_list = []
         unsorted = []
@@ -155,4 +152,4 @@ class WorldView:
         render_list = sorted(unsorted, key=itemgetter(1, 2, 3))
         for e in render_list:
             self.e_on_screen += 1
-            self.surface.blit(e[0], (e[3], e[2]))
+            self.screen.blit(e[0], (e[3], e[2]))
