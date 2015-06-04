@@ -38,6 +38,9 @@ class Game:
         pygame.init()
         pygame.mixer.init()
         self.font_init()
+        self.clock = pygame.time.Clock()  # Clock object to tick
+        self.screen_text_top = []
+        self.screen_text = []
         self.platform = sys.platform  # Determine operating system
         self.world = self.world_init(world_name,  start_coordinate_key)
         self.db = self.world.db  # Convenience renaming here
@@ -46,10 +49,7 @@ class Game:
         self.render_surface_init()
         self.view = self.world_view_init()
         self.controller = Controller(self)
-        self.clock = pygame.time.Clock()  # Clock object to tick
         self.tick = self.db['turn_accumulator']  # Load last clock tick value
-        self.screen_text_top = []
-        self.screen_text = []
         self.selected = None  # Entities left clicked
         self.path_target = None  # Path Finding Target
         self.run = True  # Run while true
@@ -130,7 +130,9 @@ class Game:
         size = self.screen_size
         px = self.px_offset
         py = self.py_offset
-        return WorldView(world, args, px, py)
+        c = self.clock
+        f = self.font
+        return WorldView(world, args, px, py, f, c)
 
     def font_init(self):
         pygame.font.init()
@@ -176,21 +178,21 @@ class Game:
             collide = True
         return collide
 
-    def draw_screen_text(self):
-        y = self.screen_size[1] - self.font_height
-        y2 = 0 + self.font_height
+    def make_screen_text(self):
+        self.screen_text = []
+        #y = self.screen_size[1] - self.font_height
+        #y2 = 0 + self.font_height
         elements = "Elements = " + str(self.view.e_on_screen)
         self.screen_text.append(elements)
         fps = "FPS = " + str(self.clock.get_fps())
         self.screen_text.append(fps)
-        for text in reversed(self.screen_text):
-            self.screen.blit(self.font.render(text, True, (255, 0, 0)), (0, y))
-            y -= self.font_height
-        for text in reversed(self.screen_text_top):
-            render = self.font.render(text, True, (255, 0, 0)), (0, y2)
-            self.screen.blit(render)
-            y2 += self.font_height
-        self.screen_text = []
+        #for text in reversed(self.screen_text):
+        #    self.screen.blit(self.font.render(text, True, (255, 0, 0)), (0, y))
+        #    y -= self.font_height
+        #for text in reversed(self.screen_text_top):
+        #    render = self.font.render(text, True, (255, 0, 0)), (0, y2)
+         #   self.screen.blit(render)
+         #   y2 += self.font_height
 
     def ui_surface_init(self):
         pass
@@ -227,10 +229,9 @@ class Game:
         self.path()
         self.world.tick(self.clock.tick())
         self.world.process_effects()
+        self.make_screen_text()
         self.view.render()
         # self.draw_ui()
-        self.draw_screen_text()
-        #pygame.display.flip()
 
 if __name__ == '__main__':
     os.chdir(sys.path[0])

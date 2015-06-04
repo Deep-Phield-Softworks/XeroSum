@@ -27,31 +27,34 @@ Return: a worldView object which:
 
 class WorldView:
     def __init__(self, world, shape_args, px_offset,  py_offset,
-                 TILE_WIDTH=64, TILE_HEIGHT=32):
+                 font, clock, TILE_WIDTH=64, TILE_HEIGHT=32):
         self.world = world
         self.screen = display.get_surface()
         self.screen_size = self.screen.get_size()
-        self.chunks = []
-        self.shape = Cuboid(**shape_args)
+        self.font = font
+        self.font_height = self.font.get_linesize()
+        self.text = Surface((120, 40))
+        self.clock = clock
+        self.text_pxy = (0, (self.screen_size[1] - self.text.get_size()[1]))
+        self.text_rect = Rect((self.text_pxy), (120, 40))
         self.px_offset = px_offset
         self.py_offset = py_offset
         self.TILE_WIDTH = TILE_WIDTH
         self.TILE_HEIGHT = TILE_HEIGHT
+        self.chunks = []
+        self.shape = Cuboid(**shape_args)
         self.render_key_list = self.shape.render_key_list
         self.nD = self.shape.shaped_3d_array
         self.background = Surface(self.screen_size)
-        self.text = Surface((120, 40))
-        self.text_pxy = (0, (self.screen_size[1] - self.text.get_size()[1]))
-        self.text_rect = Rect((self.text_pxy),(120, 40))
         self.loaded = {}
-        # Determine chunks needed and have world load them
         self.prepare_chunks()
-        # Overwrite self.nD with coordinates objects
         self.preload()
         self.rects = []
         self.dirty = []
         self.iso = OOBTree()
         self.elements = OOBTree()
+        self.e_on_screen = 0
+        self.screen_text = []
 
     def prepare_chunks(self):
         '''Generate a list of chunks in view. Ensure they are created.'''
@@ -80,6 +83,17 @@ class WorldView:
                     for t in c.tiles:
                         self.background.blit(t.to_blit(), (px, py))
         self.screen.blit(self.background, (0, 0))
+
+    def draw_screen_text(self):
+        self.screen_text = []
+        elements = "Elements = " + str(self.e_on_screen)
+        self.screen_text.append(elements)
+        fps = "FPS = " + str(self.clock.get_fps())
+        self.screen_text.append(fps)
+        y = self.screen_size[1] - self.font_height
+        for text in reversed(self.screen_text):
+            self.screen.blit(self.font.render(text, True, (255, 0, 0)), (0, y))
+            y -= self.font_height
 
     def render(self):
         self.screen.blit(self.text, self.text_pxy)
@@ -115,6 +129,6 @@ class WorldView:
         for k in self.redraw:
             e = self.iso[k]
             self.screen.blit(e.to_blit(), (k[2], k[1]))
-        if bool(len(self.dirty)):
+        if bool(len(self.dirty)) or bool(len(self.screen_text)):
             display.update(self.dirty)
             display.flip()
