@@ -95,9 +95,6 @@ class WorldView:
                             k = (e.layer, py, px, e)
                             self.b[k] = e
                             self.e[e] = k
-        for k in self.b:
-            e = self.b[k]
-            self.screen.blit(e.to_blit(), (k[2], k[1]))
 
     def render(self):
         self.screen.blit(self.text, self.text_pxy)
