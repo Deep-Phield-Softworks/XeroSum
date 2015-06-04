@@ -88,7 +88,7 @@ class WorldView:
         self.screen_text = []
         elements = "Elements = " + str(self.e_on_screen)
         self.screen_text.append(elements)
-        fps = "FPS = " + str(self.clock.get_fps())
+        fps = "FPS = " + str(int(self.clock.get_fps()))
         self.screen_text.append(fps)
         y = self.screen_size[1] - self.font_height
         for text in reversed(self.screen_text):
