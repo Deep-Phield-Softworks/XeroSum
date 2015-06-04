@@ -48,9 +48,8 @@ class WorldView:
         # Overwrite self.nD with coordinates objects
         self.preload()
         self.rects = []
-        self.b = OOBTree()
-        self.e = OOBTree()
-        self.init_b()
+        self.iso = OOBTree()
+        self.elements = OOBTree()
 
     def prepare_chunks(self):
         '''Generate a list of chunks in view. Ensure they are created.'''
@@ -78,23 +77,7 @@ class WorldView:
                     self.loaded[cKey] = [c, px, py]
                     for t in c.tiles:
                         self.background.blit(t.to_blit(), (px, py))
-
-    def init_b(self):
         self.screen.blit(self.background, (0, 0))
-        for cKey in self.loaded:
-                    c = self.loaded[cKey][0]
-                    px = self.loaded[cKey][1]
-                    py = self.loaded[cKey][2]
-                    for e in c.list_all():
-                        if e.layer > 0.1:
-                            img = e.to_blit()
-                            px = px + e.pixel_offsets[0]
-                            py = py + e.pixel_offsets[1]
-                            rect = Rect((px, py), (img.get_width(),
-                                                   img.get_height()))
-                            k = (e.layer, py, px, e)
-                            self.b[k] = e
-                            self.e[e] = k
 
     def render(self):
         self.screen.blit(self.text, self.text_pxy)
@@ -113,16 +96,16 @@ class WorldView:
                     py = py + e.pixel_offsets[1]
                     rect = Rect((px, py), (img.get_width(),
                                            img.get_height()))
-                    k = (e.layer, py, px, e)
-                    if k not in self.b:
-                        self.b[k] = e
-                        if e in self.e:
-                            remove.append(self.e[k])
-                        self.b[e] = k
+                    k = (e.layer, py, px, e, rect)
+                    if k not in self.iso:
+                        self.iso[k] = e
+                        if e in self.elements:
+                            remove.append(self.elements[k])
+                        self.elements[e] = k
         for r in remove:
-            self.b.remove(r)
-        for k in self.b:
-            e = self.b[k]
+            self.iso.remove(r)
+        for k in self.iso:
+            e = self.iso[k]
             self.screen.blit(e.to_blit(), (k[2], k[1]))
 
     def render_old(self):
