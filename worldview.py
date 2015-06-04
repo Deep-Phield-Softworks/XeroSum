@@ -39,15 +39,17 @@ class WorldView:
         self.TILE_HEIGHT = TILE_HEIGHT
         self.render_key_list = self.shape.render_key_list
         self.nD = self.shape.shaped_3d_array
+        self.background = Surface(self.screen_size)
+        self.text = Surface((120, 40))
+        self.text_pxy = (0, (self.screen_size[1] - self.text.get_size()[1]))
         self.loaded = {}
         # Determine chunks needed and have world load them
         self.prepare_chunks()
         # Overwrite self.nD with coordinates objects
-        self.preload_coordinates()
+        self.preload()
         self.rects = []
         self.b = OOBTree()
         self.e = OOBTree()
-        self.dirty = True
         self.init_b()
 
     def prepare_chunks(self):
@@ -58,8 +60,11 @@ class WorldView:
                 self.chunks.append(parent_chunk)
                 self.world.get_chunk(parent_chunk)
 
-    def preload_coordinates(self):
-        '''Pre-calculate the on screen position and load each coordinate.'''
+    def preload(self):
+        '''Pre-calculate the on screen position and load each coordinate.
+        Sort each element into background or foreground. Blit all the
+        tiles onto the background surface.
+        '''
         half_tile_wide = int(self.TILE_WIDTH / 2)
         half_tile_high = int(self.TILE_HEIGHT / 2)
         for x in xrange(len(self.nD)):
@@ -68,32 +73,35 @@ class WorldView:
                     cKey = self.nD[x][y][z]
                     chunk = self.world.db['chunks'][find_parent(cKey)]
                     c = chunk.coordinates[cKey]
-                    basepx = (x - y) * half_tile_wide + self.px_offset
-                    basepy = (x + y) * half_tile_high + self.py_offset
-                    self.loaded[cKey] = [c, basepx, basepy]
+                    px = (x - y) * half_tile_wide + self.px_offset
+                    py = (x + y) * half_tile_high + self.py_offset
+                    self.loaded[cKey] = [c, px, py]
+                    for t in c.tiles:
+                        self.background.blit(t.to_blit(), (px, py))
 
     def init_b(self):
+        self.screen.blit(self.background, (0, 0))
         for cKey in self.loaded:
                     c = self.loaded[cKey][0]
                     px = self.loaded[cKey][1]
                     py = self.loaded[cKey][2]
                     for e in c.list_all():
-                        img = e.to_blit()
-                        px = px + e.pixel_offsets[0]
-                        py = py + e.pixel_offsets[1]
-                        rect = Rect((px, py), (img.get_width(),
-                                               img.get_height()))
-                        k = (e.layer, py, px, e)
-                        self.b[k] = e
-                        self.e[e] = k
+                        if e.layer > 0.1:
+                            img = e.to_blit()
+                            px = px + e.pixel_offsets[0]
+                            py = py + e.pixel_offsets[1]
+                            rect = Rect((px, py), (img.get_width(),
+                                                   img.get_height()))
+                            k = (e.layer, py, px, e)
+                            self.b[k] = e
+                            self.e[e] = k
         for k in self.b:
             e = self.b[k]
             self.screen.blit(e.to_blit(), (k[2], k[1]))
 
     def render(self):
-        self.dirty = False
+        self.screen.blit(self.text, self.text_pxy)
         self.e_on_screen = 0
-        self.screen.fill((0, 0, 0))
         self.rects = []
         remove = []
         for cKey in self.loaded:
@@ -102,18 +110,18 @@ class WorldView:
             py = self.loaded[cKey][2]
             for e in c.list_all():
                 self.e_on_screen += 1
-                img = e.to_blit()
-                px = px + e.pixel_offsets[0]
-                py = py + e.pixel_offsets[1]
-                rect = Rect((px, py), (img.get_width(),
-                                       img.get_height()))
-                k = (e.layer, py, px, e)
-                if k not in self.b:
-                    self.dirty = True
-                    self.b[k] = e
-                    if e in self.e:
-                        remove.append(self.e[k])
-                    self.b[e] = k
+                if e.layer > 0.1:
+                    img = e.to_blit()
+                    px = px + e.pixel_offsets[0]
+                    py = py + e.pixel_offsets[1]
+                    rect = Rect((px, py), (img.get_width(),
+                                           img.get_height()))
+                    k = (e.layer, py, px, e)
+                    if k not in self.b:
+                        self.b[k] = e
+                        if e in self.e:
+                            remove.append(self.e[k])
+                        self.b[e] = k
         for r in remove:
             self.b.remove(r)
         for k in self.b:
