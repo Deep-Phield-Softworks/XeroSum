@@ -29,7 +29,7 @@ class World:
                           'effect_queue': plist(),
                           'chunks': OOBTree(),
                           'game_turn': 0,
-                          'play_music': True,
+                          'play_music': False,
                           'turn_accumulator': 0,
                           'new_game': True,
                           'player': None}
