@@ -61,9 +61,9 @@ class WorldView:
         '''Pre-calculate the on screen position and load each coordinate.'''
         half_tile_wide = int(self.TILE_WIDTH / 2)
         half_tile_high = int(self.TILE_HEIGHT / 2)
-        for x in range(len(self.nD)):
-            for y in range(len(self.nD[x])):
-                for z in range(len(self.nD[x][y])):
+        for x in xrange(len(self.nD)):
+            for y in xrange(len(self.nD[x])):
+                for z in xrange(len(self.nD[x][y])):
                     cKey = self.nD[x][y][z]
                     chunk = self.world.db['chunks'][find_parent(cKey)]
                     c = chunk.coordinates[cKey]
@@ -73,8 +73,8 @@ class WorldView:
 
     def init_b(self):
         for y in xrange(len(self.nD[0])):
-            for x in range(len(self.nD)):
-                for z in range(len(self.nD[x][y])):
+            for x in xrange(len(self.nD)):
+                for z in xrange(len(self.nD[x][y])):
                     c = self.nD[x][y][z][0]
                     px = self.nD[x][y][z][1][0]
                     py = self.nD[x][y][z][1][1]
@@ -98,8 +98,8 @@ class WorldView:
         self.rects = []
         remove = []
         for y in xrange(len(self.nD[0])):
-            for x in range(len(self.nD)):
-                for z in range(len(self.nD[x][y])):
+            for x in xrange(len(self.nD)):
+                for z in xrange(len(self.nD[x][y])):
                     c = self.nD[x][y][z][0]
                     px = self.nD[x][y][z][1][0]
                     py = self.nD[x][y][z][1][1]
@@ -129,8 +129,8 @@ class WorldView:
         # Empty hit_box_list
         self.hit_box_list = []
         unsorted = []
-        x_range = range(len(self.nD))
-        y_range = range(len(self.nD[0]))
+        x_range = xrange(len(self.nD))
+        y_range = xrange(len(self.nD[0]))
         # Render Tiles
         self.e_on_screen = 0
         for y in y_range:
