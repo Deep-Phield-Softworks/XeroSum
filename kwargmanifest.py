@@ -7,6 +7,9 @@ from persistent.list import PersistentList as plist
 import transaction
 
 
+from subclassloader import *
+
+
 class Manifest_KWARG:
 
     def __init__(self):
@@ -55,5 +58,5 @@ if __name__ == "__main__":
     kwarg_manifest = Manifest_KWARG()
 
     """Make test items"""
-    torch = {'frame': (16, 6), 'weight': 3.0,  'use_frame': (16, 5)}
+    torch = {'class': Item, 'frame': (16, 6), 'weight': 3.0,  'use_frame': (16, 5)}
     kwarg_manifest.set_kwargs('torch',  'Item',  torch)

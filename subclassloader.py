@@ -12,9 +12,7 @@ from field import Field
 
 """
 #SubclassLoader is meant to offer a flexible way to automatically import many
-#subclass modules for classes that need to be aware of them. Expected classes
-#that may need to be aware of all the archtype subclasses are: Coordinate,
-#Entity and possibly World.
+#subclass modules for classes that need to be aware of them.
 """
 
 os.chdir(sys.path[0])
@@ -34,5 +32,6 @@ for libname in libnames:
         print sys.exc_info()
     else:
         globals()[libname] = lib
+
 if __name__ == '__main__':
     print testCase.test
