@@ -42,9 +42,9 @@ class Chunk:
         return [xRange, yRange, zRange]
 
     def make_coordinates(self, ranges):
-        for x in range(*ranges[0]):
-            for y in range(*ranges[1]):
-                for z in range(*ranges[2]):
+        for x in xrange(*ranges[0]):
+            for y in xrange(*ranges[1]):
+                for z in xrange(*ranges[2]):
                     key = make_key([x, y, z])  # Make a key string
                     # Make coordinate object and store it
                     c = Coordinate(key)

@@ -37,7 +37,7 @@ class SpriteSheet:
     '''
     def populate_animations(self, pattern=None):
         # Default Sprite Sheet Pattern
-        for x in range(10):  # Create 10 empty "animation slots"
+        for x in xrange(10):  # Create 10 empty "animation slots"
             self.animations.append([])
         # Populate Slot 0 (IDK What to put here atm)
         self.animations[0] = self.create_idle_strip()  # !!PLACEHOLDER!! #
@@ -78,7 +78,7 @@ class SpriteSheet:
         strip = []
         # The bottom rows follow different rules than top rows
         if row > 1:
-            for x in range(self.frames_wide):  # For each frame in the strip
+            for x in xrange(self.frames_wide):  # For each frame in the strip
                 Rect = pygame.Rect((left, top), (width, height))
                 frame = self.surface.subsurface(Rect)
                 strip.append(frame)
@@ -86,14 +86,14 @@ class SpriteSheet:
         else:  # If the row is one of the top two with less frames...
             # There are 5 frames in the top two rows
             # These frames are for moving south and north
-            for x in range(5):  # For each frame in the strip
+            for x in xrange(5):  # For each frame in the strip
                 Rect = pygame.Rect((left, top), (width, height))
                 frame = self.surface.subsurface(Rect)
                 strip.append(frame)
                 left += width  # Add width for each
             # The basic 5 frames are split and appended.
             # To complete the cycle, loop back through
-            for x in range(3, 0, -1):
+            for x in xrange(3, 0, -1):
                 strip.append(strip[x])
         return strip
 

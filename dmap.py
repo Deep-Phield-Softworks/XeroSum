@@ -29,9 +29,9 @@ class DijkstraMap:
         self.keys_flat_list = []
         self.map_vals = dict()
         # Populate the Map Values
-        for x in range(0, len(self.coordinates)):
-            for y in range(0, len(self.coordinates[x])):
-                for z in range(0, len(self.coordinates[x][y])):
+        for x in xrange(0, len(self.coordinates)):
+            for y in xrange(0, len(self.coordinates[x])):
+                for z in xrange(0, len(self.coordinates[x][y])):
                         self.map_vals[self.coordinates[x][y][z]] = default_max
                         self.keys_flat_list.append(self.coordinates[x][y][z])
         for key in self.selected_dict.keys():

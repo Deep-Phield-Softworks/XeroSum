@@ -36,7 +36,7 @@ class ItemSheet:
         self.frames = []
 
     def populate_frames(self):
-        for i in range(self.frames_high):
+        for i in xrange(self.frames_high):
             self.frames.append(create_strip(i))
 
     '''
@@ -48,7 +48,7 @@ class ItemSheet:
         left = 0  # Initially left has an x axis value of 0.
         strip = []
         # The bottom rows follow different rules than top rows
-        for x in range(self.frames_wide):  # For each frame in the strip
+        for x in xrange(self.frames_wide):  # For each frame in the strip
             size = (self.frame_width, self.frame_height)
             Rect = pygame.Rect((left, top), size)
             frame = self.surface.subsurface(Rect)
