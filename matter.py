@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from persistent.list import PersistentList as plist
-from persistent import Persistent
+#  from persistent import Persistent
 
 
 '''
@@ -23,7 +23,8 @@ Accepted **kwargs in self.acceptedKWARGS:
 '''
 
 
-class Matter(Persistent):
+#  class Matter(Persistent):
+class Matter:
     def __init__(self, **kwargs):
         self.accepted_kwargs = {'image_key': 'ISO_BASIC_64x32.png',
                                 'name': None,

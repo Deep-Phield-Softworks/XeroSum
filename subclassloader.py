@@ -12,7 +12,7 @@ from field import Field
 
 """
 #SubclassLoader is meant to offer a flexible way to automatically import many
-#subclass modules for classes that need to be aware of them.
+#subclass modules for the use of Manifest_KWARG and 
 """
 
 os.chdir(sys.path[0])

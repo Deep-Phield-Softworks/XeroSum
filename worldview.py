@@ -129,7 +129,7 @@ class WorldView:
         for k in self.redraw:
             e = self.iso[k]
             self.screen.blit(e.to_blit(), (k[2], k[1]))
-        self.draw_screen_text()
+        # self.draw_screen_text()
         if bool(len(self.dirty)) or bool(len(self.screen_text)):
             display.update(self.dirty)
             display.flip()

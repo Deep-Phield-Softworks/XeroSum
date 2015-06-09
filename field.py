@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from persistent import Persistent
+#  from persistent import Persistent
 
 
 from aoe import *
@@ -27,7 +27,8 @@ Accepted **kwargs in self.acceptedKWARGS:
 '''
 
 
-class Field(Persistent):
+#  class Field(Persistent):
+class Field:
     def __init__(self, **kwargs):
         self.accepted_kwargs = {'name': None, 'origin': '0_0_0',
                                 'aoe_shape': Shape(**kwargs),

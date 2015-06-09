@@ -53,6 +53,8 @@ class Game:
         self.selected = None  # Entities left clicked
         self.path_target = None  # Path Finding Target
         self.run = True  # Run while true
+        self.FPS_count = 0
+        self.cycle_count = 0
 
     def world_init(self, name='Test', start_coordinate_key='0_0_0'):
         world = World(name)
@@ -178,22 +180,6 @@ class Game:
             collide = True
         return collide
 
-    def make_screen_text(self):
-        self.screen_text = []
-        #y = self.screen_size[1] - self.font_height
-        #y2 = 0 + self.font_height
-        elements = "Elements = " + str(self.view.e_on_screen)
-        self.screen_text.append(elements)
-        fps = "FPS = " + str(self.clock.get_fps())
-        self.screen_text.append(fps)
-        #for text in reversed(self.screen_text):
-        #    self.screen.blit(self.font.render(text, True, (255, 0, 0)), (0, y))
-        #    y -= self.font_height
-        #for text in reversed(self.screen_text_top):
-        #    render = self.font.render(text, True, (255, 0, 0)), (0, y2)
-         #   self.screen.blit(render)
-         #   y2 += self.font_height
-
     def ui_surface_init(self):
         pass
 
@@ -229,9 +215,11 @@ class Game:
         self.path()
         self.world.tick(self.clock.tick())
         self.world.process_effects()
-        self.make_screen_text()
+        #self.make_screen_text()
         self.view.render()
         # self.draw_ui()
+        self.FPS_count += self.clock.get_fps()
+        self.cycle_count += 1
 
 if __name__ == '__main__':
     os.chdir(sys.path[0])
@@ -239,4 +227,5 @@ if __name__ == '__main__':
     while g.run:
         g.main_loop()
     g.world.close()
+    print "FPS:", (g.FPS_count/g.cycle_count)
     sys.exit()
