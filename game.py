@@ -153,13 +153,11 @@ class Game:
 
     def reality_bubble_check(self, *elements):
         retire = []
-        active_or_adjacent = {}
-        for k in world.db['active_chunks']:
-            add = find_adjacents(k)
-            for k in add:
-                active_or_adjacent[k] = None
+        
+        p = find_parent(self.db['player'].coordinate_key)
+        active_or_adjacent = {k:k for k in find_adjacents(p)}
         for e in elements:
-            key = e.coordinate_key
+            key = find_parent(e.coordinate_key)
             if key not in active_or_adjacent:
                 retire.append(e)
         for e in retire:
@@ -173,9 +171,6 @@ class Game:
         if not (surface.get_at(point) == colorkey):
             collide = True
         return collide
-
-    def ui_surface_init(self):
-        pass
 
     def draw_ui(self):
         horiz_trim_size = ui_manifest['trim.png'].get_size()
@@ -209,9 +204,7 @@ class Game:
         self.path()
         self.world.tick(self.clock.tick())
         self.world.process_effects()
-        #self.make_screen_text()
         self.view.render()
-        # self.draw_ui()
         self.FPS_count += self.clock.get_fps()
         self.cycle_count += 1
 
