@@ -9,7 +9,8 @@ import transaction
 
 
 from controller import Controller
-from manifests import screen, screen_size, tracks, COLORKEY, ui_manifest
+from manifests import screen, screen_size, tracks, COLORKEY
+from manifests import ui_manifest
 from world import World
 from player import Player
 from aoe import *
@@ -46,7 +47,6 @@ class Game:
         self.db = self.world.db  # Convenience renaming here
         self.screen = screen
         self.screen_size = screen_size
-        self.render_surface_init()
         self.view = self.world_view_init()
         self.controller = Controller(self)
         self.tick = self.db['turn_accumulator']  # Load last clock tick value
@@ -119,19 +119,13 @@ class Game:
         transaction.commit()
         return world
 
-    def render_surface_init(self):
-        self.screen_tiles_wide = (self.screen_size[0] / TILE_WIDTH)
-        self.screen_tiles_high = (self.screen_size[1] / TILE_HEIGHT)
-        self.px_offset = (self.screen_size[0] / 2) - (TILE_WIDTH / 2)
-        pixel_y = self.screen_tiles_wide * TILE_HEIGHT
-        self.py_offset = (self.screen_size[1] / 2) - (pixel_y / 2)
-
     def world_view_init(self):
         world = self.world
         args = self.world.db['view_shape_args']
         size = self.screen_size
-        px = self.px_offset
-        py = self.py_offset
+        px = (size[0] / 2) - (TILE_WIDTH / 2)
+        tile_y =  (size[0] / TILE_WIDTH) * TILE_HEIGHT
+        py = (size[1] / 2) - (tile_y / 2)
         c = self.clock
         f = self.font
         return WorldView(world, args, px, py, f, c)
