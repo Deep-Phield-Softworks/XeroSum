@@ -65,13 +65,18 @@ class World:
     -TICK is being stored in ZODB. Not sure of performace ramifications here.
     '''
     def tick(self, TICK):
-        self.db['turn_accumulator'] += TICK  # Increment tick accumulator
-        if self.db['turn_accumulator'] % 1000:  # If % 1000 leaves a remainder
-            self.db['game_turn'] += 1  # Increment game turn
+        turn_accum = self.db['turn_accumulator']
+        turn = self.db['game_turn']
+        turn_accum += TICK  # Increment tick accumulator
+        if turn_accum % 1000:  # If % 1000 leaves a remainder
+            turn += 1  # Increment game turn
             # Get tick accumulator remainder
-            self.db['turn_accumulator'] = self.db['turn_accumulator'] % 1000
-        '''for key in self.db['chunks'].keys():
-            self.db['chunks'][key].tick(TICK, self.db['game_turn'])'''
+            turn_accum = turn_accum % 1000
+        self.db['turn_accumulator'] = turn_accum
+        self.db['game_turn'] = turn
+        transaction.commit()
+        for e in self.db['tick_roster']:
+            e.tick(TICK, turn)
 
     '''
     Given: coordinate_key as string and an object reference as element
