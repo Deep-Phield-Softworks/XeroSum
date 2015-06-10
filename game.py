@@ -153,7 +153,6 @@ class Game:
 
     def reality_bubble_check(self, *elements):
         retire = []
-        
         p = find_parent(self.db['player'].coordinate_key)
         active_or_adjacent = {k:k for k in find_adjacents(p)}
         for e in elements:
