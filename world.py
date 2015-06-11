@@ -58,7 +58,7 @@ class World:
 
     '''
     Given: int TICK as number of milliseconds that has passed since last time
-    tick was called. Cascade the tick through all active Chunks
+    tick was called. Cascade the tick through all active elements.
     ######NOTE#####
     -Currently if TICK > 2000, only one turn will be taken and the TICK will
     become < 1000. Not sure this is the correct failure mode.
@@ -70,7 +70,6 @@ class World:
         turn_accum += TICK  # Increment tick accumulator
         if turn_accum % 1000:  # If % 1000 leaves a remainder
             turn += 1  # Increment game turn
-            # Get tick accumulator remainder
             turn_accum = turn_accum % 1000
         self.db['turn_accumulator'] = turn_accum
         self.db['game_turn'] = turn

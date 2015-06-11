@@ -32,7 +32,8 @@ class Matter:
                                 'height': 64,
                                 'coordinate_key': None,
                                 'parent_coordinate': None,
-                                'effects': plist([])
+                                'effects': plist([]),
+                                'passive':True
                                 }
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():

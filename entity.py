@@ -41,7 +41,8 @@ class Entity(Matter):
                                 'impassible': True,
                                 'layer': 1.2,
                                 'float_offset': plist([0.5, 0.5]),
-                                'controllable': False
+                                'controllable': False,
+                                'passive':False
                                 }
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
