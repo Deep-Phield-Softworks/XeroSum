@@ -151,16 +151,25 @@ class Game:
             # self.selected.path = Path(goal_dict, self.selected, args)
             self.path_target = None
 
-    def reality_bubble_check(self, *elements):
+    def reality_bubble_check(self):
         retire = []
+        r = self.db['tick_roster']
+        active = {k:r[k] for k in r}
         p = find_parent(self.db['player'].coordinate_key)
         active_or_adjacent = {k:k for k in find_adjacents(p)}
+        for c in active_or_adjacent:
+            for e in c.active_elements:
+                if e not in active:
+                    active[e] = e
         for e in elements:
             key = find_parent(e.coordinate_key)
             if key not in active_or_adjacent:
                 retire.append(e)
         for e in retire:
             e.deactivate()
+            del active[e]
+        self.db['tick_roster'] = active
+        transaction.commit()
 
     def pixel_collison(self, point, surface, COLORKEY='#0080ff'):
         collide = False

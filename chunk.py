@@ -26,20 +26,21 @@ class Chunk:
         self.XYZ = key_to_XYZ(key)
         self.chunk_size = chunk_size
         self.game_turn_created = game_turn
-        self.coordinates = pdict()
-        self.coordinates_list = plist()
+        self.coordinates = {}
+        self.coordinates_list = []
         self.chunk_range = self.define_chunk_range()
         self.make_coordinates(self.chunk_range)
         self.last_active_game_turn = self.game_turn_created
+        self.active_elements = plist([])
 
     def define_chunk_range(self):
         x = self.XYZ[0] * 16
         y = self.XYZ[1] * 16
         z = self.XYZ[2]  # * 16
-        xRange = [x, x + (self.chunk_size[0])]
-        yRange = [y, y + (self.chunk_size[1])]
-        zRange = [z, z + (self.chunk_size[2])]
-        return [xRange, yRange, zRange]
+        x_range = [x, x + (self.chunk_size[0])]
+        y_range = [y, y + (self.chunk_size[1])]
+        z_range = [z, z + (self.chunk_size[2])]
+        return [x_range, y_range, z_range]
 
     def make_coordinates(self, ranges):
         for x in xrange(*ranges[0]):
@@ -51,13 +52,13 @@ class Chunk:
                     self.coordinates[key] = c
                     self.coordinates_list.append(c)
 
-    def tick(self, TICK, game_turn):
-        self.last_active_game_turn = game_turn
-        for c in self.coordinates_list:
-            c.tick(TICK)
-
     def add_element(self, coordinate_key, element):
+        if not element.passive:
+            self.active_elements[element] = element
         self.coordinates[coordinate_key].add_element(element)
 
     def remove_element(self, coordinate_key, element):
+        if not element.passive:
+            if element in self.active_elements:
+                del self.active_elements[element]
         self.coordinates[coordinate_key].remove_element(element)

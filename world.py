@@ -77,14 +77,6 @@ class World:
         for e in self.db['tick_roster']:
             e.tick(TICK, turn)
 
-    '''
-    Given: coordinate_key as string and an object reference as element
-    Add (probably new) element to a Coordinate object's contents
-    '''
-    def add_element(self, coordinate_key, element):
-        pchunk = find_parent(coordinate_key)
-        self.db['chunks'][pchunk].add_element(coordinate_key, element)
-        transaction.commit()
 
     """
     Add effects to a persistent list. Requires effects to be in
@@ -112,6 +104,15 @@ class World:
                 self.db['tick_roster'][target] = target
 
     '''
+    Given: coordinate_key as string and an object reference as element
+    Add (probably new) element to a Coordinate object's contents
+    '''
+    def add_element(self, coordinate_key, element):
+        pchunk = find_parent(coordinate_key)
+        self.db['chunks'][pchunk].add_element(coordinate_key, element)
+        transaction.commit()
+
+    '''
     Given: element as an object reference, and aKey and bKey as Coordinate
     object key strings. Move element from Coordinate aKey to Coordinate bKey
     '''
@@ -132,6 +133,9 @@ class World:
 
     def get_coordinate_obj(self, key):
         '''Return Coordinate object.'''
+        chunk = find_parent(key)
+        if chunk not in self.db['chunks']:
+            self.get_chunk(chunk)
         return self.db['chunks'][find_parent(key)].coordinates[key]
 
     def get_chunk(self, key):
