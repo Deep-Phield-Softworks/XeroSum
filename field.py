@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #  from persistent import Persistent
-
+from uuid import uuid4 as id
 
 from aoe import *
 
@@ -33,7 +33,9 @@ class Field:
         self.accepted_kwargs = {'name': None, 'origin': '0_0_0',
                                 'aoe_shape': Shape(**kwargs),
                                 'pixel_offsets': [0, 0],
-                                'layer': 0.0}
+                                'layer': 0.0,
+                                'id':id()
+                                }
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
                 self.__setattr__(key, kwargs[key])

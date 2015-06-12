@@ -31,7 +31,7 @@ class Chunk:
         self.chunk_range = self.define_chunk_range()
         self.make_coordinates(self.chunk_range)
         self.last_active_game_turn = self.game_turn_created
-        self.active_elements = plist([])
+        self.active_elements = pdict()
 
     def define_chunk_range(self):
         x = self.XYZ[0] * 16
@@ -54,11 +54,11 @@ class Chunk:
 
     def add_element(self, coordinate_key, element):
         if not element.passive:
-            self.active_elements[element] = element
+            self.active_elements[element.id] = element
         self.coordinates[coordinate_key].add_element(element)
 
     def remove_element(self, coordinate_key, element):
         if not element.passive:
-            if element in self.active_elements:
-                del self.active_elements[element]
+            if element.id in self.active_elements:
+                del self.active_elements[element.id]
         self.coordinates[coordinate_key].remove_element(element)

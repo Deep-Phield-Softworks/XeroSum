@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from persistent.list import PersistentList as plist
+from uuid import uuid4 as id
 #  from persistent import Persistent
 
 
@@ -33,7 +34,8 @@ class Matter:
                                 'coordinate_key': None,
                                 'parent_coordinate': None,
                                 'effects': plist([]),
-                                'passive':True
+                                'passive':True,
+                                'id':id()
                                 }
         for key in self.accepted_kwargs.keys():
             if key in kwargs.keys():
