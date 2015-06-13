@@ -221,6 +221,8 @@ if __name__ == '__main__':
     g = Game()
     while g.run:
         g.main_loop()
+    #for k in g.db['tick_roster']:
+    #    print k, g.db['tick_roster'][k]
     g.world.close()
     print "FPS:", (g.FPS_count/g.cycle_count)
     sys.exit()
